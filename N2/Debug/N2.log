@@ -1,0 +1,3 @@
+﻿  PhysicsSystem.cpp
+d:\programming\c++\n2\n2\source\physicssystem.cpp(39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe

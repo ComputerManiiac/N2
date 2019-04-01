@@ -3,7 +3,7 @@
 
 #include "Contiguous.h"
 #include "OverloadNew.h"
-#include "OBJInfo.h"
+#include "Info.h"
 
 
 #include "TransformComponent.h"
@@ -20,6 +20,7 @@ class Entity
 {
 public:
 
+	Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, std::string texturePath);
 	Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, std::string modelPath, std::string texturePath);
 	Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale);
 	Entity();

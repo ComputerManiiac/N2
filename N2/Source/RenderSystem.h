@@ -42,16 +42,52 @@
 #include "TransformComponent.h"
 #include "MatrixStack.h"
 #include "LightSource.h"
+#include "FrameBuffer.h"
 #include <vector>
 #include <algorithm>
 
 
 struct VertexData {
-	
+
 	VertexData(Mtx44 model, Mtx44 view, Mtx44 projection) : model(model), view(view), projection(projection) {}
 	Mtx44 model;
 	Mtx44 view;
 	Mtx44 projection;
+};
+
+
+struct BatchKey {
+
+
+	BatchKey(unsigned int textureID, Material mat) : textureID(textureID), mat(mat) {}
+	BatchKey() {}
+
+
+	bool operator==(const BatchKey& other)
+	{
+		return (other.textureID == textureID) && (mat == other.mat);
+	}
+
+	bool operator < (const BatchKey other) const
+	{
+		return memcmp((void*)this, (void*)&other, sizeof(BatchKey)) > 0;
+	}
+
+	unsigned int textureID;
+	Material mat;
+};
+
+
+
+
+
+struct Batch {
+
+	Batch(std::vector<RenderComponent*> subscribers) : subscribers(subscribers) {}
+	Batch() {}
+
+	std::vector<VertexData> data;
+	std::vector<RenderComponent*> subscribers;
 };
 
 class RenderSystem : public System
@@ -61,11 +97,20 @@ public:
 	~RenderSystem();
 
 	void Initialize();
-	void initializeComponent(const OBJInfo& info, unsigned int& VAO, unsigned int& VBO, unsigned int& EBO);
+
+	void setupComponent(const OBJInfo& info, unsigned int& VAO, unsigned int& VBO, unsigned int& EBO);
 	void setupLight();
 
 	void Update(double& dt);
-	void updateTransformMatrices();
+
+	void renderScene(ShaderProgram* shader, const Mtx44& viewMatrix);
+
+
+	/* Temp function to debug framebuffer's texture */
+	void renderTexture(const FrameBuffer& buffer);
+	
+
+	void updateTransformMatrices(Batch& batch);
 	void layoutInstancedData(const unsigned int& VAO);
 	
 
@@ -74,15 +119,25 @@ public:
 
 
 private:
+
+	ShaderProgram* depth;
 	ShaderProgram* lit;
 
+	unsigned int quadVAO;
+	unsigned int quadVBO;
+	unsigned int quadEBO;
+	
+	FrameBuffer fbo;
 	unsigned int matricesVBO;
-	std::vector<VertexData> data;
 
+	
+	std::map<BatchKey, Batch> batches;
 
 	std::vector<RenderComponent*> subscribers;
 	std::vector<LightSource*> lightSources;
-	MS modelStack, projectionStack, viewStack;
+	MS modelStack;
+	Mtx44 projection, view;
+	Mtx44 lightProjectionView, lightProjection, lightView;
 
 };
 

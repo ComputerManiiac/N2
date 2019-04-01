@@ -2,7 +2,7 @@
 #define COLLIDERCOMPONENT_H
 
 #include "Component.h"
-#include "OBJInfo.h"
+#include "Info.h"
 #include <vector>
 
 class Entity;

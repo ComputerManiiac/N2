@@ -56,6 +56,8 @@ public:
 	inline void setColor(const Vector3& color);
 	inline void setSpotlightDir(const Vector3& direction);
 
+	const Vector3& getPosition() const;
+
 	void setupAttribs();
 
 	static unsigned int& getCount();

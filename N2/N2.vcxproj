@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\FrameBuffer.cpp" />
     <ClCompile Include="Source\ColliderComponent.cpp" />
     <ClCompile Include="Source\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Primitives.cpp" />
@@ -173,8 +174,10 @@
     <ClCompile Include="Source\timer.cpp" />
     <ClCompile Include="Source\TransformComponent.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
+    <ClCompile Include="Source\UIComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\FrameBuffer.h" />
     <ClInclude Include="Source\ColliderComponent.h" />
     <ClInclude Include="Source\Contiguous.h" />
     <ClInclude Include="Source\PhysicsSystem.h" />
@@ -184,7 +187,7 @@
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\LightSource.h" />
     <ClInclude Include="Source\Loader.h" />
-    <ClInclude Include="Source\OBJInfo.h" />
+    <ClInclude Include="Source\Info.h" />
     <ClInclude Include="Source\RenderSystem.h" />
     <ClInclude Include="Source\Manager.h" />
     <ClInclude Include="Source\Application.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="Source\Vector3.h" />
     <ClInclude Include="Source\System.h" />
     <ClInclude Include="Source\Utility.h" />
+    <ClInclude Include="Source\UIComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

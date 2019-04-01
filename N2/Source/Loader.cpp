@@ -1,6 +1,8 @@
 #include "Loader.h"
 
 
+std::map<std::string, unsigned int> Loader::cachedTextures = {};
+
 Loader::Loader()
 {
 }
@@ -13,6 +15,13 @@ Loader::~Loader()
 // Loads a .TGA image file from a given file path and generates a GL_TEXTURE_2D, returning a GLuint/unsigned int for it.
 void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 {
+
+	if (cachedTextures.find(filePath) != cachedTextures.end())
+	{
+		textureID = cachedTextures[filePath];
+		return;
+	}
+
 	std::ifstream fileStream(filePath, std::ios::binary);
 	if (!fileStream.is_open())
 	{
@@ -59,8 +68,8 @@ void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 
 
 	// Texture Settings
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -70,6 +79,8 @@ void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 	float maxAntisotropy = 1.f;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAntisotropy);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLint)maxAntisotropy);
+
+	cachedTextures[filePath] = textureID;
 
 	delete[] data;
 }
@@ -86,7 +97,7 @@ void Loader::loadOBJ(const std::string& filePath, OBJInfo& outInfo)
 
 	// Input
 	std::string line;
-	std::vector<Vector3> texCoords;
+	std::vector<Vector2> texCoords;
 	std::vector<Vector3> normals;
 	std::vector<Vector3> positions;
 
@@ -114,8 +125,7 @@ void Loader::loadOBJ(const std::string& filePath, OBJInfo& outInfo)
 		else if (strncmp("vt ", buffer, 3) == 0)
 		{
 			sscanf_s((buffer + 3), "%f%f", &v.x, &v.y);
-			v.z = 0;
-			texCoords.push_back(v);
+			texCoords.emplace_back(v.x, v.y);
 		}
 
 		// Vertex Normal
@@ -186,7 +196,7 @@ void Loader::loadOBJ(const std::string& filePath, OBJInfo& outInfo)
 		// Index starts from 1 in obj file
 		// Therefore, actual position in vector = Index - 1
 		Vector3 pos = positions[vertIndex - 1];
-		Vector3 uv = texCoords[uvIndex - 1];
+		Vector2 uv = texCoords[uvIndex - 1];
 		Vector3 norm = normals[normIndex - 1];
 
 		Vertex vertex(pos, uv, norm);

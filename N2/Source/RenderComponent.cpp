@@ -3,6 +3,14 @@
 #include "Primitives.h"
 #include "Entity.h"
 
+
+RenderComponent::RenderComponent(Entity* parent, std::string texturePath, DRAW_MODE mode) : Component("Render", parent),
+mode(mode), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.4f, 0.4f), Vector3(0.3f, 0.3f, 0.3f), 1.0f)
+{
+	Primitives::generateCube(info);
+	Loader::loadTGA(texturePath, textureID);
+}
+
 RenderComponent::RenderComponent(Entity* parent, std::string modelPath, std::string texturePath, DRAW_MODE mode) : Component("Render", parent),
 mode(mode), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.4f, 0.4f), Vector3(0.3f, 0.3f, 0.3f), 1.0f)
 {

@@ -175,26 +175,29 @@ void Primitives::generateQuad(OBJInfo& info)
 {
 	std::vector<Vertex>& vertices = info.vertices;
 
+	float length = 2.0f;
+	float halfLength = 0.5f * length;
+
 	Vertex v;
 	v.normal.Set(0, 0, 1);
 
-	v.position.Set(-0.5f, 0.5f, 0);
-	v.texCoord.Set(0, 1, 0);
+	v.position.Set(-halfLength, halfLength, 0);
+	v.texCoord.Set(0, 1);
 	vertices.push_back(v);
 
 
-	v.position.Set(-0.5f, -0.5f, 0);
-	v.texCoord.Set(0, 0, 0);
+	v.position.Set(-halfLength, -halfLength, 0);
+	v.texCoord.Set(0, 0);
 	vertices.push_back(v);
 
 
-	v.position.Set(0.5f, 0.5f, 0);
-	v.texCoord.Set(1, 1, 0);
+	v.position.Set(halfLength, halfLength, 0);
+	v.texCoord.Set(1, 1);
 	vertices.push_back(v);
 
 
-	v.position.Set(0.5f, -0.5f, 0);
-	v.texCoord.Set(1, 0, 0);
+	v.position.Set(halfLength, -halfLength, 0);
+	v.texCoord.Set(1, 0);
 	vertices.push_back(v);
 
 	info.indices = { 0,1,2,2,1,3 };

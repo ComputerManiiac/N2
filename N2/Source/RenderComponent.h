@@ -3,7 +3,7 @@
 
 #include <GL\glew.h>
 #include "Component.h"
-#include "OBJInfo.h"
+#include "Info.h"
 
 
 class Entity;
@@ -12,6 +12,11 @@ struct Material {
 
 	Material(Vector3 ambient, Vector3 diffuse, Vector3 specular, float shininess) : ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess) {}
 	Material() {}
+
+	bool operator==(const Material& other)
+	{
+		return (ambient == other.ambient) && (diffuse == other.diffuse) && (specular == other.specular) && (shininess == other.shininess);
+	}
 
 	Vector3 ambient;
 	Vector3 diffuse;
@@ -32,6 +37,7 @@ enum DRAW_MODE
 class RenderComponent : public Component
 {
 public:
+	RenderComponent(Entity* parent, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
 	RenderComponent(Entity* parent, std::string modelPath, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
 	RenderComponent(Entity* parent);
 	RenderComponent();

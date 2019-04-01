@@ -117,6 +117,12 @@
     <ClCompile Include="Source\ColliderComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\MatrixStack.h">
@@ -167,9 +173,6 @@
     <ClInclude Include="Source\Camera.h">
       <Filter>Header Files\Others</Filter>
     </ClInclude>
-    <ClInclude Include="Source\OBJInfo.h">
-      <Filter>Header Files\Others</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Primitives.h">
       <Filter>Header Files\Others</Filter>
     </ClInclude>
@@ -196,6 +199,15 @@
     </ClInclude>
     <ClInclude Include="Source\Utility.h">
       <Filter>Header Files\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Info.h">
+      <Filter>Header Files\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FrameBuffer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

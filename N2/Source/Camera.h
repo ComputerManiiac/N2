@@ -13,6 +13,9 @@ public:
 	Camera(const Vector3& pos);
 	Camera();
 	~Camera();
+
+	static Mtx44 generateLookAt(const Vector3& pos, const Vector3& target,  const Vector3& up);
+
 	Mtx44 LookAt();
 	void Init(const Vector3& pos);
 	void Reset();

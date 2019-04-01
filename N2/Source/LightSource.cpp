@@ -148,6 +148,11 @@ void LightSource::setSpotlightDir(const Vector3& spotDirection)
 	this->spotDirection = spotDirection;
 }
 
+const Vector3& LightSource::getPosition() const
+{
+	return position;
+}
+
 void LightSource::setPower(const float& power)
 {
 	shader->Use();

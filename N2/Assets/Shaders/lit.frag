@@ -34,6 +34,7 @@ uniform Material material;
 uniform int numLights;
 uniform bool colorTextureEnabled;
 uniform sampler2D colorTexture;
+uniform sampler2D depthTexture;
 //uniform mat4 view;
 
 // Interpolated values from the vertex shaders
@@ -41,6 +42,7 @@ in vec3 vertexPosition_cameraspace;
 in vec3 vertexNormal_cameraspace;
 in vec2 texCoord;
 in mat4 view;
+in vec4 vertexPosition_lightspace;
 
 // Ouput data
 out vec4 color;
@@ -65,6 +67,38 @@ float getSpotlightEffect(Light light, vec3 lightDirection) {
 		return 1; //pow(cosDirection, light.exponent);
 }
 
+float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
+
+
+
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+
+	if(projCoords.z > 1.0 )
+		return 0.0;
+
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(depthTexture, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(depthTexture, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(depthTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
+			if(currentDepth > pcfDepth)
+				shadow+=1.0;
+		}    
+	}
+	shadow /= 9.0;
+	
+
+    return shadow;
+}
 
 
 void main(){
@@ -113,15 +147,13 @@ void main(){
 			vec3 R = reflect(-L, N);
 			float cosAlpha = clamp( dot( E, R ), 0, 1 );
 			
-			color += 
-				// Ambient : simulates indirect lighting
-				materialColor * vec4(material.kAmbient, 1) +
-				
-				// Diffuse : "color" of the object
-				materialColor * vec4(material.kDiffuse, 1) * vec4(lights[i].color, 1) * lights[i].power * cosTheta * attenuationFactor * spotlightEffect +
-				
-				// Specular : reflective highlight, like a mirror
-				vec4(material.kSpecular, 1) * vec4(lights[i].color, 1) * lights[i].power * pow(cosAlpha, material.kShininess) * attenuationFactor * spotlightEffect;
+			vec4 ambient = materialColor * vec4(material.kAmbient, 1);
+			vec4 diffuse = materialColor * vec4(material.kDiffuse, 1) * vec4(lights[i].color, 1) * lights[i].power * cosTheta * attenuationFactor * spotlightEffect;
+			vec4 specular = vec4(material.kSpecular, 1) * vec4(lights[i].color, 1) * lights[i].power * pow(cosAlpha, material.kShininess) * attenuationFactor * spotlightEffect;
+			
+			 color += ambient + (1.0 - getShadow(vertexPosition_lightspace, L, N)) * (diffuse + specular);
+//			color = vec4(vec3(getShadow(vertexPosition_lightspace)), 1.f);
+//			color += ambient + diffuse + specular;
 		}
 	}
 	else

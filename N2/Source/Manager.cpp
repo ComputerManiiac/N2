@@ -35,11 +35,13 @@ void Manager::Initialize()
 
 	camera = Camera(Vector3(0, 1, 5));
 	shaders.try_emplace("lit", ShaderProgram("Assets\\Shaders\\lit.vert", "Assets\\Shaders\\lit.frag"));
+	shaders.try_emplace("depth", "Assets\\Shaders\\depth.vert", "Assets\\Shaders\\depth.frag");
+	shaders.try_emplace("quad", "Assets\\Shaders\\quad.vert", "Assets\\Shaders\\quad.frag");
 
 	registerSystem<RenderSystem>(); 
 	registerSystem<PhysicsSystem>();
-	
-	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100));
+	//
+	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100), "Assets\\Textures\\wood.tga");
 	
 
 	//for (int x = 1; x < 11; x += 2)
@@ -47,13 +49,18 @@ void Manager::Initialize()
 
 
 	//}
-	
-	for (int i = 1; i < 3; ++i)
+	//
+	/*for (int i = 1; i < 3; ++i)
 	{
 		std::string name = "obj" + std::to_string(i);
 		entities[name] = new Entity(name, Vector3(1, i * 2.0f, 1), Vector3(0, 0, 0), Vector3(1, 1, 1));
-	}
+	}*/
 
+	//entities["obj2"] = new Entity("obj2", Vector3(0, 1, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
+	entities["obj1"] = new Entity("obj1", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");
+
+
+	/*entities["car"] = new Entity("car", Vector3(0, 2, 0), Vector3(0, 0, 0), Vector3(1,1,1), "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
 	
 	for (auto& system : systems) {
 		system.second->Initialize();

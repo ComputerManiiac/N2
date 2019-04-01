@@ -1,3 +1,4 @@
-﻿  PhysicsSystem.cpp
-d:\programming\c++\n2\n2\source\physicssystem.cpp(39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+﻿  RenderSystem.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
   N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe

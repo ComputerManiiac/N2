@@ -3,6 +3,22 @@
 
 
 
+Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, std::string texturePath) : name(name)
+{
+	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
+	contiguous.defineTypes(t, r, c, rigid);
+
+	addComponent(contiguous.Allocate<TransformComponent>(this, position, rotation, scale));
+	addComponent(contiguous.Allocate<RenderComponent>(this, texturePath));
+	addComponent(contiguous.Allocate<ColliderComponent>(this));
+	addComponent(contiguous.Allocate<RigidbodyComponent>(this, 2.0f));
+
+	Manager* manager = Manager::getInstance();
+	manager->registerComponent<RenderSystem>(getComponent<RenderComponent>());
+	manager->registerComponent<PhysicsSystem>(getComponent<RigidbodyComponent>());
+}
+
+
 Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, std::string modelPath, std::string texturePath) : name(name)
 {
 	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
@@ -46,7 +62,7 @@ Entity::~Entity()
 
 }
 
-const std::string & Entity::getName() const
+const std::string& Entity::getName() const
 {
 	return name;
 }

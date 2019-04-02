@@ -8,12 +8,68 @@
 struct Vector2 {
 
 	Vector2() {}
+	Vector2(const Vector2& other) : x(other.x), y(other.y) {}
 	Vector2(float x, float y) : x(x), y(y) {}
 
 	void Set(float x, float y)
 	{
 		this->x = x;
 		this->y = y;
+	}
+
+	Vector2& operator=(const Vector2& other) {
+		x = other.x;
+		y = other.y;
+		return *this;
+	}
+
+	Vector2& operator+(const Vector2& other)
+	{
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+
+	Vector2& operator+(const float& other) {
+		x += other;
+		y += other;
+		return *this;
+	}
+
+	Vector2& operator-(const Vector2& other) {
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
+
+	Vector2& operator-(const float& other) {
+		x -= other;
+		y -= other;
+		return *this;
+	}
+
+	Vector2& operator*(const float &other) {
+		x *= other;
+		y *= other;
+		return *this;
+	}
+
+	Vector2& operator/(const float& other) {
+		x /= other;
+		y /= other;
+		return *this;
+	}
+
+	Vector2& operator/=(const float& other) {
+		x /= other;
+		y /= other;
+		return *this;
+	}
+
+	Vector2& operator-() {
+		x = -x;
+		y = -y;
+		return *this;
 	}
 
 	float x;
@@ -55,6 +111,11 @@ struct OBJInfo {
 
 struct FontChar {
 	
+	FontChar() : id(0), xPos(-1), yPos(-1), width(-1), height(-1), xOffset(-1), yOffset(-1) {}
+
+	FontChar(char id, float xPos, float yPos, float width, float height, float xOffset, float yOffset)
+		: id(id), xPos(xPos), yPos(yPos), width(width), height(height), xOffset(xOffset), yOffset(yOffset) {}
+
 	// ASCII equivalent number
 	char id;
 
@@ -78,11 +139,27 @@ struct Font {
 
 	Font() {}
 	unsigned int textureID;
-	unsigned int VAO;
-	unsigned int VBO;
 	FontChar data[256];
 };
 
+struct UIVertex {
+
+	UIVertex() {}
+	UIVertex(Vector2 position, Vector2 texCoord) : position(position), texCoord(texCoord){}
+
+	Vector2 position;
+	Vector2 texCoord;
+};
+
+struct Text {
+
+	Text() {}
+	Text(std::vector<UIVertex> vertices, std::vector<unsigned int> indices, unsigned int VAO) : vertices(vertices), indices(indices), VAO(VAO) {}
+
+	std::vector<UIVertex> vertices;
+	std::vector<unsigned int> indices;
+	unsigned int VAO;
+};
 
 
 

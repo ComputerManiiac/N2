@@ -40,6 +40,9 @@ public:
 	static void loadFont(const std::string& filePath, Font& font);
 private:
 	static std::map<std::string, unsigned int> cachedTextures;
+	static float getValueFloat(const std::string& line);
+	static int getValueInt(const std::string& line);
+
 };
 
 #endif

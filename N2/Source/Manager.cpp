@@ -34,9 +34,10 @@ void Manager::Initialize()
 {
 
 	camera = Camera(Vector3(0, 1, 5));
-	shaders.try_emplace("lit", ShaderProgram("Assets\\Shaders\\lit.vert", "Assets\\Shaders\\lit.frag"));
+	shaders.try_emplace("lit", "Assets\\Shaders\\lit.vert", "Assets\\Shaders\\lit.frag");
 	shaders.try_emplace("depth", "Assets\\Shaders\\depth.vert", "Assets\\Shaders\\depth.frag");
 	shaders.try_emplace("quad", "Assets\\Shaders\\quad.vert", "Assets\\Shaders\\quad.frag");
+	shaders.try_emplace("ui", "Assets\\Shaders\\ui.vert", "Assets\\Shaders\\ui.frag");
 
 	registerSystem<RenderSystem>(); 
 	registerSystem<PhysicsSystem>();

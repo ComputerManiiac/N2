@@ -83,6 +83,7 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 
+
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(depthTexture, 0);
 	for(int x = -1; x <= 1; ++x)

@@ -1,36 +1,10 @@
-﻿  FrameBuffer.cpp
-  ColliderComponent.cpp
-  PhysicsSystem.cpp
-d:\programming\c++\n2\n2\source\physicssystem.cpp(39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Primitives.cpp
-  RenderComponent.cpp
+﻿  Application.cpp
   Entity.cpp
-  Component.cpp
-  LightSource.cpp
-  Loader.cpp
-  RenderSystem.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
   Manager.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-  Application.cpp
-  Camera.cpp
-d:\programming\c++\n2\n2\source\camera.cpp(91): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  main.cpp
-  MatrixStack.cpp
-  MemoryLeak.cpp
-  Mtx44.cpp
-  RigidbodyComponent.cpp
-  ShaderProgram.cpp
-  timer.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+  RenderSystem.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
   Generating Code...
-  Compiling...
-  TransformComponent.cpp
-  Vector3.cpp
-  UIComponent.cpp
-  Generating Code...
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'D:\Programming\C++\N2\Debug\vc120.pdb'; linking object as if no debug info
-  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe
+  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.exe

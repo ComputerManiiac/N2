@@ -45,7 +45,7 @@
 #include "FrameBuffer.h"
 #include <vector>
 #include <algorithm>
-
+#include <string>
 
 struct VertexData {
 
@@ -54,7 +54,6 @@ struct VertexData {
 	Mtx44 view;
 	Mtx44 projection;
 };
-
 
 struct BatchKey {
 
@@ -78,9 +77,6 @@ struct BatchKey {
 };
 
 
-
-
-
 struct Batch {
 
 	Batch(std::vector<RenderComponent*> subscribers) : subscribers(subscribers) {}
@@ -89,6 +85,13 @@ struct Batch {
 	std::vector<VertexData> data;
 	std::vector<RenderComponent*> subscribers;
 };
+
+enum TextAlignment {
+	TEXT_ALIGN_LEFT,
+	TEXT_ALIGN_RIGHT,
+};
+
+
 
 class RenderSystem : public System
 {
@@ -119,10 +122,13 @@ public:
 	void removeComp(Component* component);
 
 
+	void renderText(const std::string& text, float xPos, float yPos, Font& font, float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
+
 private:
 
 	ShaderProgram* depth;
 	ShaderProgram* lit;
+	ShaderProgram* ui;
 	
 	/* Used for rendering textures to screen */
 	unsigned int quadVAO;
@@ -136,8 +142,10 @@ private:
 	unsigned int batchVBO;
 	std::map<BatchKey, Batch> batches;
 
+	std::vector<Text> texts;
 	std::vector<RenderComponent*> subscribers;
 	std::vector<LightSource*> lightSources;
+	std::vector<Font> fonts;
 	MS modelStack;
 	Mtx44 projection, view;
 

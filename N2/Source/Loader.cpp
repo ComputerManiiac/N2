@@ -250,24 +250,27 @@ void Loader::loadFont(const std::string& filePath, Font& font)
 	{
 		if (line.substr(0, 5) == "char ")
 		{
-			std::string::iterator withoutSpaces = std::unique(line.begin(), line.end(), [](char lhs, char rhs)
+			std::string::iterator withoutSpaces = std::unique(line.begin(), line.end(), [](char& lhs, char& rhs)
 			{ return (lhs == rhs) && (lhs == ' '); });
 			
 			line.erase(withoutSpaces, line.end());
+			line = line.substr(5, line.length() - 5);
 			std::vector<std::string> params = splitLine(line, ' ');
-			//FontChar fontChar()
-			/*int ascii = (int) */
-		/*	font.data[(int)]*/
 
+			int ascii = getValueInt(params[0]);
+			FontChar fontChar((char)ascii, getValueFloat(params[1]), getValueFloat(params[2]),
+				getValueFloat(params[3]), getValueFloat(params[4]), getValueFloat(params[5]), getValueFloat(params[6]));
+
+			font.data[ascii] = std::move(fontChar);
 		}
 	}
-
 	handle.close();
 }
 
+float Loader::getValueFloat(const std::string& line) {
+	return std::stof(splitLine(line, '=')[1]);
+}
 
-/*
-
-				getValue(params[5]), getValue(params[6]), getValue(params[7]), getValue(params[8]));
-			data[(int) text->id] = text;
-*/
+int Loader::getValueInt(const std::string& line) {
+	return std::stoi(splitLine(line, '=')[1]);
+}

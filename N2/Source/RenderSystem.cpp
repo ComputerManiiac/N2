@@ -57,11 +57,14 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize() {
 
-	Font f;
-	Loader::loadFont("Assets\\Fonts\\sansserif.fnt", f);
+	fonts.push_back(Font());
+	Loader::loadFont("Assets\\Fonts\\sansserif.fnt", fonts[0]);
+	renderText("abc", 684.0f, 384.0f, fonts[0]);
 
-	lit = Manager::getInstance()->getShader("lit");
-	depth = Manager::getInstance()->getShader("depth");
+	Manager* manager = Manager::getInstance();
+	lit = manager->getShader("lit");
+	depth = manager->getShader("depth");
+	ui = manager->getShader("ui");
 
 	/* Sets the default shader used by all light sources*/
 	LightSource::setShader(lit);
@@ -218,6 +221,12 @@ void RenderSystem::Update(double& dt)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
 	renderScene(lit, Manager::getInstance()->getCamera()->LookAt());
+
+
+	for (Text& text : texts) {
+		glDeleteVertexArrays(1, &text.VAO);
+	}
+	texts.clear();
 }
 
 void RenderSystem::renderTexture(const FrameBuffer& buffer)
@@ -367,4 +376,88 @@ void RenderSystem::removeComp(Component* component)
 	}
 
 	
+}
+
+void RenderSystem::renderText(const std::string& text, float xPos, float yPos, Font& font, float fontSize, TextAlignment align)
+{
+	Vector2 cursor(xPos, yPos);
+	//Vector2 textDimensions;
+
+	UIVertex vertex;
+
+	std::vector<UIVertex> textData;
+	std::vector<unsigned int> textIndices;
+
+	float halfScreenWidth = Application::getScreenWidth() * 0.5f;
+	float halfScreenHeight = Application::getScreenHeight() * 0.5f;
+	float textureSize = 512.0f;
+
+
+	for (int i = 0; i < (int) text.length(); i++) {
+		FontChar& fontChar = font.data[(int)text[i]];
+
+
+		/* 
+		Screen Pixel Range, Top Left (0,0), Bottom Right (width, height)
+		The extreme points are stored based on their axis such that the conversion to NDC is consistent. 
+		*/
+		Vector2 extremeX(cursor.x + fontChar.xOffset, cursor.x + fontChar.xOffset + fontChar.width);
+		Vector2 extremeY(cursor.y + fontChar.yOffset, cursor.y + fontChar.yOffset + fontChar.height);
+
+		/* NDC Range, Center (0,0), Top Left (-1, 1), Bottom Right (1, -1) */
+		extremeX = (extremeX + 1) / halfScreenWidth - 1;
+		extremeY = -((extremeY + 1) / halfScreenHeight - 1);
+
+		/* UV Range, Bottom Left (0,0), Top Right (1,1) */
+		Vector2 texCoordMin(fontChar.xPos, fontChar.yPos);
+		texCoordMin /= textureSize;
+
+		/* Y position is inverted due to the origin being at the bottom instead of top in OpenGL */
+		texCoordMin.y = 1 - texCoordMin.y;
+
+		Vector2 texCoordMax(texCoordMin.x + fontChar.width, texCoordMin.y - fontChar.height);
+		texCoordMax /= textureSize;
+
+		/* Compute the positions and uv coordinates of the quad */
+		vertex.position.x = extremeX.x;
+		vertex.position.y = extremeY.x;
+		vertex.texCoord = texCoordMin;
+		textData.push_back(vertex);
+
+		vertex.position.y = extremeY.y;
+		vertex.texCoord.y = texCoordMax.y;
+		textData.push_back(vertex);
+		
+		vertex.position.x = extremeX.y;
+		vertex.position.y = extremeY.x;
+		vertex.texCoord = texCoordMin;
+		vertex.texCoord.x = texCoordMax.x;
+		textData.push_back(vertex);
+
+		vertex.position.y = extremeY.y;
+		vertex.texCoord = texCoordMax;
+		textData.push_back(vertex);
+
+		/* Compute the proper index count of the vertices added */
+		int offset = 4 * (textData.size() / 4 - 1);
+		textIndices.push_back(offset);
+		textIndices.push_back(offset + 1);
+		textIndices.push_back(offset + 2);
+		textIndices.push_back(offset + 2);
+		textIndices.push_back(offset + 1);
+		textIndices.push_back(offset + 3);
+
+		/* Advance the text cursor by set amount */
+		cursor.x += fontChar.xAdvance;
+
+		/* If the extreme right extends beyond the screen ( > 1 in NDC ), go to next line */
+		if (extremeX.y > 1.0f) {
+			cursor.x = 0;
+			cursor.y += fontChar.height;
+		}
+	}
+
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	texts.emplace_back(textData, textIndices, VAO);
 }

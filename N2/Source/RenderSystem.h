@@ -100,6 +100,7 @@ public:
 
 	void setupComponent(const OBJInfo& info, unsigned int& VAO, unsigned int& VBO, unsigned int& EBO);
 	void setupLight();
+	void setupShadows();
 
 	void Update(double& dt);
 
@@ -122,22 +123,24 @@ private:
 
 	ShaderProgram* depth;
 	ShaderProgram* lit;
-
+	
+	/* Used for rendering textures to screen */
 	unsigned int quadVAO;
 	unsigned int quadVBO;
 	unsigned int quadEBO;
 	
-	FrameBuffer fbo;
-	unsigned int matricesVBO;
+	/* Shadows */
+	FrameBuffer shadowFBO;	
+	Mtx44 lightProjectionView, lightProjection, lightView;
 
-	
+	unsigned int batchVBO;
 	std::map<BatchKey, Batch> batches;
 
 	std::vector<RenderComponent*> subscribers;
 	std::vector<LightSource*> lightSources;
 	MS modelStack;
 	Mtx44 projection, view;
-	Mtx44 lightProjectionView, lightProjection, lightView;
+
 
 };
 

@@ -47,9 +47,42 @@ struct OBJInfo {
 
 	OBJInfo(std::vector<Vertex> vertices, std::vector<unsigned int> indices) : vertices(vertices), indices(indices) {}
 
-	OBJInfo(){}
+	OBJInfo() {}
 
 };
+
+
+
+struct FontChar {
+	
+	// ASCII equivalent number
+	char id;
+
+	// X and Y offsets for the starting position of the character in the font texture with origin at top left
+	float xPos;
+	float yPos;
+
+	// Width and Height of the character in the font texture
+	float width;
+	float height;
+
+	// X and Y offsets relative to the text cursor where the character is supposed to be drawn
+	float xOffset;
+	float yOffset;
+
+	/* How much the text cursor should advance in the x-axis after drawing this char*/
+	float xAdvance;
+};
+
+struct Font {
+
+	Font() {}
+	unsigned int textureID;
+	unsigned int VAO;
+	unsigned int VBO;
+	FontChar data[256];
+};
+
 
 
 

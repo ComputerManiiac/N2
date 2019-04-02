@@ -224,3 +224,50 @@ void Loader::loadOBJ(const std::string& filePath, OBJInfo& outInfo)
 }
 
 
+std::vector<std::string> splitLine(const std::string& s, char delimiter)
+{
+	std::vector<std::string> tokens;
+	std::string token;
+	std::istringstream tokenStream(s);
+	while (std::getline(tokenStream, token, delimiter))
+		tokens.push_back(token);
+	return tokens;
+}
+
+void Loader::loadFont(const std::string& filePath, Font& font)
+{
+	std::ifstream handle(filePath);
+	if (!handle.is_open())
+	{
+		std::cout << "[Error] Failed to load font at " << filePath << std::endl;
+		return;
+	}
+
+	
+
+	std::string line;
+	while (std::getline(handle, line))
+	{
+		if (line.substr(0, 5) == "char ")
+		{
+			std::string::iterator withoutSpaces = std::unique(line.begin(), line.end(), [](char lhs, char rhs)
+			{ return (lhs == rhs) && (lhs == ' '); });
+			
+			line.erase(withoutSpaces, line.end());
+			std::vector<std::string> params = splitLine(line, ' ');
+			//FontChar fontChar()
+			/*int ascii = (int) */
+		/*	font.data[(int)]*/
+
+		}
+	}
+
+	handle.close();
+}
+
+
+/*
+
+				getValue(params[5]), getValue(params[6]), getValue(params[7]), getValue(params[8]));
+			data[(int) text->id] = text;
+*/

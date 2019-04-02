@@ -8,6 +8,9 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <sstream>
 #include "Info.h"
 
 /*
@@ -34,6 +37,7 @@ public:
 	~Loader();
 	static void loadTGA(const std::string& filePath, unsigned int& textureID);
 	static void loadOBJ(const std::string& filePath, OBJInfo& outInfo);
+	static void loadFont(const std::string& filePath, Font& font);
 private:
 	static std::map<std::string, unsigned int> cachedTextures;
 };

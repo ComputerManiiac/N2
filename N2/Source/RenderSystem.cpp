@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Utility.h"
 #include "Primitives.h"
+#include "Loader.h"
 
 
 RenderSystem::RenderSystem()
@@ -15,7 +16,8 @@ RenderSystem::RenderSystem()
 
 RenderSystem::~RenderSystem()
 {
-	glDeleteBuffers(1, &matricesVBO);
+
+	glDeleteBuffers(1, &batchVBO);
 
 	for (RenderComponent* sub : subscribers)
 	{
@@ -55,18 +57,24 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize() {
 
-	lit = Manager::getInstance()->getShader("lit");
-	LightSource::setShader(lit);
-	lit->Use();
+	Font f;
+	Loader::loadFont("Assets\\Fonts\\sansserif.fnt", f);
 
+	lit = Manager::getInstance()->getShader("lit");
+	depth = Manager::getInstance()->getShader("depth");
+
+	/* Sets the default shader used by all light sources*/
+	LightSource::setShader(lit);
+
+	/* Bind target sampler2D to the correct sampler unit for binding textures */
+	lit->Use();
 	lit->setUniform("colorTexture", 0);
 	lit->setUniform("depthTexture", 1);
 
 	/* Defines projection matrix for the scene */
 	projection.SetToPerspective(45.0f, (float)Application::getScreenWidth() / (float)Application::getScreenHeight(), 0.1f, 10000.0f);
 
-	glGenBuffers(1, &matricesVBO);
-
+	glGenBuffers(1, &batchVBO);
 	BatchKey key;
 
 	/* Generates vertex arrays and buffers for each render component and populates the assigned int into them */
@@ -108,43 +116,8 @@ void RenderSystem::Initialize() {
 	}
 
 	setupLight();
-	fbo = FrameBuffer(2048, 2048, GL_DEPTH_ATTACHMENT);
-
-
-
-	OBJInfo info;
-	Primitives::generateQuad(info);
-
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glGenBuffers(1, &quadEBO);
-
-	GLsizei size = sizeof(Vertex);
-
-	glBindVertexArray(quadVAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * size, &info.vertices.at(0), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, size, (void*)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, false, size, (void*) (sizeof(Vector3) + sizeof(Vector3)));
-
-
-	lightView.SetToLookAt(lightSources[0]->getPosition().x, lightSources[0]->getPosition().y, lightSources[0]->getPosition().z, 0.0f, 0.f, 0.0f, 0.0f, 1.0f, 0.0f);
-	lightProjection.SetToOrtho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 80.0f);
-	lightProjectionView = lightProjection * lightView;
-
-	lit->setUniform("lightProjectionView", lightProjectionView);
-
-	depth = Manager::getInstance()->getShader("depth");
-	depth->Use();
-	depth->setUniform("lightProjectionView", lightProjectionView);
+	setupShadows();
+	
 	
 
 }
@@ -154,7 +127,7 @@ void RenderSystem::setupComponent(const OBJInfo& info, unsigned int& VAO, unsign
 {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * sizeof(Vertex), &info.vertices.at(0), GL_STATIC_DRAW);
-	
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
 
@@ -167,10 +140,7 @@ void RenderSystem::setupComponent(const OBJInfo& info, unsigned int& VAO, unsign
 	glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), (void*)(sizeof(Vector3) + sizeof(Vector3)));
 }
 
-
-
-
-/* Sets up values for all the lights in the Scene */ 
+/* Sets up values for all the lights in the Scene */
 void RenderSystem::setupLight()
 {
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
@@ -185,8 +155,50 @@ void RenderSystem::setupLight()
 	light3->setSpotLight(lit, Vector3(0.1f, 10.0, 0), Vector3(1, 1, 1), Vector3(0, -1, 0), 1.0f, 45.0f, 30.0f, 1.0f, 1.0f, 0.01f, 0.001f);
 	lightSources.push_back(light3);
 
-	lit->setUniform("numLights", (int) LightSource::getCount());
+	lit->setUniform("numLights", (int)LightSource::getCount());
 }
+
+
+void RenderSystem::setupShadows()
+{
+	shadowFBO = FrameBuffer(2048, 2048, GL_DEPTH_ATTACHMENT);
+
+	OBJInfo info;
+	Primitives::generateQuad(info);
+
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glGenBuffers(1, &quadEBO);
+
+	glBindVertexArray(quadVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * sizeof(Vertex), &info.vertices.at(0), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(Vertex), (void*)(sizeof(Vector3) + sizeof(Vector3)));
+
+	lightView.SetToLookAt(lightSources[0]->getPosition().x, lightSources[0]->getPosition().y, lightSources[0]->getPosition().z, 0.0f, 0.f, 0.0f, 0.0f, 1.0f, 0.0f);
+	lightProjection.SetToOrtho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 80.0f);
+	lightProjectionView = lightProjection * lightView;
+
+	lit->setUniform("lightProjectionView", lightProjectionView);
+
+	depth->Use();
+	depth->setUniform("lightProjectionView", lightProjectionView);
+}
+
+
+
+
+
+
 
 
 /* Main loop where rendering is done */
@@ -194,17 +206,17 @@ void RenderSystem::Update(double& dt)
 {
 	glCullFace(GL_FRONT);
 	glViewport(0, 0, 2048, 2048);
-	fbo.Bind();
+	shadowFBO.Bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 	renderScene(depth, lightView);
 
 	glCullFace(GL_BACK);
-	fbo.Unbind();
+	shadowFBO.Unbind();
 	glViewport(0, 0, Application::getScreenWidth(), Application::getScreenHeight());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, fbo.getTexID());
+	glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
 	renderScene(lit, Manager::getInstance()->getCamera()->LookAt());
 }
 
@@ -223,7 +235,7 @@ void RenderSystem::renderScene(ShaderProgram* shader, const Mtx44& viewMatrix)
 	modelStack.LoadIdentity();
 	view = viewMatrix;
 
-	/* Renders objects in batches */
+	/* Renders all objects in batches */
 	for (auto& b : batches)
 	{
 		const BatchKey& key = b.first;
@@ -231,6 +243,7 @@ void RenderSystem::renderScene(ShaderProgram* shader, const Mtx44& viewMatrix)
 
 		updateTransformMatrices(batch);
 
+		/* Bind current batch's texture */
 		shader->Use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, key.textureID);
@@ -281,7 +294,7 @@ void RenderSystem::updateTransformMatrices(Batch& batch)
 	data.clear();
 	data.reserve(subscribers.size());
 
-	glBindBuffer(GL_ARRAY_BUFFER, matricesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
 
 	for (RenderComponent* sub : batch.subscribers)
 	{

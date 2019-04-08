@@ -92,8 +92,8 @@ void RenderSystem::Initialize() {
 	/* Set renderers */
 	skybox = new RendererSkybox(skyboxShader);
 	renderers[skyboxShader] = skybox;
-	renderers[lit] = new RendererLit(lit);
 	renderers[grass] = new RendererGrass(grass);
+	renderers[lit] = new RendererLit(lit);
 	renderers[depth] = new RendererShadow(depth);
 
 	/* Set up skybox */
@@ -213,21 +213,10 @@ void RenderSystem::Update(double& dt)
 	Camera* camera = Manager::getInstance()->getCamera();
 
 	/* Skybox */
-	modelStack.LoadIdentity();
-	modelStack.PushMatrix();
-	modelStack.Translate(camera->getPos());
-	Mtx44 skyboxView = projection * camera->LookAt() * modelStack.Top();
-	modelStack.PopMatrix();
-
-	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
-	skyboxShader->Use();
-	skyboxShader->setUniform("MVP", skyboxView);
-
 	if (renderSkybox)
-		skybox->Render();
+		skybox->Render(modelStack);
 
 
-	lit->Use();
 	renderScene(camera->LookAt());
 
 
@@ -251,11 +240,12 @@ void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 		const BatchKey& key = b.first;
 		Batch& batch = b.second;
 
-		if (shader == nullptr)
+		if (shader == nullptr) {
 			renderers[key.shader]->Render(batch, key.textureID, modelStack, viewMatrix);
-		else
+		}
+		else {
 			renderers[shader]->Render(batch, key.textureID, modelStack, viewMatrix);
-		
+		}
 	}
 	glBindVertexArray(0);
 }

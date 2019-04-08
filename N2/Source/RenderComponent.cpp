@@ -18,6 +18,13 @@ shader(shader), mode(mode), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.
 	Loader::loadTGA(texturePath, textureID);
 }
 
+RenderComponent::RenderComponent(Entity* parent, ShaderProgram* shader, bool doubleSided, std::string modelPath, std::string texturePath, DRAW_MODE mode) : Component("Render", parent),
+shader(shader), doubleSided(doubleSided), mode(mode), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.4f, 0.4f), Vector3(0.3f, 0.3f, 0.3f), 1.0f)
+{
+	Loader::loadOBJ(modelPath, info);
+	Loader::loadTGA(texturePath, textureID);
+}
+
 
 RenderComponent::RenderComponent(Entity* parent, ShaderProgram* shader) : Component("Render", parent),
 	shader(shader), mode(DRAW_TRIANGLES), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.4f, 0.4f), Vector3(0.3f, 0.3f, 0.3f), 1.0f)
@@ -81,4 +88,9 @@ const unsigned int& RenderComponent::getTexID() const
 ShaderProgram* RenderComponent::getShader() const
 {
 	return shader;
+}
+
+const bool& RenderComponent::isDoubleSided() const
+{
+	return doubleSided;
 }

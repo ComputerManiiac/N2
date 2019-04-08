@@ -39,6 +39,7 @@ void Manager::Initialize()
 	shaders.try_emplace("quad", "Assets\\Shaders\\quad.vert", "Assets\\Shaders\\quad.frag");
 	shaders.try_emplace("ui", "Assets\\Shaders\\ui.vert", "Assets\\Shaders\\ui.frag");
 	shaders.try_emplace("skybox", "Assets\\Shaders\\skybox.vert", "Assets\\Shaders\\skybox.frag");
+	shaders.try_emplace("grass", "Assets\\Shaders\\grass.vert", "Assets\\Shaders\\grass.frag");
 
 	registerSystem<RenderSystem>(); 
 	registerSystem<PhysicsSystem>();
@@ -46,12 +47,20 @@ void Manager::Initialize()
 	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\wood.tga");
 	
 
-	entities["grass"] = new Entity("grass",  Vector3(10, 3, 0), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
-	//for (int x = 1; x < 11; x += 2)
-	//{
+	float offset = 0.0f;
+	for (int x = 1; x < 11; x += 2)
+	{
+		std::string name = "grass " + std::to_string(x);
+		entities[name] = new Entity(name, Vector3(10, 3, offset), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], true, false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
+		offset += 0.5f;
+	}
 
-
-	//}
+	for (int x = 1; x < 11; x += 2)
+	{
+		std::string name = "grass " + std::to_string(x);
+		entities[name] = new Entity(name, Vector3(5, 3, offset), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], true, false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
+		offset += 0.5f;
+	}
 	//
 	/*for (int i = 1; i < 3; ++i)
 	{
@@ -60,7 +69,7 @@ void Manager::Initialize()
 	}*/
 
 	//entities["obj2"] = new Entity("obj2", Vector3(0, 1, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
-	entities["obj1"] = new Entity("obj1", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");
+	/*entities["obj1"] = new Entity("obj1", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
 
 
 	/*entities["car"] = new Entity("car", Vector3(0, 2, 0), Vector3(0, 0, 0), Vector3(1,1,1), "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
@@ -89,7 +98,7 @@ ShaderProgram* Manager::getShader(const std::string& name)
 void Manager::Update(double dt)
 {
 
-	RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
+	/*RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
 	
 	if (Application::isKeyPressed(GLFW_KEY_I))
 	{
@@ -118,7 +127,7 @@ void Manager::Update(double dt)
 	if (Application::isKeyPressed(GLFW_KEY_O))
 	{
 		rigidbody->setVelocity(Vector3(0, -2.0f, 0));
-	}
+	}*/
 
 	if (Application::isKeyPressDown(GLFW_KEY_3))
 	{

@@ -93,7 +93,6 @@ void Application::Run()
 		/* FPS Counter */
 		if (glfwGetTime() - lastTime >= 1.0f)
 		{
-			std::cout << "FPS: " << frames << std::endl;
 			framesPerSecond = frames;
 			frames = -1;
 			lastTime = glfwGetTime();

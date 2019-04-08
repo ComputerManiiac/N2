@@ -157,10 +157,10 @@ void main(){
 //			color += ambient + diffuse + specular;
 		}
 
-		color.a =  materialColor.a;
-				
-		if(color.a == 0)
+		if(materialColor.a < 0.1)
 			discard;
+		color.a =  materialColor.a;
+
 	}
 	else
 	{

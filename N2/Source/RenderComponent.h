@@ -40,6 +40,9 @@ class RenderComponent : public Component
 public:
 	RenderComponent(Entity* parent, ShaderProgram* shader, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
 	RenderComponent(Entity* parent, ShaderProgram* shader, std::string modelPath, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
+	
+	RenderComponent(Entity* parent, ShaderProgram* shader, bool doubleSided, std::string modelPath, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
+	
 	RenderComponent(Entity* parent, ShaderProgram* shader);
 	RenderComponent();
 	~RenderComponent();
@@ -57,7 +60,7 @@ public:
 	const unsigned int& getEBO() const;
 	const unsigned int& getTexID() const;
 	ShaderProgram* getShader() const;
-
+	const bool& isDoubleSided() const;
 
 private:
 	DRAW_MODE mode;
@@ -68,6 +71,7 @@ private:
 	unsigned int EBO;
 	unsigned int textureID;
 	ShaderProgram* shader;
+	bool doubleSided;
 };
 
 #endif

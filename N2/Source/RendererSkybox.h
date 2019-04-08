@@ -12,7 +12,7 @@ public:
 
 
 	void Initialize();
-	void Render();
+	void Render(MS& modelStack);
 
 private:
 	unsigned int VAO;

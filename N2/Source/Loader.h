@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <sstream>
 #include "Info.h"
+#include "Text.h"
+#include "OverloadNew.h"
 
 /*
 
@@ -35,14 +37,18 @@ class Loader
 public:
 	Loader();
 	~Loader();
-	static void loadTGA(const std::string& filePath, unsigned int& textureID);
+	static void loadCubemap(const std::vector<std::string>& filePath, unsigned int& textureID, GLint filterMode = GL_LINEAR, GLint wrapMode = GL_CLAMP_TO_EDGE);
+	static void loadTGA(const std::string& filePath, unsigned int& textureID, GLint filterMode=GL_LINEAR, GLint wrapMode=GL_CLAMP_TO_EDGE);
 	static void loadOBJ(const std::string& filePath, OBJInfo& outInfo);
 	static void loadFont(const std::string& filePath, Font& font);
 private:
-	static std::map<std::string, unsigned int> cachedTextures;
+
+	static void loadImg(const std::string& filePath, GLubyte*& data, GLuint& bytesPerPixel, unsigned int& width, unsigned int& height);
+
 	static float getValueFloat(const std::string& line);
 	static int getValueInt(const std::string& line);
 
+	static std::map<std::string, unsigned int> cachedTextures;
 };
 
 #endif

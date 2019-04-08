@@ -91,7 +91,7 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 		for(int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = texture(depthTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
-			if(currentDepth > pcfDepth)
+			if(currentDepth - 0.0001f > pcfDepth)
 				shadow+=1.0;
 		}    
 	}
@@ -99,7 +99,7 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 	
 
     return shadow;
-}
+} 
 
 
 void main(){
@@ -112,6 +112,7 @@ void main(){
 			materialColor = texture2D( colorTexture, texCoord );
 		else
 			materialColor = vec4( 0, 1, 0, 1 );
+
 
 		// Vectors
 		vec3 eyeDirection_cameraspace = -vertexPosition_cameraspace;
@@ -152,10 +153,14 @@ void main(){
 			vec4 diffuse = materialColor * vec4(material.kDiffuse, 1) * vec4(lights[i].color, 1) * lights[i].power * cosTheta * attenuationFactor * spotlightEffect;
 			vec4 specular = vec4(material.kSpecular, 1) * vec4(lights[i].color, 1) * lights[i].power * pow(cosAlpha, material.kShininess) * attenuationFactor * spotlightEffect;
 			
-			 color += ambient + (1.0 - getShadow(vertexPosition_lightspace, L, N)) * (diffuse + specular);
-//			color = vec4(vec3(getShadow(vertexPosition_lightspace)), 1.f);
+			color += ambient + (1.0 - getShadow(vertexPosition_lightspace, L, N)) * (diffuse + specular);
 //			color += ambient + diffuse + specular;
 		}
+
+		color.a =  materialColor.a;
+				
+		if(color.a == 0)
+			discard;
 	}
 	else
 	{

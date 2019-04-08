@@ -12,28 +12,17 @@ Loader::~Loader()
 {
 }
 
-// Loads a .TGA image file from a given file path and generates a GL_TEXTURE_2D, returning a GLuint/unsigned int for it.
-void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
+void Loader::loadImg(const std::string& filePath, GLubyte*& data, GLuint& bytesPerPixel, unsigned int& width, unsigned int& height)
 {
-
-	if (cachedTextures.find(filePath) != cachedTextures.end())
-	{
-		textureID = cachedTextures[filePath];
-		return;
-	}
-
+	GLubyte header[18];									
+	GLuint imageSize;										
 	std::ifstream fileStream(filePath, std::ios::binary);
+
 	if (!fileStream.is_open())
 	{
 		std::cout << "[ERROR] Failed to load TGA file at " << filePath << " ! Invalid directory?" << std::endl;
 		return;
 	}
-
-	GLubyte		header[18];									// first 6 useful header bytes
-	GLuint		bytesPerPixel;									// number of bytes per pixel in TGA gile
-	GLuint		imageSize;										// for setting memory
-	GLubyte*	data;
-	unsigned	width, height;
 
 	fileStream.read((char*)header, 18);
 	width = header[12] + header[13] * 256;
@@ -42,7 +31,7 @@ void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 	// Wrong bit compression format or invalid file
 	if (width <= 0 || height <= 0 || (header[16] != 24 && header[16] != 32))
 	{
-		fileStream.close();							
+		fileStream.close();
 		std::cout << "[ERROR] Failed to load TGA file at " << filePath << " ! Corrupted file?" << std::endl;
 		return;
 	}
@@ -50,13 +39,30 @@ void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 	// Divide by 8 to get bytes per pixel
 	bytesPerPixel = header[16] / 8;
 	// Calculate memory required for TGA data
-	imageSize = width * height * bytesPerPixel;	
+	imageSize = width * height * bytesPerPixel;
 
 	data = new GLubyte[imageSize];
 	fileStream.seekg(18, std::ios::beg);
-	fileStream.read((char *)data, imageSize);
+	fileStream.read((char*)data, imageSize);
 	fileStream.close();
+}
 
+// Loads a .TGA image file from a given file path and generates a GL_TEXTURE_2D, returning a GLuint/unsigned int for it.
+void Loader::loadTGA(const std::string& filePath, unsigned int& textureID, GLint filterMode, GLint wrapMode)
+{
+
+	if (cachedTextures.find(filePath) != cachedTextures.end())
+	{
+		textureID = cachedTextures[filePath];
+		return;
+	}
+
+	GLuint bytesPerPixel;
+	GLubyte* data;
+	unsigned int width, height;
+
+	loadImg(filePath, data, bytesPerPixel, width, height);
+	
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -68,11 +74,11 @@ void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 
 
 	// Texture Settings
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMode);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
 	// Auto generate Mipmaps
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -83,6 +89,35 @@ void Loader::loadTGA(const std::string& filePath, unsigned int& textureID)
 	cachedTextures[filePath] = textureID;
 
 	delete[] data;
+}
+
+void Loader::loadCubemap(const std::vector<std::string>& filePaths, unsigned int& textureID, GLint filterMode, GLint wrapMode)
+{
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	for (unsigned int i = 0; i < 6; i++)
+	{
+
+		unsigned int width, height;
+		GLuint bytesPerPixel;
+		GLubyte* data;
+		loadImg(filePaths[i], data, bytesPerPixel, width, height);
+
+		// Read alpha values if supported
+		if (bytesPerPixel == 3)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+		else
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+
+		delete[] data;
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, filterMode);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, filterMode);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, wrapMode);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, wrapMode);
 }
 
 // Loads a .OBJ file from a given file path and generates an OBJInfo object containing all Vertex (position,uv,normals) and Indices information.
@@ -234,6 +269,8 @@ std::vector<std::string> splitLine(const std::string& s, char delimiter)
 	return tokens;
 }
 
+
+
 void Loader::loadFont(const std::string& filePath, Font& font)
 {
 	std::ifstream handle(filePath);
@@ -243,7 +280,7 @@ void Loader::loadFont(const std::string& filePath, Font& font)
 		return;
 	}
 
-	
+	float textureSize = 512.0f;
 
 	std::string line;
 	while (std::getline(handle, line))
@@ -258,13 +295,27 @@ void Loader::loadFont(const std::string& filePath, Font& font)
 			std::vector<std::string> params = splitLine(line, ' ');
 
 			int ascii = getValueInt(params[0]);
-			FontChar fontChar((char)ascii, getValueFloat(params[1]), getValueFloat(params[2]),
-				getValueFloat(params[3]), getValueFloat(params[4]), getValueFloat(params[5]), getValueFloat(params[6]));
 
+			/* UV Range, Bottom Left (0,0), Top Right (1,1) */
+			float xPos = getValueFloat(params[1]);
+			float yPos = getValueFloat(params[2]);
+			float width = getValueFloat(params[3]);
+			float height = getValueFloat(params[4]);
+
+			Vector2 texCoordMin(xPos, yPos);
+			texCoordMin /= textureSize;
+			texCoordMin.y = 1 - texCoordMin.y;
+
+			Vector2 texCoordMax(texCoordMin.x + width / textureSize, texCoordMin.y - height / textureSize);
+
+			FontChar fontChar((char)ascii, xPos, yPos, width, height, getValueFloat(params[5]), getValueFloat(params[6]), getValueFloat(params[7]), texCoordMin, texCoordMax);
 			font.data[ascii] = std::move(fontChar);
 		}
 	}
 	handle.close();
+
+	std::string texturePath = splitLine(filePath, '.')[0] + ".tga";
+	loadTGA(texturePath, font.textureID);
 }
 
 float Loader::getValueFloat(const std::string& line) {

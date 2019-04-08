@@ -5,6 +5,11 @@
 #include "Utility.h"
 #include "Primitives.h"
 #include "Loader.h"
+#include "RendererLit.h"
+#include "RendererShadow.h"
+#include "RendererGrass.h"
+#include "RendererSkybox.h"
+
 
 
 RenderSystem::RenderSystem()
@@ -49,33 +54,51 @@ RenderSystem::~RenderSystem()
 	}
 
 
-	for (LightSource* light : lightSources)
+	for (auto& r : renderers)
+		delete r.second;
+
+	for (auto& m : mutatedCache)
 	{
-		delete light;
+		const Text& t = m.second;
+		glDeleteVertexArrays(1, &t.VAO);
+		glDeleteBuffers(1, &t.VBO);
+		glDeleteBuffers(1, &t.EBO);
 	}
+
+	for (LightSource* light : lightSources)
+		delete light;
 }
 
 void RenderSystem::Initialize() {
 
-	fonts.push_back(Font());
-	Loader::loadFont("Assets\\Fonts\\sansserif.fnt", fonts[0]);
-	renderText("abc", 684.0f, 384.0f, fonts[0]);
+	renderSkybox = false;
+	textUID = 0;
+
+	Loader::loadFont("Assets\\Fonts\\sansserif2.fnt", fonts["sansserif"]);
+
+	/* Defines projection matrix for the scene */
+	projection.SetToPerspective(45.0f, (float)Application::getScreenWidth() / (float)Application::getScreenHeight(), 0.1f, 1000.0f);
 
 	Manager* manager = Manager::getInstance();
 	lit = manager->getShader("lit");
 	depth = manager->getShader("depth");
 	ui = manager->getShader("ui");
+	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
+	ShaderProgram* grass = manager->getShader("grass");
 
 	/* Sets the default shader used by all light sources*/
 	LightSource::setShader(lit);
 
-	/* Bind target sampler2D to the correct sampler unit for binding textures */
-	lit->Use();
-	lit->setUniform("colorTexture", 0);
-	lit->setUniform("depthTexture", 1);
+	/* Set renderers */
+	skybox = new RendererSkybox(skyboxShader);
+	renderers[skyboxShader] = skybox;
+	renderers[lit] = new RendererLit(lit);
+	renderers[grass] = new RendererGrass(grass);
+	renderers[depth] = new RendererShadow(depth);
 
-	/* Defines projection matrix for the scene */
-	projection.SetToPerspective(45.0f, (float)Application::getScreenWidth() / (float)Application::getScreenHeight(), 0.1f, 10000.0f);
+	/* Set up skybox */
+	skybox->Initialize();
+
 
 	glGenBuffers(1, &batchVBO);
 	BatchKey key;
@@ -83,71 +106,38 @@ void RenderSystem::Initialize() {
 	/* Generates vertex arrays and buffers for each render component and populates the assigned int into them */
  	for (RenderComponent* sub : subscribers)
 	{
+		ShaderProgram* componentShader = sub->getShader();
+
+		/* Generate buffers */
 		unsigned int VAO, VBO, EBO;
 		glGenVertexArrays(1, &VAO);
 		glBindVertexArray(VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
 
-		setupComponent(sub->getInfo(), VAO, VBO, EBO);
+		/* Update buffer object values in Render Component */
 		sub->setBufferObjects(VAO, VBO, EBO);
 
-		const Material& mat = sub->getMaterial();
-
-		lit->setUniform("material.kAmbient", mat.ambient);
-		lit->setUniform("material.kDiffuse", mat.diffuse);
-		lit->setUniform("material.kSpecular", mat.specular);
-		lit->setUniform("material.kShininess", mat.shininess);
-		lit->setUniform("colorTextureEnabled", 1);
-		lit->setUniform("colorTexture", 0);
-
-		ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
-		if (collider != nullptr)
-		{
-			glGenVertexArrays(1, &VAO);
-			glBindVertexArray(VAO);
-			glGenBuffers(1, &VBO);
-			glGenBuffers(1, &EBO);
-			setupComponent(collider->getInfo(), VAO, VBO, EBO);
-			collider->setBufferObjects(VAO, VBO, EBO);
-		}
+		/* Initialize shader uniforms and layout VBO data based on the shader used to render */
+		renderers[componentShader]->Initialize(sub);
 
 		/* Add To Batch */
-		key.textureID = sub->getTexID();
-		key.mat = mat;
+		key.setAll(componentShader, sub->getTexID(), sub->getMaterial());
 		batches[key].subscribers.push_back(sub);
 	}
 
+	glBindVertexArray(0);
 	setupLight();
 	setupShadows();
 	
-	
 
 }
 
-/* Sets up how attributes are layed out in the VAO before buffering data into VBO */
-void RenderSystem::setupComponent(const OBJInfo& info, unsigned int& VAO, unsigned int& VBO, unsigned int& EBO)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * sizeof(Vertex), &info.vertices.at(0), GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), (void*) sizeof(Vector3));
-	glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), (void*)(sizeof(Vector3) + sizeof(Vector3)));
-}
-
-/* Sets up values for all the lights in the Scene */
 void RenderSystem::setupLight()
 {
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
-	light->setDirLight(lit, Vector3(1.0f, 80.0f, 1.0f), Vector3(1, 1, 1), 1.0f);
+	light->setDirLight(lit, Vector3(5.0f, 100.0f, 5.0f), Vector3(1, 1, 1), 1.0f);
 	lightSources.push_back(light);
 
 	LightSource* light2 = new LightSource(LIGHT_POINT);
@@ -188,46 +178,110 @@ void RenderSystem::setupShadows()
 	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(Vertex), (void*)(sizeof(Vector3) + sizeof(Vector3)));
 
 	lightView.SetToLookAt(lightSources[0]->getPosition().x, lightSources[0]->getPosition().y, lightSources[0]->getPosition().z, 0.0f, 0.f, 0.0f, 0.0f, 1.0f, 0.0f);
-	lightProjection.SetToOrtho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 80.0f);
+	lightProjection.SetToOrtho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 500.0f);
 	lightProjectionView = lightProjection * lightView;
 
 	lit->setUniform("lightProjectionView", lightProjectionView);
 
 	depth->Use();
 	depth->setUniform("lightProjectionView", lightProjectionView);
+
+	glBindVertexArray(0);
 }
 
 
-
-
-
-
-
-
-/* Main loop where rendering is done */
 void RenderSystem::Update(double& dt)
 {
+	/* Render scene using simple depth shader to get depth map*/
 	glCullFace(GL_FRONT);
 	glViewport(0, 0, 2048, 2048);
 	shadowFBO.Bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
-	renderScene(depth, lightView);
+	renderScene(lightView, depth);
+
 
 	glCullFace(GL_BACK);
 	shadowFBO.Unbind();
+
+	/* Render scene normally */
 	glViewport(0, 0, Application::getScreenWidth(), Application::getScreenHeight());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
-	renderScene(lit, Manager::getInstance()->getCamera()->LookAt());
+
+	Camera* camera = Manager::getInstance()->getCamera();
+
+	/* Skybox */
+	modelStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.Translate(camera->getPos());
+	Mtx44 skyboxView = projection * camera->LookAt() * modelStack.Top();
+	modelStack.PopMatrix();
+
+	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
+	skyboxShader->Use();
+	skyboxShader->setUniform("MVP", skyboxView);
+
+	if (renderSkybox)
+		skybox->Render();
 
 
-	for (Text& text : texts) {
-		glDeleteVertexArrays(1, &text.VAO);
+	lit->Use();
+	renderScene(camera->LookAt());
+
+
+	/* Render texts */
+	glDisable(GL_DEPTH_TEST);
+	renderText("FPS: " + std::to_string(Application::framesPerSecond), 10, 0, fonts["sansserif"], Vector3(1, 1, 0), 0.30f);
+	renderText("Regular", 0, 100, fonts["sansserif"], Vector3(0, 1, 0), 1.0f);
+	renderText("2x", 0, 200, fonts["sansserif"], Vector3(0, 1, 0), 2.0f);
+	renderText("4x", 0, 300, fonts["sansserif"], Vector3(0, 1, 0), 4.0f);
+	renderTexts();
+	glEnable(GL_DEPTH_TEST);
+}
+
+void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
+{
+	modelStack.LoadIdentity();
+
+	/* Renders all objects in batches */
+	for (auto& b : batches)
+	{
+		const BatchKey& key = b.first;
+		Batch& batch = b.second;
+
+		if (shader == nullptr)
+			renderers[key.shader]->Render(batch, key.textureID, modelStack, viewMatrix);
+		else
+			renderers[shader]->Render(batch, key.textureID, modelStack, viewMatrix);
+		
+	}
+	glBindVertexArray(0);
+}
+
+void RenderSystem::renderTexts()
+{
+	for (auto& f : texts)
+	{
+		const Font& font = *f.first;
+		std::vector<Text*>& text = f.second;
+		ui->Use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, font.textureID);
+	
+		for (Text* t : text)
+		{
+			ui->setUniform("textColor", t->color);
+			ui->setUniform("textSize", t->textSize);
+			glBindVertexArray(t->VAO);
+			glDrawElements(GL_TRIANGLES, t->indices.size(), GL_UNSIGNED_INT, 0);
+		}
 	}
 	texts.clear();
+	textUID = 0;
 }
+
 
 void RenderSystem::renderTexture(const FrameBuffer& buffer)
 {
@@ -239,117 +293,133 @@ void RenderSystem::renderTexture(const FrameBuffer& buffer)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RenderSystem::renderScene(ShaderProgram* shader, const Mtx44& viewMatrix)
+void RenderSystem::renderText(const std::string& text, float xPos, float yPos, Font & font, Vector3 color, float fontSize, TextAlignment align)
 {
-	modelStack.LoadIdentity();
-	view = viewMatrix;
+	++textUID;
 
-	/* Renders all objects in batches */
-	for (auto& b : batches)
+	UIVertex vertex;
+	Vector2 cursor(xPos, yPos);
+
+	/* New mutated text not in cache */
+	if (mutatedCache.find(textUID) == mutatedCache.end())
 	{
-		const BatchKey& key = b.first;
-		Batch& batch = b.second;
 
-		updateTransformMatrices(batch);
-
-		/* Bind current batch's texture */
-		shader->Use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, key.textureID);
-
-		for (RenderComponent* sub : batch.subscribers)
+		/* Generate all data needed for rendering */
+		std::vector<UIVertex> vertices;
+		std::vector<unsigned int> indices;
+		for (int i = 0; i < (int)text.length(); i++)
 		{
-			if (!sub->isActive()) continue;
+			FontChar& fontChar = font.data[(int)text[i]];
+			generateData(fontChar, fontSize, vertices, indices, cursor);
+		}
 
+		unsigned int VAO, VBO, EBO;
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
 
-			glBindVertexArray(sub->getVAO());
+		glBindVertexArray(VAO);
 
-			const unsigned int& indexSize = sub->getInfo().indices.size();
-			const DRAW_MODE& mode = sub->getMode();
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(UIVertex), &vertices.at(0), GL_STATIC_DRAW);
 
-			if (mode == DRAW_TRIANGLE_STRIP)
-				glDrawElementsInstanced(GL_TRIANGLE_STRIP, indexSize, GL_UNSIGNED_INT, 0, batch.subscribers.size());
-			else if (mode == DRAW_LINES)
-				glDrawElementsInstanced(GL_LINES, indexSize, GL_UNSIGNED_INT, 0, batch.subscribers.size());
-			else if (mode == DRAW_FAN)
-				glDrawElementsInstanced(GL_TRIANGLE_FAN, indexSize, GL_UNSIGNED_INT, 0, batch.subscribers.size());
-			else
-				glDrawElementsInstanced(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, 0, batch.subscribers.size());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices.at(0), GL_STATIC_DRAW);
 
-			if (shader == lit)
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(UIVertex), (void*)0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(UIVertex), (void*) sizeof(Vector2));
+
+		Text& t = mutatedCache[textUID];
+		t.setAll(text, fontSize, vertices, indices, color, VAO, VBO, EBO);
+
+		texts[&font].push_back(&mutatedCache[textUID]);
+	}
+	/* Existing text in cache */
+	else
+	{
+
+		Text& t = mutatedCache[textUID];
+
+		/* Existing data of the old text */
+		std::vector<UIVertex>& vertices = t.vertices;
+		std::vector<unsigned int>& indices = t.indices;
+
+		if (t.raw != text)
+		{
+			for (int i = 0; i < text.length(); i++)
 			{
-				/* Drawing colliders can be costly - DEBUG ONLY! */
-				ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
-				if (collider != nullptr && collider->shouldDrawCollider())
+				/* Get information about current character in new string */
+				const FontChar& fontChar = font.data[(int)text[i]];
+
+				/* Check if character exists in the old string */
+				if (i < (int)t.raw.length())
 				{
-					glBindVertexArray(collider->getVAO());
-					shader->setUniform("colorTextureEnabled", 0);
-					shader->setUniform("lightEnabled", false);
-					glDrawElementsInstanced(GL_LINES, indexSize, GL_UNSIGNED_INT, 0, subscribers.size());
-					shader->setUniform("lightEnabled", true);
-					shader->setUniform("colorTextureEnabled", 1);
+					/* Skip if character is same */
+					if (text[i] == t.raw[i])
+					{
+						cursor.x += fontChar.xAdvance * fontSize;
+						if (cursor.x > Application::getScreenWidth())
+						{
+							cursor.x = xPos;
+							cursor.y += fontChar.height;
+						}
+						continue;
+					}
+
+					/* If a different character is present, modify existing data to match the new character*/
+					int vertexIndex = i * 4;
+					modifyData(fontChar, vertexIndex, fontSize, vertices, indices, cursor);
+				}
+				else
+				{
+					/* Generate data for new character */
+					generateData(fontChar, fontSize, vertices, indices, cursor);
+				}
+
+				/* If the cursor extends beyond the screen ( > 1 in NDC ), go to next line */
+				if (cursor.x > Application::getScreenWidth())
+				{
+					cursor.x = xPos;
+					cursor.y += fontChar.height;
 				}
 			}
+
+			/* If the new mutated text is smaller than the previous cached text, then delete unnecessary data */
+			int diff = t.raw.length() - text.length();
+			if (diff > 0)
+			{
+				int v = diff * 4;
+				for (int i = 0; i < v; ++i)
+					vertices.pop_back();
+
+				int e = diff * 6;
+				for (int i = 0; i < e; ++i)
+					indices.pop_back();
+			}
+
+			/* Set cached text to be the new text */
+			t.raw = text;
 		}
+
+		glBindVertexArray(t.VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, t.VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(UIVertex), &vertices.at(0), GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, t.EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices.at(0), GL_STATIC_DRAW);
+
+		texts[&font].push_back(&mutatedCache[textUID]);
 	}
-	
 }
 
-/* Creates a large VBO containing MVPs of objects in the current batch to draw them in a single call */
-void RenderSystem::updateTransformMatrices(Batch& batch)
+const Mtx44 RenderSystem::getProjectionMatrix() const
 {
-	std::vector<VertexData>& data = batch.data;
-
-	data.clear();
-	data.reserve(subscribers.size());
-
-	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
-
-	for (RenderComponent* sub : batch.subscribers)
-	{
-		modelStack.PushMatrix();
-
-		layoutInstancedData(sub->getVAO());
-
-		TransformComponent* transform = sub->getParent()->getComponent<TransformComponent>();
-		modelStack.Translate(transform->getPos());
-		modelStack.Rotate(transform->getRot());
-		modelStack.Scale(transform->getScale());
-		data.emplace_back(modelStack.Top(), view, projection);
-
-		/* Drawing colliders can be costly - DEBUG ONLY! */
-		ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
-		if (collider != nullptr && collider->shouldDrawCollider())
-		{
-			layoutInstancedData(collider->getVAO());
-			modelStack.PushMatrix();
-			modelStack.Scale(collider->getScale());
-			modelStack.PopMatrix();
-			data.emplace_back(modelStack.Top(), view, projection);
-		}
-		modelStack.PopMatrix();
-	}
-
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(VertexData), &data.at(0), GL_STATIC_DRAW);
-
+	return projection;
 }
-
-/* Defines how the instanced data should be layed out */
-void RenderSystem::layoutInstancedData(const unsigned int& VAO)
-{
-	glBindVertexArray(VAO);
-	GLsizei offset = 0;
-	for (unsigned int i = 3; i <= 14; ++i)
-	{
-		glEnableVertexAttribArray(i);
-		glVertexAttribPointer(i, 4, GL_FLOAT, false, sizeof(VertexData), (void*)offset);
-		offset += 4 * sizeof(float);
-		glVertexAttribDivisor(i, 1);
-	}
-}
-
-
-
 
 void RenderSystem::registerComp(Component* component)
 {
@@ -366,7 +436,7 @@ void RenderSystem::removeComp(Component* component)
 
 	subscribers.erase(std::remove(subscribers.begin(), subscribers.end(), render));
 	
-	BatchKey key(render->getTexID(), render->getMaterial());
+	BatchKey key(render->getShader(), render->getTexID(), render->getMaterial());
 	if (batches.find(key) != batches.end())
 	{
 		std::vector<RenderComponent*>* subs = &batches[key].subscribers;
@@ -378,86 +448,151 @@ void RenderSystem::removeComp(Component* component)
 	
 }
 
-void RenderSystem::renderText(const std::string& text, float xPos, float yPos, Font& font, float fontSize, TextAlignment align)
+
+
+void RenderSystem::generateData(const FontChar& fontChar, const float& fontSize, std::vector<UIVertex>& vertices, std::vector<unsigned int>& indices, Vector2& cursor)
 {
-	Vector2 cursor(xPos, yPos);
-	//Vector2 textDimensions;
+	Vector2 extremeX(cursor.x + fontChar.xOffset * fontSize, cursor.x + fontChar.xOffset * fontSize + fontChar.width * fontSize);
+	Vector2 extremeY(cursor.y + fontChar.yOffset * fontSize, cursor.y + fontChar.yOffset * fontSize + fontChar.height * fontSize);
+
+	/* NDC Range, Center (0,0), Top Left (-1, 1), Bottom Right (1, -1) */
+	float halfScreenWidth = Application::getScreenWidth() * 0.5f;
+	float halfScreenHeight = Application::getScreenHeight() * 0.5f;
+
+	extremeX = (extremeX + 1) / halfScreenWidth - 1;
+	extremeY = -((extremeY + 1) / halfScreenHeight - 1);
 
 	UIVertex vertex;
 
-	std::vector<UIVertex> textData;
-	std::vector<unsigned int> textIndices;
+	/* Compute the positions and uv coordinates of the character's quad */
+	vertex.position.x = extremeX.x;
+	vertex.position.y = extremeY.x;
+	vertex.texCoord = fontChar.texCoordMin;
+	vertices.push_back(vertex);
+
+
+	vertex.position.y = extremeY.y;
+	vertex.texCoord.y = fontChar.texCoordMax.y;
+	vertices.push_back(vertex);
+
+	vertex.position.x = extremeX.y;
+	vertex.position.y = extremeY.x;
+	vertex.texCoord = fontChar.texCoordMin;
+	vertex.texCoord.x = fontChar.texCoordMax.x;
+	vertices.push_back(vertex);
+
+	vertex.position.y = extremeY.y;
+	vertex.texCoord = fontChar.texCoordMax;
+	vertices.push_back(vertex);
+
+	int offset = 4 * (vertices.size() / 4 - 1);
+
+	indices.push_back(offset);
+	indices.push_back(offset + 1);
+	indices.push_back(offset + 2);
+	indices.push_back(offset + 2);
+	indices.push_back(offset + 1);
+	indices.push_back(offset + 3);
+
+	/* Advance the text cursor by set amount */
+	cursor.x += fontChar.xAdvance * fontSize;
+}
+
+
+void RenderSystem::modifyData(const FontChar& fontChar, const int& i, const float& fontSize, std::vector<UIVertex>& vertices, std::vector<unsigned int>& indices, Vector2& cursor)
+{
+	Vector2 extremeX(cursor.x + fontChar.xOffset * fontSize, cursor.x + fontChar.xOffset * fontSize + fontChar.width * fontSize);
+	Vector2 extremeY(cursor.y + fontChar.yOffset * fontSize, cursor.y + fontChar.yOffset * fontSize + fontChar.height * fontSize);
+	/* NDC Range, Center (0,0), Top Left (-1, 1), Bottom Right (1, -1) */
 
 	float halfScreenWidth = Application::getScreenWidth() * 0.5f;
 	float halfScreenHeight = Application::getScreenHeight() * 0.5f;
-	float textureSize = 512.0f;
+
+	extremeX = (extremeX + 1) / halfScreenWidth - 1;
+	extremeY = -((extremeY + 1) / halfScreenHeight - 1);
 
 
-	for (int i = 0; i < (int) text.length(); i++) {
-		FontChar& fontChar = font.data[(int)text[i]];
+	UIVertex vertex;
 
+	/* Compute the positions and uv coordinates of the character's quad */
+	vertex.position.x = extremeX.x;
+	vertex.position.y = extremeY.x;
+	vertex.texCoord = fontChar.texCoordMin;
+	vertices[i] = vertex;
 
-		/* 
-		Screen Pixel Range, Top Left (0,0), Bottom Right (width, height)
-		The extreme points are stored based on their axis such that the conversion to NDC is consistent. 
-		*/
-		Vector2 extremeX(cursor.x + fontChar.xOffset, cursor.x + fontChar.xOffset + fontChar.width);
-		Vector2 extremeY(cursor.y + fontChar.yOffset, cursor.y + fontChar.yOffset + fontChar.height);
+	vertex.position.y = extremeY.y;
+	vertex.texCoord.y = fontChar.texCoordMax.y;
+	vertices[i + 1] = vertex;
 
-		/* NDC Range, Center (0,0), Top Left (-1, 1), Bottom Right (1, -1) */
-		extremeX = (extremeX + 1) / halfScreenWidth - 1;
-		extremeY = -((extremeY + 1) / halfScreenHeight - 1);
+	vertex.position.x = extremeX.y;
+	vertex.position.y = extremeY.x;
+	vertex.texCoord = fontChar.texCoordMin;
+	vertex.texCoord.x = fontChar.texCoordMax.x;
+	vertices[i + 2] = vertex;
 
-		/* UV Range, Bottom Left (0,0), Top Right (1,1) */
-		Vector2 texCoordMin(fontChar.xPos, fontChar.yPos);
-		texCoordMin /= textureSize;
+	vertex.position.y = extremeY.y;
+	vertex.texCoord = fontChar.texCoordMax;
+	vertices[i + 3] = vertex;
 
-		/* Y position is inverted due to the origin being at the bottom instead of top in OpenGL */
-		texCoordMin.y = 1 - texCoordMin.y;
-
-		Vector2 texCoordMax(texCoordMin.x + fontChar.width, texCoordMin.y - fontChar.height);
-		texCoordMax /= textureSize;
-
-		/* Compute the positions and uv coordinates of the quad */
-		vertex.position.x = extremeX.x;
-		vertex.position.y = extremeY.x;
-		vertex.texCoord = texCoordMin;
-		textData.push_back(vertex);
-
-		vertex.position.y = extremeY.y;
-		vertex.texCoord.y = texCoordMax.y;
-		textData.push_back(vertex);
-		
-		vertex.position.x = extremeX.y;
-		vertex.position.y = extremeY.x;
-		vertex.texCoord = texCoordMin;
-		vertex.texCoord.x = texCoordMax.x;
-		textData.push_back(vertex);
-
-		vertex.position.y = extremeY.y;
-		vertex.texCoord = texCoordMax;
-		textData.push_back(vertex);
-
-		/* Compute the proper index count of the vertices added */
-		int offset = 4 * (textData.size() / 4 - 1);
-		textIndices.push_back(offset);
-		textIndices.push_back(offset + 1);
-		textIndices.push_back(offset + 2);
-		textIndices.push_back(offset + 2);
-		textIndices.push_back(offset + 1);
-		textIndices.push_back(offset + 3);
-
-		/* Advance the text cursor by set amount */
-		cursor.x += fontChar.xAdvance;
-
-		/* If the extreme right extends beyond the screen ( > 1 in NDC ), go to next line */
-		if (extremeX.y > 1.0f) {
-			cursor.x = 0;
-			cursor.y += fontChar.height;
-		}
-	}
-
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	texts.emplace_back(textData, textIndices, VAO);
+	/* Advance the text cursor by set amount */
+	cursor.x += fontChar.xAdvance * fontSize;
 }
+
+
+//ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
+//if (collider != nullptr)
+//{
+//	glGenVertexArrays(1, &VAO);
+//	glGenBuffers(1, &VBO);
+//	glGenBuffers(1, &EBO);
+//	setupComponent(collider->getInfo(), VAO, VBO, EBO);
+//	collider->setBufferObjects(VAO, VBO, EBO);
+//}
+
+
+			//if (shader == lit)
+			//{
+			//	/* Drawing colliders can be costly - DEBUG ONLY! */
+			//	ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
+			//	if (collider != nullptr && collider->shouldDrawCollider())
+			//	{
+			//		glBindVertexArray(collider->getVAO());
+			//		shader->setUniform("colorTextureEnabled", 0);
+			//		shader->setUniform("lightEnabled", false);
+			//		glDrawElementsInstanced(GL_LINES, indexSize, GL_UNSIGNED_INT, 0, subscribers.size());
+			//		shader->setUniform("lightEnabled", true);
+			//		shader->setUniform("colorTextureEnabled", 1);
+			//	}
+			//}
+
+
+/* Sets up how attributes are layed out in the VAO before buffering data into VBO */
+//void RenderSystem::setupComponent(const OBJInfo& info, unsigned int& VAO, unsigned int& VBO, unsigned int& EBO)
+//{
+//	glBindVertexArray(VAO);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//	glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * sizeof(Vertex), &info.vertices.at(0), GL_STATIC_DRAW);
+//
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
+//
+//	glEnableVertexAttribArray(0);
+//	glEnableVertexAttribArray(1);
+//	glEnableVertexAttribArray(2);
+//
+//	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (void*)0);
+//	glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), (void*) sizeof(Vector3));
+//	glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), (void*)(sizeof(Vector3) + sizeof(Vector3)));
+//
+//}
+		/* Drawing colliders can be costly - DEBUG ONLY! */
+//ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
+//if (collider != nullptr && collider->shouldDrawCollider())
+//{
+//	layoutComponentInstancedData(collider->getVAO());
+//	modelStack.PushMatrix();
+//	modelStack.Scale(collider->getScale());
+//	modelStack.PopMatrix();
+//	data.emplace_back(modelStack.Top(), view, projection);
+//}

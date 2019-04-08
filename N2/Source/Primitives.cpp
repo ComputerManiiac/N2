@@ -12,6 +12,100 @@ Primitives::~Primitives()
 }
 
 
+void Primitives::generateCubePositions(std::vector<Vector3>& positions, const float& length)
+{
+	positions.reserve(36);
+	Vector3 v;
+
+	float half = 0.5f * length;
+
+	/* Back Face */
+	v.Set(-half, half, half);
+	positions.push_back(v);
+	v.Set(-half, -half, half);
+	positions.push_back(v);
+	v.Set(half, half, half);
+	positions.push_back(v);
+	v.Set(half, half, half);
+	positions.push_back(v);
+	v.Set(-half, -half, half);
+	positions.push_back(v);
+	v.Set(half, -half, half);
+	positions.push_back(v);
+
+
+	v.Set(half, half, half);
+	positions.push_back(v);
+	v.Set(half, -half, half);
+	positions.push_back(v);
+	v.Set(half, half, -half);
+	positions.push_back(v);
+	v.Set(half, half, -half);
+	positions.push_back(v);
+	v.Set(half, -half, half);
+	positions.push_back(v);
+	v.Set(half, -half, -half);
+	positions.push_back(v);
+
+
+	/* Top Face*/
+	v.Set(half, half, -half);
+	positions.push_back(v);
+	v.Set(-half, half, -half);
+	positions.push_back(v);
+	v.Set(-half, half, half);
+	positions.push_back(v);
+	v.Set(half, half, -half);
+	positions.push_back(v);
+	v.Set(-half, half, half);
+	positions.push_back(v);
+	v.Set(half, half, half);
+	positions.push_back(v);
+
+
+	/* Left Face */
+	v.Set(-half, half, -half);
+	positions.push_back(v);
+	v.Set(-half, -half, -half);
+	positions.push_back(v);
+	v.Set(-half, half, half);
+	positions.push_back(v);
+	v.Set(-half, half, half);
+	positions.push_back(v);
+	v.Set(-half, -half, -half);
+	positions.push_back(v);
+	v.Set(-half, -half, half);
+	positions.push_back(v);
+
+	/* Bottom Face */
+	v.Set(-half, -half, -half);
+	positions.push_back(v);
+	v.Set(half, -half, -half);
+	positions.push_back(v);
+	v.Set(half, -half, half);
+	positions.push_back(v);
+	v.Set(-half, -half, -half);
+	positions.push_back(v);
+	v.Set(half, -half, half);
+	positions.push_back(v);
+	v.Set(-half, -half, half);
+	positions.push_back(v);
+
+	/* Front Face */
+	v.Set(-half, half, -half);
+	positions.push_back(v);
+	v.Set(half, -half, -half);
+	positions.push_back(v);
+	v.Set(-half, -half, -half);
+	positions.push_back(v);
+	v.Set(-half, half, -half);
+	positions.push_back(v);
+	v.Set(half, half, -half);
+	positions.push_back(v);
+	v.Set(half, -half, -half);
+	positions.push_back(v);
+}
+
 void Primitives::generateCube(OBJInfo& info)
 {
 	std::vector<Vertex>& vertices = info.vertices;

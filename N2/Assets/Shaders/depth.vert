@@ -2,6 +2,8 @@
 
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPosition_modelspace;
+
+/* Instancing */
 layout(location = 3) in mat4 model;
 
 uniform mat4 lightProjectionView;

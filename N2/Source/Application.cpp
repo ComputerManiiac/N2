@@ -10,13 +10,19 @@ double Application::mouseY = 0.0;
 
 unsigned int Application::screenWidth = 0;
 unsigned int Application::screenHeight = 0;
+unsigned int Application::halfScreenWidth = 0;
+unsigned int Application::halfScreenHeight = 0;
 
+int Application::framesPerSecond = 0;
 
 
 Application::Application(std::string title, unsigned int screenWidth, unsigned int screenHeight) : title(title)
 {
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
+
+	this->halfScreenWidth = (unsigned int) 0.5 * screenWidth;
+	this->halfScreenHeight = (unsigned int) 0.5 * screenHeight;
 
 	/* Initialize the library */
 	if (!glfwInit()) return;
@@ -40,6 +46,8 @@ Application::Application(std::string title, unsigned int screenWidth, unsigned i
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 }
 
@@ -86,6 +94,7 @@ void Application::Run()
 		if (glfwGetTime() - lastTime >= 1.0f)
 		{
 			std::cout << "FPS: " << frames << std::endl;
+			framesPerSecond = frames;
 			frames = -1;
 			lastTime = glfwGetTime();
 		}
@@ -148,6 +157,16 @@ unsigned int Application::getScreenWidth()
 unsigned int Application::getScreenHeight()
 {
 	return screenHeight;
+}
+
+unsigned int Application::getHalfScreenWidth()
+{
+	return halfScreenWidth;
+}
+
+unsigned int Application::getHalfScreenHeight()
+{
+	return halfScreenHeight;
 }
 
 double Application::getMouseX()

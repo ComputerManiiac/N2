@@ -152,6 +152,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\RendererSkybox.cpp" />
+    <ClCompile Include="Source\Renderer.cpp" />
+    <ClCompile Include="Source\RendererGrass.cpp" />
+    <ClCompile Include="Source\RendererShadow.cpp" />
+    <ClCompile Include="Source\RendererLit.cpp" />
+    <ClCompile Include="Source\ShaderComponent.cpp" />
     <ClCompile Include="Source\FrameBuffer.cpp" />
     <ClCompile Include="Source\ColliderComponent.cpp" />
     <ClCompile Include="Source\PhysicsSystem.cpp" />
@@ -177,6 +183,13 @@
     <ClCompile Include="Source\UIComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\RendererSkybox.h" />
+    <ClInclude Include="Source\RendererGrass.h" />
+    <ClInclude Include="Source\RendererShadow.h" />
+    <ClInclude Include="Source\RendererLit.h" />
+    <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\Batch.h" />
+    <ClInclude Include="Source\ShaderComponent.h" />
     <ClInclude Include="Source\FrameBuffer.h" />
     <ClInclude Include="Source\ColliderComponent.h" />
     <ClInclude Include="Source\Contiguous.h" />
@@ -205,6 +218,7 @@
     <ClInclude Include="Source\System.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\UIComponent.h" />
+    <ClInclude Include="Source\Text.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

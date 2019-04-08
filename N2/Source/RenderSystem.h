@@ -43,48 +43,16 @@
 #include "MatrixStack.h"
 #include "LightSource.h"
 #include "FrameBuffer.h"
+#include "Batch.h"
+#include "Text.h"
+#include "Renderer.h"
+#include "RendererSkybox.h"
 #include <vector>
 #include <algorithm>
 #include <string>
-
-struct VertexData {
-
-	VertexData(Mtx44 model, Mtx44 view, Mtx44 projection) : model(model), view(view), projection(projection) {}
-	Mtx44 model;
-	Mtx44 view;
-	Mtx44 projection;
-};
-
-struct BatchKey {
+#include <map>
 
 
-	BatchKey(unsigned int textureID, Material mat) : textureID(textureID), mat(mat) {}
-	BatchKey() {}
-
-
-	bool operator==(const BatchKey& other)
-	{
-		return (other.textureID == textureID) && (mat == other.mat);
-	}
-
-	bool operator < (const BatchKey other) const
-	{
-		return memcmp((void*)this, (void*)&other, sizeof(BatchKey)) > 0;
-	}
-
-	unsigned int textureID;
-	Material mat;
-};
-
-
-struct Batch {
-
-	Batch(std::vector<RenderComponent*> subscribers) : subscribers(subscribers) {}
-	Batch() {}
-
-	std::vector<VertexData> data;
-	std::vector<RenderComponent*> subscribers;
-};
 
 enum TextAlignment {
 	TEXT_ALIGN_LEFT,
@@ -100,52 +68,66 @@ public:
 	~RenderSystem();
 
 	void Initialize();
-
-	void setupComponent(const OBJInfo& info, unsigned int& VAO, unsigned int& VBO, unsigned int& EBO);
-	void setupLight();
-	void setupShadows();
-
 	void Update(double& dt);
-
-	void renderScene(ShaderProgram* shader, const Mtx44& viewMatrix);
-
-
-	/* Temp function to debug framebuffer's texture */
-	void renderTexture(const FrameBuffer& buffer);
-	
-
-	void updateTransformMatrices(Batch& batch);
-	void layoutInstancedData(const unsigned int& VAO);
-	
 
 	void registerComp(Component* component);
 	void removeComp(Component* component);
 
+	
+	void renderText(const std::string& text, float xPos, float yPos, Font& font, Vector3 color = Vector3(1, 1, 1), float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
 
-	void renderText(const std::string& text, float xPos, float yPos, Font& font, float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
+	bool renderSkybox;
+
+	const Mtx44 getProjectionMatrix() const;
 
 private:
 
+	void setupLight();
+	void setupShadows();
+
+	void renderScene(const Mtx44& viewMatrix, ShaderProgram* shader=nullptr);
+	void renderTexts();
+
+	/* Text Mutation */
+	void generateData(const FontChar& fontChar, const float& fontSize, std::vector<UIVertex>& vertices, std::vector<unsigned int>& indices, Vector2& cursor);
+	void modifyData(const FontChar& fontChar, const int& i, const float& fontSize, std::vector<UIVertex>& vertices, std::vector<unsigned int>& indices, Vector2& cursor);
+
+
+	/* Temp function to debug framebuffer's texture */
+	void renderTexture(const FrameBuffer& buffer);
+
+
+	/* Shaders */
 	ShaderProgram* depth;
 	ShaderProgram* lit;
 	ShaderProgram* ui;
+	
+	/* Skybox */
+	RendererSkybox* skybox;
 	
 	/* Used for rendering textures to screen */
 	unsigned int quadVAO;
 	unsigned int quadVBO;
 	unsigned int quadEBO;
-	
+
+	/* Text */
+	std::map<std::string, Font> fonts;
+	std::map<Font*, std::vector<Text*>> texts;
+	std::map<unsigned int, Text> mutatedCache;
+	unsigned int textUID;
+
 	/* Shadows */
 	FrameBuffer shadowFBO;	
 	Mtx44 lightProjectionView, lightProjection, lightView;
 
+	/* Batching */
 	unsigned int batchVBO;
 	std::map<BatchKey, Batch> batches;
 
-	std::vector<Text> texts;
+	std::map<ShaderProgram*, Renderer*> renderers;
 	std::vector<RenderComponent*> subscribers;
 	std::vector<LightSource*> lightSources;
-	std::vector<Font> fonts;
+
 	MS modelStack;
 	Mtx44 projection, view;
 

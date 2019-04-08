@@ -1,10 +1,11 @@
 #ifndef RENDERCOMPONENT_H
 #define RENDERCOMPONENT_H
 
-#include <GL\glew.h>
+
 #include "Component.h"
 #include "Info.h"
-
+#include "ShaderProgram.h"
+#include <GL\glew.h>
 
 class Entity;
 
@@ -37,9 +38,9 @@ enum DRAW_MODE
 class RenderComponent : public Component
 {
 public:
-	RenderComponent(Entity* parent, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
-	RenderComponent(Entity* parent, std::string modelPath, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
-	RenderComponent(Entity* parent);
+	RenderComponent(Entity* parent, ShaderProgram* shader, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
+	RenderComponent(Entity* parent, ShaderProgram* shader, std::string modelPath, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
+	RenderComponent(Entity* parent, ShaderProgram* shader);
 	RenderComponent();
 	~RenderComponent();
 
@@ -55,6 +56,7 @@ public:
 	const unsigned int& getVBO() const;
 	const unsigned int& getEBO() const;
 	const unsigned int& getTexID() const;
+	ShaderProgram* getShader() const;
 
 
 private:
@@ -65,6 +67,7 @@ private:
 	unsigned int VBO;
 	unsigned int EBO;
 	unsigned int textureID;
+	ShaderProgram* shader;
 };
 
 #endif

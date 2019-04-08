@@ -28,8 +28,13 @@ public:
 	static unsigned int getScreenWidth();
 	static unsigned int getScreenHeight();
 
+	static unsigned int getHalfScreenWidth();
+	static unsigned int getHalfScreenHeight();
+
 	static double getMouseX();
 	static double getMouseY();
+
+	static int framesPerSecond;
 
 private:
 
@@ -41,8 +46,13 @@ private:
 
 	static double mouseX;
 	static double mouseY;
+
 	static unsigned int screenWidth;
 	static unsigned int screenHeight;
+
+	static unsigned int halfScreenWidth;
+	static unsigned int halfScreenHeight;
+
 	static GLFWwindow* window;
 
 	std::string title;

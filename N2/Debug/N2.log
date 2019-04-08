@@ -2,9 +2,17 @@
   Entity.cpp
   Manager.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
   RenderSystem.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+d:\programming\c++\n2\n2\source\rendersystem.cpp(356): warning C4018: '<': signed/unsigned mismatch
+  Renderer.cpp
+  RendererGrass.cpp
+  RendererLit.cpp
+  RendererShadow.cpp
   Generating Code...
-  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.exe
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'D:\Programming\C++\N2\Debug\vc120.pdb'; linking object as if no debug info
+  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe

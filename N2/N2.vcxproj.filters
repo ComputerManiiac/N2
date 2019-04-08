@@ -52,6 +52,15 @@
     <Filter Include="Source Files\OpenGL">
       <UniqueIdentifier>{784ba561-8aef-44f9-80ef-e34acceffffd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Structures">
+      <UniqueIdentifier>{be18c654-cb0a-47f4-8dff-985fc8a36dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer">
+      <UniqueIdentifier>{6acd75f4-b4e9-4c54-8114-050a67d2080f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{f1ab7205-3f58-434d-a46f-39ac4a8a30d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -121,7 +130,25 @@
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\FrameBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Others</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShaderComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererGrass.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererLit.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererShadow.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererSkybox.cpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,11 +230,35 @@
     <ClInclude Include="Source\UIComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Info.h">
-      <Filter>Header Files\Others</Filter>
+    <ClInclude Include="Source\ShaderComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\FrameBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Batch.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Info.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Text.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RendererGrass.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderer.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RendererLit.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RendererShadow.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RendererSkybox.h">
+      <Filter>Header Files\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 d:\programming\c++\n2\n2\debug\vc141.pdb
 d:\programming\c++\n2\n2\debug\vc141.idb
-d:\programming\c++\n2\n2\debug\transformcomponent.obj
 d:\programming\c++\n2\n2\debug\timer.obj
 d:\programming\c++\n2\n2\debug\shaderprogram.obj
 d:\programming\c++\n2\n2\debug\rigidbodycomponent.obj
@@ -20,9 +19,10 @@ d:\programming\c++\n2\n2\debug\rendercomponent.obj
 d:\programming\c++\n2\n2\debug\primitives.obj
 d:\programming\c++\n2\n2\debug\physicssystem.obj
 d:\programming\c++\n2\n2\debug\collidercomponent.obj
-d:\programming\c++\n2\n2\debug\vector3.obj
 d:\programming\c++\n2\n2\debug\framebuffer.obj
 d:\programming\c++\n2\n2\debug\uicomponent.obj
+d:\programming\c++\n2\n2\debug\vector3.obj
+d:\programming\c++\n2\n2\debug\transformcomponent.obj
 d:\programming\c++\n2\debug\n2.exe
 d:\programming\c++\n2\debug\n2.ilk
 d:\programming\c++\n2\debug\n2.pdb

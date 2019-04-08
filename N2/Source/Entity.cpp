@@ -3,13 +3,13 @@
 
 
 
-Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, std::string texturePath) : name(name)
+Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader, std::string texturePath) : name(name)
 {
 	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
 	contiguous.defineTypes(t, r, c, rigid);
 
 	addComponent(contiguous.Allocate<TransformComponent>(this, position, rotation, scale));
-	addComponent(contiguous.Allocate<RenderComponent>(this, texturePath));
+	addComponent(contiguous.Allocate<RenderComponent>(this, shader, texturePath));
 	addComponent(contiguous.Allocate<ColliderComponent>(this));
 	addComponent(contiguous.Allocate<RigidbodyComponent>(this, 2.0f));
 
@@ -19,13 +19,13 @@ Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 sca
 }
 
 
-Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, std::string modelPath, std::string texturePath) : name(name)
+Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader, std::string modelPath, std::string texturePath) : name(name)
 {
 	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
 	contiguous.defineTypes(t, r, c, rigid);
 
 	addComponent(contiguous.Allocate<TransformComponent>(this, position, rotation, scale));
-	addComponent(contiguous.Allocate<RenderComponent>(this, modelPath, texturePath));
+	addComponent(contiguous.Allocate<RenderComponent>(this, shader, modelPath, texturePath));
 	addComponent(contiguous.Allocate<ColliderComponent>(this));
 	addComponent(contiguous.Allocate<RigidbodyComponent>(this, 2.0f));
 
@@ -35,13 +35,13 @@ Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 sca
 }
 
 
-Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale) : name(name)
+Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader) : name(name)
 {
 	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
 	contiguous.defineTypes(t, r, c, rigid);
 
 	addComponent(contiguous.Allocate<TransformComponent>(this, position, rotation, scale));
-	addComponent(contiguous.Allocate<RenderComponent>(this));
+	addComponent(contiguous.Allocate<RenderComponent>(this, shader));
 	addComponent(contiguous.Allocate<ColliderComponent>(this));
 	addComponent(contiguous.Allocate<RigidbodyComponent>(this, 2.0f));
 

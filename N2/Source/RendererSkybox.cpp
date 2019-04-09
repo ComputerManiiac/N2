@@ -1,6 +1,7 @@
 #include "RendererSkybox.h"
 #include "Primitives.h"
 #include "Loader.h"
+#include "Manager.h"
 
 RendererSkybox::RendererSkybox(ShaderProgram* shader) : Renderer(shader, false)
 {
@@ -52,8 +53,19 @@ void RendererSkybox::Initialize()
 	Loader::loadCubemap(filePaths, textureID, GL_LINEAR, GL_CLAMP_TO_EDGE);
 }
 
-void RendererSkybox::Render()
+void RendererSkybox::Render(MS& modelStack)
 {
+	Camera* camera = Manager::getInstance()->getCamera();
+
+	modelStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.Translate(camera->getPos());
+	Mtx44 skyboxView = projection * camera->LookAt() * modelStack.Top();
+	modelStack.PopMatrix();
+
+	shader->Use();
+	shader->setUniform("MVP", skyboxView);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glBindVertexArray(VAO);

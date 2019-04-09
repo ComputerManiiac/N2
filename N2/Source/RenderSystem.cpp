@@ -86,9 +86,6 @@ void RenderSystem::Initialize() {
 	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
 	ShaderProgram* grass = manager->getShader("grass");
 
-	/* Sets the default shader used by all light sources*/
-	LightSource::setShader(lit);
-
 	/* Set renderers */
 	skybox = new RendererSkybox(skyboxShader);
 	renderers[skyboxShader] = skybox;
@@ -136,8 +133,10 @@ void RenderSystem::Initialize() {
 
 void RenderSystem::setupLight()
 {
+	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass") });
+
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
-	light->setDirLight(lit, Vector3(5.0f, 100.0f, 5.0f), Vector3(1, 1, 1), 1.0f);
+	light->setDirLight(lit, Vector3(5.0f, 100.0f, 5.0f), Vector3(1, 1, 1), 0.2f);
 	lightSources.push_back(light);
 
 	LightSource* light2 = new LightSource(LIGHT_POINT);
@@ -148,7 +147,7 @@ void RenderSystem::setupLight()
 	light3->setSpotLight(lit, Vector3(0.1f, 10.0, 0), Vector3(1, 1, 1), Vector3(0, -1, 0), 1.0f, 45.0f, 30.0f, 1.0f, 1.0f, 0.01f, 0.001f);
 	lightSources.push_back(light3);
 
-	lit->setUniform("numLights", (int)LightSource::getCount());
+	
 }
 
 
@@ -210,33 +209,16 @@ void RenderSystem::Update(double& dt)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
 
-	Camera* camera = Manager::getInstance()->getCamera();
-
 	/* Skybox */
-	modelStack.LoadIdentity();
-	modelStack.PushMatrix();
-	modelStack.Translate(camera->getPos());
-	Mtx44 skyboxView = projection * camera->LookAt() * modelStack.Top();
-	modelStack.PopMatrix();
-
-	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
-	skyboxShader->Use();
-	skyboxShader->setUniform("MVP", skyboxView);
-
 	if (renderSkybox)
-		skybox->Render();
+		skybox->Render(modelStack);
 
-
-	lit->Use();
-	renderScene(camera->LookAt());
+	renderScene(Manager::getInstance()->getCamera()->LookAt());
 
 
 	/* Render texts */
 	glDisable(GL_DEPTH_TEST);
-	renderText("FPS: " + std::to_string(Application::framesPerSecond), 10, 0, fonts["sansserif"], Vector3(1, 1, 0), 0.30f);
-	renderText("Regular", 0, 100, fonts["sansserif"], Vector3(0, 1, 0), 1.0f);
-	renderText("2x", 0, 200, fonts["sansserif"], Vector3(0, 1, 0), 2.0f);
-	renderText("4x", 0, 300, fonts["sansserif"], Vector3(0, 1, 0), 4.0f);
+	renderText("FPS: " + std::to_string(Application::framesPerSecond), 10, 0, fonts["sansserif"], Vector3(1, 1, 0), 0.35f);
 	renderTexts();
 	glEnable(GL_DEPTH_TEST);
 }

@@ -39,32 +39,32 @@ void Manager::Initialize()
 	shaders.try_emplace("quad", "Assets\\Shaders\\quad.vert", "Assets\\Shaders\\quad.frag");
 	shaders.try_emplace("ui", "Assets\\Shaders\\ui.vert", "Assets\\Shaders\\ui.frag");
 	shaders.try_emplace("skybox", "Assets\\Shaders\\skybox.vert", "Assets\\Shaders\\skybox.frag");
+	shaders.try_emplace("grass", "Assets\\Shaders\\grass.vert", "Assets\\Shaders\\grass.frag");
 
 	registerSystem<RenderSystem>(); 
 	registerSystem<PhysicsSystem>();
-	//
-	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\wood.tga");
+
+	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
 	
 
-	entities["grass"] = new Entity("grass",  Vector3(10, 3, 0), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
-	//for (int x = 1; x < 11; x += 2)
-	//{
+	float offsetX = 0.0f;
 
-
-	//}
-	//
-	/*for (int i = 1; i < 3; ++i)
+	for (int x = 1; x < 4; x++)
 	{
-		std::string name = "obj" + std::to_string(i);
-		entities[name] = new Entity(name, Vector3(1, i * 2.0f, 1), Vector3(0, 0, 0), Vector3(1, 1, 1));
-	}*/
-
-	//entities["obj2"] = new Entity("obj2", Vector3(0, 1, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
-	entities["obj1"] = new Entity("obj1", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");
-
-
-	/*entities["car"] = new Entity("car", Vector3(0, 2, 0), Vector3(0, 0, 0), Vector3(1,1,1), "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
+		float offsetZ = 0.0f;
+		for (int z = 1; z < 4; z++)
+		{
+			std::string name = "grass" + std::to_string(x) + std::to_string(z);
+			entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
+			offsetZ += 0.4f;
+		}
+		offsetX += 0.6f;
+	}
 	
+	/*entities["obj1"] = new Entity("obj1", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
+	
+	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+
 	for (auto& system : systems) {
 		system.second->Initialize();
 	}
@@ -88,37 +88,63 @@ ShaderProgram* Manager::getShader(const std::string& name)
 
 void Manager::Update(double dt)
 {
+	TransformComponent* transform = entities["sphere"]->getComponent<TransformComponent>();
+	shaders["grass"].Use();
+	shaders["grass"].setUniform("objPosition", transform->getPos());
 
-	RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
-	
+
+
 	if (Application::isKeyPressed(GLFW_KEY_I))
 	{
-		rigidbody->setVelocity(Vector3(0, 0, 2.0f));
+		transform->Move(Vector3(0, 0, 2.0f) * dt);
 	}
+
 	if (Application::isKeyPressed(GLFW_KEY_K))
 	{
-		rigidbody->setVelocity(Vector3(0, 0, -2.0f));
+		transform->Move(Vector3(0, 0, -2.0f) * dt);
 	}
 
 	if (Application::isKeyPressed(GLFW_KEY_J))
 	{
-		rigidbody->setVelocity(Vector3(-2.0f, 0, 0));
+		transform->Move(Vector3(2, 0, 0.0f) * dt);
 	}
 
 	if (Application::isKeyPressed(GLFW_KEY_L))
 	{
-		rigidbody->setVelocity(Vector3(2.0f, 0, 0));
+		transform->Move(Vector3(-2, 0, 0.0f) * dt);
 	}
 
-	if (Application::isKeyPressed(GLFW_KEY_U))
-	{
-		rigidbody->setVelocity(Vector3(0, 2.0f, 0));
-	}
 
-	if (Application::isKeyPressed(GLFW_KEY_O))
-	{
-		rigidbody->setVelocity(Vector3(0, -2.0f, 0));
-	}
+	//RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
+	//
+	//if (Application::isKeyPressed(GLFW_KEY_I))
+	//{
+	//	rigidbody->setVelocity(Vector3(0, 0, 2.0f));
+	//}
+	//if (Application::isKeyPressed(GLFW_KEY_K))
+	//{
+	//	rigidbody->setVelocity(Vector3(0, 0, -2.0f));
+	//}
+
+	//if (Application::isKeyPressed(GLFW_KEY_J))
+	//{
+	//	rigidbody->setVelocity(Vector3(-2.0f, 0, 0));
+	//}
+
+	//if (Application::isKeyPressed(GLFW_KEY_L))
+	//{
+	//	rigidbody->setVelocity(Vector3(2.0f, 0, 0));
+	//}
+
+	//if (Application::isKeyPressed(GLFW_KEY_U))
+	//{
+	//	rigidbody->setVelocity(Vector3(0, 2.0f, 0));
+	//}
+
+	//if (Application::isKeyPressed(GLFW_KEY_O))
+	//{
+	//	rigidbody->setVelocity(Vector3(0, -2.0f, 0));
+	//}
 
 	if (Application::isKeyPressDown(GLFW_KEY_3))
 	{

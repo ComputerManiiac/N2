@@ -2,11 +2,11 @@
 
 
 unsigned int LightSource::count = 0;
-ShaderProgram* LightSource::shader = nullptr;
 
-LightSource::LightSource(LIGHTING_TYPE type)
+std::vector<ShaderProgram*> LightSource::shaders = {};
+
+LightSource::LightSource(LIGHTING_TYPE type) :  type(type)
 {
-	this->type = type;
 	id = count++;
 	prefix = "lights[" + std::to_string(id) + "].";
 }
@@ -33,6 +33,10 @@ void LightSource::setPointLight(ShaderProgram* shader, const Vector3& position, 
 	locationNames.try_emplace(LIGHT_KC, prefix + "kC");
 	locationNames.try_emplace(LIGHT_KL, prefix + "kL");
 	locationNames.try_emplace(LIGHT_KQ, prefix + "kQ");
+	locationNames.try_emplace(LIGHT_TYPE, prefix + "type");
+	locationNames.try_emplace(LIGHT_POSITION, prefix + "position");
+	locationNames.try_emplace(LIGHT_COLOR, prefix + "color");
+	locationNames.try_emplace(LIGHT_POWER, prefix + "power");
 	setupAttribs();
 }
 
@@ -41,7 +45,10 @@ void LightSource::setDirLight(ShaderProgram* shader, const Vector3& direction, c
 	this->position = direction;
 	this->color = color;
 	this->power = power;
-
+	locationNames.try_emplace(LIGHT_TYPE, prefix + "type");
+	locationNames.try_emplace(LIGHT_POSITION, prefix + "position");
+	locationNames.try_emplace(LIGHT_COLOR, prefix + "color");
+	locationNames.try_emplace(LIGHT_POWER, prefix + "power");
 	setupAttribs();
 }
 
@@ -67,47 +74,46 @@ void LightSource::setSpotLight(ShaderProgram* shader, const Vector3& position, c
 	locationNames.try_emplace(LIGHT_KC, prefix + "kC");
 	locationNames.try_emplace(LIGHT_KL, prefix + "kL");
 	locationNames.try_emplace(LIGHT_KQ, prefix + "kQ");
+	locationNames.try_emplace(LIGHT_TYPE, prefix + "type");
+	locationNames.try_emplace(LIGHT_POSITION, prefix + "position");
+	locationNames.try_emplace(LIGHT_COLOR, prefix + "color");
+	locationNames.try_emplace(LIGHT_POWER, prefix + "power");
 	setupAttribs();
 }
 
 void LightSource::setupAttribs()
 {
-
-	locationNames.try_emplace(LIGHT_TYPE, prefix + "type");
-	locationNames.try_emplace(LIGHT_POSITION, prefix + "position");
-	locationNames.try_emplace(LIGHT_COLOR, prefix + "color");
-	locationNames.try_emplace(LIGHT_POWER, prefix + "power");
-
-	shader->Use();
-	shader->setUniform(getPropertyName(LIGHT_TYPE), type);
-	shader->setUniform("lightEnabled", true);
-
-	if (type == LIGHT_POINT || type == LIGHT_SPOTLIGHT)
+	for (ShaderProgram* shader : shaders)
 	{
-		shader->setUniform(getPropertyName(LIGHT_KC), kC);
-		shader->setUniform(getPropertyName(LIGHT_KL), kL);
-		shader->setUniform(getPropertyName(LIGHT_KQ), kQ);
+		shader->Use();
+		shader->setUniform(getPropertyName(LIGHT_TYPE), type);
+		shader->setUniform("lightEnabled", true);
+
+		if (type == LIGHT_POINT || type == LIGHT_SPOTLIGHT)
+		{
+			shader->setUniform(getPropertyName(LIGHT_KC), kC);
+			shader->setUniform(getPropertyName(LIGHT_KL), kL);
+			shader->setUniform(getPropertyName(LIGHT_KQ), kQ);
+
+			if (type == LIGHT_SPOTLIGHT)
+			{
+				shader->setUniform(getPropertyName(LIGHT_COSCUTOFF), cos(Math::DegreeToRadian(cosCutoff)));
+				shader->setUniform(getPropertyName(LIGHT_COSINNER), cos(Math::DegreeToRadian(cosInner)));
+				shader->setUniform(getPropertyName(LIGHT_EXPONENT), exponent);
+			}
+		}
+
+		shader->setUniform(getPropertyName(LIGHT_POSITION), position);
+		shader->setUniform(getPropertyName(LIGHT_COLOR), color);
+		shader->setUniform(getPropertyName(LIGHT_POWER), power);
 
 		if (type == LIGHT_SPOTLIGHT)
-		{
-			shader->setUniform(getPropertyName(LIGHT_COSCUTOFF), cos(Math::DegreeToRadian(cosCutoff)));
-			shader->setUniform(getPropertyName(LIGHT_COSINNER), cos(Math::DegreeToRadian(cosInner)));
-			shader->setUniform(getPropertyName(LIGHT_EXPONENT), exponent);
-		}
+			shader->setUniform(getPropertyName(LIGHT_SPOTDIRECTION), spotDirection);
+
+		shader->setUniform("numLights", (int)LightSource::getCount());
 	}
-
-	shader->setUniform(getPropertyName(LIGHT_POSITION), position);
-	shader->setUniform(getPropertyName(LIGHT_COLOR), color);
-	shader->setUniform(getPropertyName(LIGHT_POWER), power);
-
-	if (type == LIGHT_SPOTLIGHT)
-		shader->setUniform(getPropertyName(LIGHT_SPOTDIRECTION), spotDirection);
 }
 
-void LightSource::setShader(ShaderProgram* shader)
-{
-	LightSource::shader = shader;
-}
 
 const char* LightSource::getPropertyName(const LIGHT_PROPERTIES& propertyName)
 {
@@ -119,32 +125,50 @@ unsigned int& LightSource::getCount()
 	return count;
 }
 
+void LightSource::setShaders(const std::vector<ShaderProgram*>& shaders)
+{
+	LightSource::shaders = shaders;
+}
+
 void LightSource::setPosition(const Vector3& position)
 {
-	shader->Use();
-	shader->setUniform(getPropertyName(LIGHT_POSITION), position);
+	for (ShaderProgram* shader : shaders)
+	{
+		shader->Use();
+		shader->setUniform(getPropertyName(LIGHT_POSITION), position);
+	}
 	this->position = position;
 }
 
 
 void LightSource::setPosition(const float& x, const float& y, const float& z)
 {
-	shader->Use();
-	shader->setUniform(getPropertyName(LIGHT_POSITION), x, y, z);
+	for (ShaderProgram* shader : shaders)
+	{
+		shader->Use();
+		shader->setUniform(getPropertyName(LIGHT_POSITION), x, y, z);
+	}
 	this->position = position;
 }
 
 void LightSource::setColor(const Vector3& color)
 {
-	shader->Use();
-	shader->setUniform(getPropertyName(LIGHT_COLOR), color);
+
+	for (ShaderProgram* shader : shaders)
+	{
+		shader->Use();
+		shader->setUniform(getPropertyName(LIGHT_COLOR), color);
+	}
 	this->color = color;
 }
 
 void LightSource::setSpotlightDir(const Vector3& spotDirection)
 {
-	shader->Use();
-	shader->setUniform(getPropertyName(LIGHT_SPOTDIRECTION), spotDirection);
+	for (ShaderProgram* shader : shaders)
+	{
+		shader->Use();
+		shader->setUniform(getPropertyName(LIGHT_SPOTDIRECTION), spotDirection);
+	}
 	this->spotDirection = spotDirection;
 }
 
@@ -155,8 +179,11 @@ const Vector3& LightSource::getPosition() const
 
 void LightSource::setPower(const float& power)
 {
-	shader->Use();
-	shader->setUniform(getPropertyName(LIGHT_POWER), power);
+	for (ShaderProgram* shader : shaders)
+	{
+		shader->Use();
+		shader->setUniform(getPropertyName(LIGHT_POWER), power);
+	}
 	this->power = power;
 }
 

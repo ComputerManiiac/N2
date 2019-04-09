@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "ShaderProgram.h"
 #include "MatrixStack.h"
+#include <vector>
 #include <iostream>
 #include <string>
 #include <map>
@@ -50,24 +51,24 @@ public:
 		const float& power, const float& cosCutoff, const float& cosInner, const float& exponent,
 		const float& kC, const float &kL, const float& kQ);
 
-	inline void setPosition(const Vector3& position);
-	inline void setPosition(const float& x, const float& y, const float& z);
-	inline void setPower(const float& power);
-	inline void setColor(const Vector3& color);
-	inline void setSpotlightDir(const Vector3& direction);
+	void setPosition(const Vector3& position);
+	void setPosition(const float& x, const float& y, const float& z);
+	void setPower(const float& power);
+	void setColor(const Vector3& color);
+	void setSpotlightDir(const Vector3& direction);
 
 	const Vector3& getPosition() const;
 
 	void setupAttribs();
-
 	static unsigned int& getCount();
-	static void setShader(ShaderProgram* shader);
+	static void setShaders(const std::vector<ShaderProgram*>& shaders);
 
 private:
 
 	const char* getPropertyName(const LIGHT_PROPERTIES& propertyName);
 	
-	static ShaderProgram* shader;
+	static std::vector<ShaderProgram*> shaders;
+
 	unsigned int id;
 	std::string prefix;
 	static unsigned int count;

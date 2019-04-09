@@ -11,14 +11,18 @@ RendererLit::~RendererLit()
 {
 }
 
-
-void RendererLit::Initialize(RenderComponent* sub)
+void RendererLit::Initialize(const std::vector<LightSource*>& lightSources)
 {
 
 	shader->Use();
 	shader->setUniform("colorTexture", 0);
 	shader->setUniform("depthTexture", 1);
+	shader->setUniform("numLights", (int)LightSource::getCount());
+}
 
+
+void RendererLit::Initialize(RenderComponent* sub)
+{
 	const OBJInfo& info = sub->getInfo();
 
 	/* Buffer data into VBO and EBO*/

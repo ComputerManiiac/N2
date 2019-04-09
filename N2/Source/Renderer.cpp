@@ -17,6 +17,10 @@ Renderer::~Renderer()
 		glDeleteBuffers(1, &batchVBO);
 }
 
+void Renderer::Initialize(const std::vector<LightSource*>& lightSources)
+{
+}
+
 void Renderer::Initialize(RenderComponent* render)
 {
 

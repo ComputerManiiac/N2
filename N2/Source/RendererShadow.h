@@ -11,6 +11,7 @@ public:
 	RendererShadow();
 	~RendererShadow();
 
+	void Initialize(Batch& batch);
 	void Initialize(RenderComponent* render);
 	void Render(RenderComponent* render);
 

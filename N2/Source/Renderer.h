@@ -15,6 +15,7 @@ public:
 	Renderer();
 	~Renderer();
 
+	virtual void Initialize(Batch& batch);
 	virtual void Initialize(const std::vector<LightSource*>& lightSources);
 	virtual void Initialize(RenderComponent* render);
 	virtual void Render(RenderComponent* render);
@@ -22,9 +23,11 @@ public:
 
 protected:
 	ShaderProgram* shader;
-	unsigned int batchVBO;
+
 	bool isBatched;
 	Mtx44 projection;
+
+	unsigned int batchVBO;
 };
 
 #endif

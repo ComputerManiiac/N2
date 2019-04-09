@@ -1,2 +1,2 @@
-﻿  RenderSystem.cpp
-d:\programming\c++\n2\n2\source\rendersystem.cpp : fatal error C1041: cannot open program database 'D:\Programming\C++\N2\N2\Debug\vc141.idb'; if multiple CL.EXE write to the same .PDB file, please use /FS
+﻿  RendererShadow.cpp
+  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.exe

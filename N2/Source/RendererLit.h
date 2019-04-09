@@ -12,6 +12,7 @@ public:
 	RendererLit();
 	~RendererLit();
 
+	void Initialize(Batch& batch);
 	void Initialize(const std::vector<LightSource*>& lightSources);
 	void Initialize(RenderComponent* render);
 	void Render(RenderComponent* render);

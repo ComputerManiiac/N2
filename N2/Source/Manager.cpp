@@ -49,17 +49,17 @@ void Manager::Initialize()
 
 	float offsetX = 0.0f;
 
-	for (int x = 1; x < 4; x++)
-	{
-		float offsetZ = 0.0f;
-		for (int z = 1; z < 4; z++)
-		{
-			std::string name = "grass" + std::to_string(x) + std::to_string(z);
-			entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
-			offsetZ += 0.4f;
-		}
-		offsetX += 0.6f;
-	}
+	//for (int x = 1; x < 4; x++)
+	//{
+	//	float offsetZ = 0.0f;
+	//	for (int z = 1; z < 4; z++)
+	//	{
+	//		std::string name = "grass" + std::to_string(x) + std::to_string(z);
+	//		entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
+	//		offsetZ += 0.4f;
+	//	}
+	//	offsetX += 0.6f;
+	//}
 	
 	/*entities["obj1"] = new Entity("obj1", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
 	
@@ -88,13 +88,13 @@ ShaderProgram* Manager::getShader(const std::string& name)
 
 void Manager::Update(double dt)
 {
-	TransformComponent* transform = entities["sphere"]->getComponent<TransformComponent>();
-	shaders["grass"].Use();
-	shaders["grass"].setUniform("objPosition", transform->getPos());
+	//TransformComponent* transform = entities["sphere"]->getComponent<TransformComponent>();
+	//shaders["grass"].Use();
+	//shaders["grass"].setUniform("objPosition", transform->getPos());
 
 
 
-	if (Application::isKeyPressed(GLFW_KEY_I))
+	/*if (Application::isKeyPressed(GLFW_KEY_I))
 	{
 		transform->Move(Vector3(0, 0, 2.0f) * dt);
 	}
@@ -113,7 +113,7 @@ void Manager::Update(double dt)
 	{
 		transform->Move(Vector3(-2, 0, 0.0f) * dt);
 	}
-
+*/
 
 	//RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
 	//

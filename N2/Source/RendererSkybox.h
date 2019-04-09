@@ -10,7 +10,6 @@ public:
 	RendererSkybox();
 	~RendererSkybox();
 
-
 	void Initialize();
 	void Render(MS& modelStack);
 

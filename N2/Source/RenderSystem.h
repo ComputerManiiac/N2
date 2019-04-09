@@ -121,7 +121,6 @@ private:
 	Mtx44 lightProjectionView, lightProjection, lightView;
 
 	/* Batching */
-	unsigned int batchVBO;
 	std::map<BatchKey, Batch> batches;
 
 	std::map<ShaderProgram*, Renderer*> renderers;

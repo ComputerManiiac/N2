@@ -43,7 +43,7 @@ void RenderComponent::setBufferObjects(const unsigned int& VAO, const unsigned i
 	this->EBO = EBO;
 }
 
-const OBJInfo& RenderComponent::getInfo() const
+OBJInfo& RenderComponent::getInfo()
 {
 	return info;
 }
@@ -58,20 +58,6 @@ const Material& RenderComponent::getMaterial() const
 	return material;
 }
 
-const unsigned int & RenderComponent::getVAO() const
-{
-	return VAO;
-}
-
-const unsigned int& RenderComponent::getVBO() const
-{
-	return VBO;
-}
-
-const unsigned int& RenderComponent::getEBO() const
-{
-	return EBO;
-}
 
 const unsigned int& RenderComponent::getTexID() const
 {

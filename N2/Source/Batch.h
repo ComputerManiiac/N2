@@ -18,7 +18,7 @@ struct VertexData {
 struct BatchKey {
 
 
-	BatchKey(ShaderProgram* shader, unsigned int textureID, Material mat) : shader(shader), textureID(textureID), mat(mat) {}
+	BatchKey(ShaderProgram* shader, unsigned int textureID, Material mat): shader(shader), textureID(textureID), mat(mat){}
 	BatchKey() {}
 
 
@@ -47,11 +47,15 @@ struct BatchKey {
 
 struct Batch {
 
-	Batch(std::vector<RenderComponent*> subscribers) : subscribers(subscribers) {}
+	Batch(std::vector<RenderComponent*> subscribers, OBJInfo info) : subscribers(subscribers), info(info) {}
 	Batch() {}
 
+	OBJInfo info;
 	std::vector<VertexData> data;
 	std::vector<RenderComponent*> subscribers;
+	unsigned int VAO;
+	unsigned int VBO;
+	unsigned int EBO;
 };
 
 #endif

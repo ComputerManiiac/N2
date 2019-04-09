@@ -22,13 +22,9 @@ RenderSystem::RenderSystem()
 RenderSystem::~RenderSystem()
 {
 
-	glDeleteBuffers(1, &batchVBO);
 
 	for (RenderComponent* sub : subscribers)
 	{
-		glDeleteVertexArrays(1, &sub->getVAO());
-		glDeleteBuffers(1, &sub->getVBO());
-		glDeleteBuffers(1, &sub->getEBO());
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
@@ -36,21 +32,6 @@ RenderSystem::~RenderSystem()
 		glDisableVertexAttribArray(3);
 		glDisableVertexAttribArray(7);
 		glDisableVertexAttribArray(11);
-
-		ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
-		if (collider != nullptr)
-		{
-			glDeleteVertexArrays(1, &collider->getVAO());
-			glDeleteBuffers(1, &collider->getVBO());
-			glDeleteBuffers(1, &collider->getEBO());
-
-			glDisableVertexAttribArray(0);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(3);
-			glDisableVertexAttribArray(7);
-			glDisableVertexAttribArray(11);
-		}
 	}
 
 
@@ -83,44 +64,45 @@ void RenderSystem::Initialize() {
 	lit = manager->getShader("lit");
 	depth = manager->getShader("depth");
 	ui = manager->getShader("ui");
-	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
+	//ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
 	ShaderProgram* grass = manager->getShader("grass");
 
 	/* Set renderers */
-	skybox = new RendererSkybox(skyboxShader);
-	renderers[skyboxShader] = skybox;
+	//skybox = new RendererSkybox(skyboxShader);
+	//renderers[skyboxShader] = skybox;
 	renderers[lit] = new RendererLit(lit);
 	renderers[grass] = new RendererGrass(grass);
 	renderers[depth] = new RendererShadow(depth);
 
-	/* Set up skybox */
-	skybox->Initialize();
+	///* Set up skybox */
+	//skybox->Initialize();
 
-
-	glGenBuffers(1, &batchVBO);
 	BatchKey key;
+
+
+	//for (auto& r : renderers) {
+	//	Renderer* ren = r.second;
+	//	ren->Initialize();
+	//}
+
 
 	/* Generates vertex arrays and buffers for each render component and populates the assigned int into them */
  	for (RenderComponent* sub : subscribers)
 	{
 		ShaderProgram* componentShader = sub->getShader();
 
-		/* Generate buffers */
-		unsigned int VAO, VBO, EBO;
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
-
-		/* Update buffer object values in Render Component */
-		sub->setBufferObjects(VAO, VBO, EBO);
-
-		/* Initialize shader uniforms and layout VBO data based on the shader used to render */
-		renderers[componentShader]->Initialize(sub);
-
 		/* Add To Batch */
 		key.setAll(componentShader, sub->getTexID(), sub->getMaterial());
+
+		if (batches.find(key) == batches.end())
+			batches[key].info = sub->getInfo();
 		batches[key].subscribers.push_back(sub);
+	}
+
+	for (auto& b : batches) {
+		const BatchKey& key = b.first;
+		Batch& batch = b.second;
+		renderers[key.shader]->Initialize(batch);
 	}
 
 	glBindVertexArray(0);
@@ -210,8 +192,8 @@ void RenderSystem::Update(double& dt)
 	glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
 
 	/* Skybox */
-	if (renderSkybox)
-		skybox->Render(modelStack);
+	//if (renderSkybox)
+	//	skybox->Render(modelStack);
 
 	renderScene(Manager::getInstance()->getCamera()->LookAt());
 
@@ -228,7 +210,7 @@ void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 	modelStack.LoadIdentity();
 
 	/* Renders all objects in batches */
-	for (auto& b : batches)
+	/*for (auto& b : batches)
 	{
 		const BatchKey& key = b.first;
 		Batch& batch = b.second;
@@ -238,7 +220,7 @@ void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 		else
 			renderers[shader]->Render(batch, key.textureID, modelStack, viewMatrix);
 		
-	}
+	}*/
 	glBindVertexArray(0);
 }
 

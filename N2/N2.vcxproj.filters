@@ -49,9 +49,6 @@
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{d7b4296b-7016-4709-b4f2-596ff946cf42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\OpenGL">
-      <UniqueIdentifier>{784ba561-8aef-44f9-80ef-e34acceffffd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Structures">
       <UniqueIdentifier>{be18c654-cb0a-47f4-8dff-985fc8a36dc7}</UniqueIdentifier>
     </Filter>
@@ -132,9 +129,6 @@
     <ClCompile Include="Source\FrameBuffer.cpp">
       <Filter>Source Files\Others</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ShaderComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Source\RendererGrass.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
@@ -148,6 +142,15 @@
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererSkybox.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ParticleComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ParticleSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererParticle.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,9 +233,6 @@
     <ClInclude Include="Source\UIComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ShaderComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Source\FrameBuffer.h">
       <Filter>Header Files\Others</Filter>
     </ClInclude>
@@ -258,6 +258,15 @@
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererSkybox.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ParticleComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ParticleSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RendererParticle.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

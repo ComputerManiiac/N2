@@ -43,27 +43,28 @@ void Manager::Initialize()
 
 	registerSystem<RenderSystem>(); 
 	registerSystem<PhysicsSystem>();
+	registerSystem<ParticleSystem>();
 
 
 	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
 	
 
-	float offsetX = 2.0f;
+	//float offsetX = 2.0f;
 
-	for (int x = 0; x < 10; x++)
-	{
-		float offsetZ = 5.0f;
-		for (int z = 0; z < 10; z++)
-		{
-			std::string name = "grass" + std::to_string(x) + "-" + std::to_string(z);
-			entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
-			offsetZ += 0.4f;
-		}
-		offsetX += 0.6f;
-	}
+	//for (int x = 0; x < 10; x++)
+	//{
+	//	float offsetZ = 5.0f;
+	//	for (int z = 0; z < 10; z++)
+	//	{
+	//		std::string name = "grass" + std::to_string(x) + "-" + std::to_string(z);
+	//		entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
+	//		offsetZ += 0.4f;
+	//	}
+	//	offsetX += 0.6f;
+	//}
 	//
 
-	entities["car"] = new Entity("car", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");
+	/*entities["car"] = new Entity("car", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
 	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 	
 	//for (int x = 0; x < 10; x++)
@@ -108,7 +109,25 @@ void Manager::Update(double dt)
 
 	transform = entities["sphere"]->getComponent<TransformComponent>();
 
+	if (Application::isKeyPressed(GLFW_KEY_I))
+	{
+		transform->Move(Vector3(0, 0, 2.0f) * dt);
+	}
 
+	if (Application::isKeyPressed(GLFW_KEY_K))
+	{
+		transform->Move(Vector3(0, 0, -2.0f) * dt);
+	}
+
+	if (Application::isKeyPressed(GLFW_KEY_J))
+	{
+		transform->Move(Vector3(2, 0, 0.0f) * dt);
+	}
+
+	if (Application::isKeyPressed(GLFW_KEY_L))
+	{
+		transform->Move(Vector3(-2, 0, 0.0f) * dt);
+	}
 
 	//RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
 	//
@@ -160,5 +179,6 @@ void Manager::Update(double dt)
 	camera.Update(dt);
 	getSystem<PhysicsSystem>()->Update(dt);
 	getSystem<RenderSystem>()->Update(dt);
+	getSystem<ParticleSystem>()->Update(dt);
 
 }

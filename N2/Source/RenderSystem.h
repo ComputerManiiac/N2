@@ -54,10 +54,6 @@
 
 
 
-enum TextAlignment {
-	TEXT_ALIGN_LEFT,
-	TEXT_ALIGN_RIGHT,
-};
 
 
 

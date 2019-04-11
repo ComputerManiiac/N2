@@ -152,12 +152,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\RendererParticle.cpp" />
+    <ClCompile Include="Source\ParticleComponent.cpp" />
+    <ClCompile Include="Source\ParticleSystem.cpp" />
     <ClCompile Include="Source\RendererSkybox.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\RendererGrass.cpp" />
     <ClCompile Include="Source\RendererShadow.cpp" />
     <ClCompile Include="Source\RendererLit.cpp" />
-    <ClCompile Include="Source\ShaderComponent.cpp" />
     <ClCompile Include="Source\FrameBuffer.cpp" />
     <ClCompile Include="Source\ColliderComponent.cpp" />
     <ClCompile Include="Source\PhysicsSystem.cpp" />
@@ -183,13 +185,15 @@
     <ClCompile Include="Source\UIComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\RendererParticle.h" />
+    <ClInclude Include="Source\ParticleComponent.h" />
+    <ClInclude Include="Source\ParticleSystem.h" />
     <ClInclude Include="Source\RendererSkybox.h" />
     <ClInclude Include="Source\RendererGrass.h" />
     <ClInclude Include="Source\RendererShadow.h" />
     <ClInclude Include="Source\RendererLit.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Batch.h" />
-    <ClInclude Include="Source\ShaderComponent.h" />
     <ClInclude Include="Source\FrameBuffer.h" />
     <ClInclude Include="Source\ColliderComponent.h" />
     <ClInclude Include="Source\Contiguous.h" />

@@ -1,6 +1,7 @@
 #include "RendererLit.h"
 #include "Manager.h"
 
+RendererLit::RendererLit(ShaderProgram* shader) : Renderer(shader) {}
 
 RendererLit::RendererLit()
 {

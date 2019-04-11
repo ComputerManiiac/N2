@@ -8,7 +8,7 @@ class RendererLit : public Renderer
 {
 public:
 
-	RendererLit(ShaderProgram* shader) : Renderer(shader) {}
+	RendererLit(ShaderProgram* shader);
 	RendererLit();
 	~RendererLit();
 

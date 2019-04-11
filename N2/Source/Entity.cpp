@@ -3,6 +3,7 @@
 
 
 
+
 Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader, std::string texturePath) : name(name)
 {
 	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
@@ -21,17 +22,24 @@ Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 sca
 
 Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader, std::string modelPath, std::string texturePath) : name(name)
 {
-	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid;
-	contiguous.defineTypes(t, r, c, rigid);
+	TransformComponent* t; RenderComponent* r; ColliderComponent* c; RigidbodyComponent* rigid; ParticleComponent* particle;
+	contiguous.defineTypes(t, r, c, rigid, particle);
 
 	addComponent(contiguous.Allocate<TransformComponent>(this, position, rotation, scale));
 	addComponent(contiguous.Allocate<RenderComponent>(this, shader, modelPath, texturePath));
 	addComponent(contiguous.Allocate<ColliderComponent>(this));
 	addComponent(contiguous.Allocate<RigidbodyComponent>(this, 2.0f));
 
+	if(name != "ground")
+		addComponent(contiguous.Allocate<ParticleComponent>(this, true, 8.0f, 0.25f, Vector3(1, 0, 1)));
+	//addComponent(contiguous.Allocate<ParticleComponent>(this));
+
 	Manager* manager = Manager::getInstance();
 	manager->registerComponent<RenderSystem>(getComponent<RenderComponent>());
 	manager->registerComponent<PhysicsSystem>(getComponent<RigidbodyComponent>());
+
+	if(name != "ground")
+		manager->registerComponent<ParticleSystem>(getComponent<ParticleComponent>());
 
 }
 

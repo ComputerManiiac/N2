@@ -2,3 +2,5 @@
 *.ipch
 *.db
 *.db
+*.tlog
+Debug/

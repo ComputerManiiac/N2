@@ -3,6 +3,7 @@
 
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
+#include "ParticleSystem.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Entity.h"

@@ -4,6 +4,8 @@
 #include "Component.h"
 #include "Vector3.h"
 
+class Entity;
+
 class RigidbodyComponent : public Component
 {
 public:

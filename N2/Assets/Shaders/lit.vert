@@ -5,8 +5,8 @@ layout(location = 0) in vec3 vertexPosition_modelspace;
 layout(location = 1) in vec3 vertexNormal_modelspace;
 layout(location = 2) in vec2 vertexTexCoord;
 layout(location = 3) in mat4 model;
-layout(location = 7) in mat4 viewMatrix;
-layout(location = 11) in mat4 projection;
+//layout(location = 7) in mat4 viewMatrix;
+//layout(location = 11) in mat4 projection;
 
 // Output data ; will be interpolated for each fragment.
 out vec3 vertexPosition_cameraspace;
@@ -14,6 +14,9 @@ out vec3 vertexNormal_cameraspace;
 out vec2 texCoord;
 out mat4 view;
 out vec4 vertexPosition_lightspace;
+
+uniform mat4 viewMatrix;
+uniform mat4 projection;
 
 uniform mat4 lightProjectionView;
 uniform bool lightEnabled;

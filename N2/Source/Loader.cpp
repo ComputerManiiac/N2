@@ -1,6 +1,6 @@
 #include "Loader.h"
 
-
+std::map<std::string, OBJInfo> Loader::cachedInfo = {};
 std::map<std::string, unsigned int> Loader::cachedTextures = {};
 
 Loader::Loader()
@@ -96,6 +96,8 @@ void Loader::loadCubemap(const std::vector<std::string>& filePaths, unsigned int
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
+	cachedTextures[filePaths[0]] = textureID;
+
 	for (unsigned int i = 0; i < 6; i++)
 	{
 
@@ -123,6 +125,14 @@ void Loader::loadCubemap(const std::vector<std::string>& filePaths, unsigned int
 // Loads a .OBJ file from a given file path and generates an OBJInfo object containing all Vertex (position,uv,normals) and Indices information.
 void Loader::loadOBJ(const std::string& filePath, OBJInfo& outInfo)
 {
+
+	if (cachedInfo.find(filePath) != cachedInfo.end())
+	{
+		outInfo = cachedInfo[filePath];
+		return;
+	}
+
+
 	std::ifstream handle(filePath);
 	if (!handle.is_open())
 	{
@@ -316,6 +326,11 @@ void Loader::loadFont(const std::string& filePath, Font& font)
 
 	std::string texturePath = splitLine(filePath, '.')[0] + ".tga";
 	loadTGA(texturePath, font.textureID);
+}
+
+std::map<std::string, unsigned int>& Loader::getCachedTextures()
+{
+	return cachedTextures;
 }
 
 float Loader::getValueFloat(const std::string& line) {

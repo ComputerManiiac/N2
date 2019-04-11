@@ -91,7 +91,8 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 		for(int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = texture(depthTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
-			if(currentDepth - 0.0001f > pcfDepth)
+//			if(currentDepth - 0.0001f > pcfDepth)
+			if(currentDepth - 0.0004f > pcfDepth)
 				shadow+=1.0;
 		}    
 	}

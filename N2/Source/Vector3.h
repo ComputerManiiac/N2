@@ -69,6 +69,7 @@ struct Vector3
 	//Throw a divide by zero exception if normalizing a zero vector
 	Vector3& Normalize( void ) throw( DivideByZero );
 	
+	std::string toString() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Vector3& rhs);
 	friend std::ostream& operator<<( std::ostream& os, Vector3& rhs); //print to ostream

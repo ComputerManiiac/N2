@@ -45,16 +45,11 @@ public:
 	~RenderComponent();
 
 
-	/* Initialized by RenderSystem*/
-	void setBufferObjects(const unsigned int& VAO, const unsigned int& VBO, const unsigned int& EBO);
 
 	/* Needed for Rendering */
 	const OBJInfo& getInfo() const;
 	const DRAW_MODE& getMode() const;
 	const Material& getMaterial() const;
-	const unsigned int& getVAO() const;
-	const unsigned int& getVBO() const;
-	const unsigned int& getEBO() const;
 	const unsigned int& getTexID() const;
 	ShaderProgram* getShader() const;
 

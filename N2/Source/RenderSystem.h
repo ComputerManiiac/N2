@@ -74,7 +74,7 @@ public:
 	void removeComp(Component* component);
 
 	
-	void renderText(const std::string& text, float xPos, float yPos, Font& font, Vector3 color = Vector3(1, 1, 1), float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
+	void renderText(const std::string& text, float xPos, float yPos, const std::string& fontName, Vector3 color = Vector3(1, 1, 1), float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
 
 	bool renderSkybox;
 
@@ -93,6 +93,8 @@ private:
 	void modifyData(const FontChar& fontChar, const int& i, const float& fontSize, std::vector<UIVertex>& vertices, std::vector<unsigned int>& indices, Vector2& cursor);
 
 
+	void updateBatchedData();
+
 	/* Temp function to debug framebuffer's texture */
 	void renderTexture(const FrameBuffer& buffer);
 
@@ -101,6 +103,7 @@ private:
 	ShaderProgram* depth;
 	ShaderProgram* lit;
 	ShaderProgram* ui;
+	
 	
 	/* Skybox */
 	RendererSkybox* skybox;
@@ -121,7 +124,6 @@ private:
 	Mtx44 lightProjectionView, lightProjection, lightView;
 
 	/* Batching */
-	unsigned int batchVBO;
 	std::map<BatchKey, Batch> batches;
 
 	std::map<ShaderProgram*, Renderer*> renderers;

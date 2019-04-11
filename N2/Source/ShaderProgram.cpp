@@ -1,5 +1,7 @@
 #include "ShaderProgram.h"
 
+
+
 ShaderProgram::ShaderProgram(std::string vertexPath, std::string fragmentPath)
 {
 
@@ -62,36 +64,36 @@ unsigned int ShaderProgram::loadAndCompile(unsigned int type, const std::string 
 	return id;
 }
 
-void ShaderProgram::setUniform(const char* name, const bool& value) const
+void ShaderProgram::setUniform(const char* name, const bool& value)
 {
 	glUniform1i(glGetUniformLocation(id, name), (int)value);
 }
-void ShaderProgram::setUniform(const char* name, const int& value) const
+void ShaderProgram::setUniform(const char* name, const int& value)
 {
 	glUniform1i(glGetUniformLocation(id, name), value);
 }
-void ShaderProgram::setUniform(const char* name, const float& value) const
+void ShaderProgram::setUniform(const char* name, const float& value)
 {
 	glUniform1f(glGetUniformLocation(id, name), value);
 }
 
-void ShaderProgram::setUniform(const char* name, const Vector3& vec) const
+void ShaderProgram::setUniform(const char* name, const Vector3& vec)
 {
 	setUniform(name, vec.x, vec.y, vec.z);
 }
 
-void ShaderProgram::setUniform(const char* name, const float& x, const float& y, const float& z) const
+void ShaderProgram::setUniform(const char* name, const float& x, const float& y, const float& z)
 {
 	glUniform3f(glGetUniformLocation(id, name), x, y, z);
 }
 
-void ShaderProgram::setUniform(const char* name, const float& x, const float& y, const float& z, const float& w) const
+void ShaderProgram::setUniform(const char* name, const float& x, const float& y, const float& z, const float& w)
 {
 	int attrid = glGetUniformLocation(id, name);
 	glUniform4f(attrid, x, y, z, w);
 }
 
-void ShaderProgram::setUniform(const char* name, const Mtx44& matrix) const
+void ShaderProgram::setUniform(const char* name, const Mtx44& matrix)
 {
 	unsigned int attrid = glGetUniformLocation(id, name);
 	glUniformMatrix4fv(attrid, 1, false, &matrix.a[0]);
@@ -106,3 +108,4 @@ const std::string& ShaderProgram::getFragmentPath() const
 {
 	return fragmentPath;
 }
+

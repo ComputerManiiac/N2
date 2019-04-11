@@ -12,11 +12,10 @@ public:
 	RendererLit();
 	~RendererLit();
 
-	void Initialize(const std::vector<LightSource*>& lightSources);
-	void Initialize(RenderComponent* render);
-	void Render(RenderComponent* render);
+	void Initialize(const BatchKey& key, Batch& batch);
 
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
+	void Deinitialize(Batch& batch);
 
 };
 

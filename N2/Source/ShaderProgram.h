@@ -19,18 +19,20 @@ public:
 	ShaderProgram(std::string vertexPath, std::string fragmentPath);
 
 	void Use();
-	void setUniform(const char* name, const bool& value) const;
-	void setUniform(const char* name, const int& value) const;
-	void setUniform(const char* name, const float& value) const;
-	void setUniform(const char* name, const float& x, const float& y, const float& z) const;
-	void setUniform(const char* name, const Vector3& vec) const;
-	void setUniform(const char* name, const float& x, const float& y, const float& z, const float& w) const;
-	void setUniform(const char* name, const Mtx44& matrix) const;
+	void setUniform(const char* name, const bool& value);
+	void setUniform(const char* name, const int& value);
+	void setUniform(const char* name, const float& value);
+	void setUniform(const char* name, const float& x, const float& y, const float& z);
+	void setUniform(const char* name, const Vector3& vec);
+	void setUniform(const char* name, const float& x, const float& y, const float& z, const float& w);
+	void setUniform(const char* name, const Mtx44& matrix);
 
 	const std::string& getVertexPath() const;
 	const std::string& getFragmentPath() const;
 
+
 private:
+
 
 	unsigned int loadAndCompile(unsigned int type, const std::string &filePath);
 	unsigned int id;

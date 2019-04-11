@@ -8,10 +8,11 @@
 
 struct VertexData {
 
-	VertexData(Mtx44 model, Mtx44 view, Mtx44 projection) : model(model), view(view), projection(projection) {}
+	VertexData(Mtx44 model): model(model){}
+	//VertexData(Mtx44 model, Mtx44 view, Mtx44 projection) : model(model), view(view), projection(projection) {}
 	Mtx44 model;
-	Mtx44 view;
-	Mtx44 projection;
+	//Mtx44 view;
+	//Mtx44 projection;
 };
 
 
@@ -48,10 +49,15 @@ struct BatchKey {
 struct Batch {
 
 	Batch(std::vector<RenderComponent*> subscribers) : subscribers(subscribers) {}
-	Batch() {}
+	Batch() : VAO(0), VBO(0), EBO(0) {}
 
+
+	unsigned int VAO;
+	unsigned int VBO;
+	unsigned int EBO;
 	std::vector<VertexData> data;
 	std::vector<RenderComponent*> subscribers;
+	OBJInfo info;
 };
 
 #endif

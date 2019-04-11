@@ -56,6 +56,7 @@ void RendererSkybox::Initialize()
 void RendererSkybox::Render(MS& modelStack)
 {
 	Camera* camera = Manager::getInstance()->getCamera();
+
 	modelStack.LoadIdentity();
 	modelStack.PushMatrix();
 	modelStack.Translate(camera->getPos());

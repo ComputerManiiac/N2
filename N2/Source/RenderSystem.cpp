@@ -22,41 +22,31 @@ RenderSystem::RenderSystem()
 RenderSystem::~RenderSystem()
 {
 
-	glDeleteBuffers(1, &batchVBO);
+	
 
-	for (RenderComponent* sub : subscribers)
+
+	/* Deinitialize batches with the appropriate render */
+	for (auto& b : batches)
 	{
-		glDeleteVertexArrays(1, &sub->getVAO());
-		glDeleteBuffers(1, &sub->getVBO());
-		glDeleteBuffers(1, &sub->getEBO());
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(3);
-		glDisableVertexAttribArray(7);
-		glDisableVertexAttribArray(11);
-
-		ColliderComponent* collider = sub->getParent()->getComponent<ColliderComponent>();
-		if (collider != nullptr)
-		{
-			glDeleteVertexArrays(1, &collider->getVAO());
-			glDeleteBuffers(1, &collider->getVBO());
-			glDeleteBuffers(1, &collider->getEBO());
-
-			glDisableVertexAttribArray(0);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(3);
-			glDisableVertexAttribArray(7);
-			glDisableVertexAttribArray(11);
-		}
+		const BatchKey& key = b.first;
+		Batch& batch = b.second;
+		renderers[key.shader]->Deinitialize(batch);
 	}
 
+	/* Free cached textures */
+	std::map<std::string, unsigned int>& cachedTextures = Loader::getCachedTextures();
+	for (auto& t : cachedTextures)
+		glDeleteTextures(1, &t.second);
 
+	/* Free renderers */
 	for (auto& r : renderers)
+	{
+		const Renderer* renderer = r.second;
 		delete r.second;
 
+	}
+
+	/* Free buffer objects for Text */
 	for (auto& m : mutatedCache)
 	{
 		const Text& t = m.second;
@@ -65,6 +55,7 @@ RenderSystem::~RenderSystem()
 		glDeleteBuffers(1, &t.EBO);
 	}
 
+	/* Free Light Sources */
 	for (LightSource* light : lightSources)
 		delete light;
 }
@@ -77,7 +68,7 @@ void RenderSystem::Initialize() {
 	Loader::loadFont("Assets\\Fonts\\sansserif2.fnt", fonts["sansserif"]);
 
 	/* Defines projection matrix for the scene */
-	projection.SetToPerspective(45.0f, (float)Application::getScreenWidth() / (float)Application::getScreenHeight(), 0.1f, 1000.0f);
+	projection.SetToPerspective(45.0f, (float)Application::getScreenWidth() / (float)Application::getScreenHeight(), 0.1f, 10000.0f);
 
 	Manager* manager = Manager::getInstance();
 	lit = manager->getShader("lit");
@@ -85,9 +76,6 @@ void RenderSystem::Initialize() {
 	ui = manager->getShader("ui");
 	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
 	ShaderProgram* grass = manager->getShader("grass");
-
-	/* Sets the default shader used by all light sources*/
-	LightSource::setShader(lit);
 
 	/* Set renderers */
 	skybox = new RendererSkybox(skyboxShader);
@@ -99,8 +87,6 @@ void RenderSystem::Initialize() {
 	/* Set up skybox */
 	skybox->Initialize();
 
-
-	glGenBuffers(1, &batchVBO);
 	BatchKey key;
 
 	/* Generates vertex arrays and buffers for each render component and populates the assigned int into them */
@@ -108,22 +94,20 @@ void RenderSystem::Initialize() {
 	{
 		ShaderProgram* componentShader = sub->getShader();
 
-		/* Generate buffers */
-		unsigned int VAO, VBO, EBO;
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
-
-		/* Update buffer object values in Render Component */
-		sub->setBufferObjects(VAO, VBO, EBO);
-
-		/* Initialize shader uniforms and layout VBO data based on the shader used to render */
-		renderers[componentShader]->Initialize(sub);
-
 		/* Add To Batch */
 		key.setAll(componentShader, sub->getTexID(), sub->getMaterial());
+
+		if (batches.find(key) == batches.end() || batches[key].info.vertices.size() == 0)
+			batches[key].info = sub->getInfo();
+
 		batches[key].subscribers.push_back(sub);
+	}
+
+	for (auto& b : batches)
+	{
+		const BatchKey& key = b.first;
+		Batch& batch = b.second;
+		renderers[key.shader]->Initialize(key, batch);
 	}
 
 	glBindVertexArray(0);
@@ -136,8 +120,10 @@ void RenderSystem::Initialize() {
 
 void RenderSystem::setupLight()
 {
+	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass") });
+
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
-	light->setDirLight(lit, Vector3(5.0f, 100.0f, 5.0f), Vector3(1, 1, 1), 1.0f);
+	light->setDirLight(lit, Vector3(2.0f, 100.0f, 2.0f), Vector3(1, 1, 1), 1.0f);
 	lightSources.push_back(light);
 
 	LightSource* light2 = new LightSource(LIGHT_POINT);
@@ -148,7 +134,7 @@ void RenderSystem::setupLight()
 	light3->setSpotLight(lit, Vector3(0.1f, 10.0, 0), Vector3(1, 1, 1), Vector3(0, -1, 0), 1.0f, 45.0f, 30.0f, 1.0f, 1.0f, 0.01f, 0.001f);
 	lightSources.push_back(light3);
 
-	lit->setUniform("numLights", (int)LightSource::getCount());
+	
 }
 
 
@@ -181,7 +167,12 @@ void RenderSystem::setupShadows()
 	lightProjection.SetToOrtho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 500.0f);
 	lightProjectionView = lightProjection * lightView;
 
+	lit->Use();
 	lit->setUniform("lightProjectionView", lightProjectionView);
+
+	ShaderProgram* grass = Manager::getInstance()->getShader("grass");
+	grass->Use();
+	grass->setUniform("lightProjectionView", lightProjectionView);
 
 	depth->Use();
 	depth->setUniform("lightProjectionView", lightProjectionView);
@@ -192,46 +183,90 @@ void RenderSystem::setupShadows()
 
 void RenderSystem::Update(double& dt)
 {
-	/* Render scene using simple depth shader to get depth map*/
-	glCullFace(GL_FRONT);
-	glViewport(0, 0, 2048, 2048);
-	shadowFBO.Bind();
-	glClear(GL_DEPTH_BUFFER_BIT);
-	renderScene(lightView, depth);
+	float renderTime = 0.0f;
+	{
+		/* Used for timing render loop */
+		PerformanceClock clock(&renderTime);
+
+		/* Update batched data once which is then reused in each renderScene pass */
+		updateBatchedData();
+
+		/* Render scene using simple depth shader to get depth map */
+		glCullFace(GL_FRONT);
+		glViewport(0, 0, 2048, 2048);
+		shadowFBO.Bind();
+		glClear(GL_DEPTH_BUFFER_BIT);
+		renderScene(lightView, depth);
 
 
-	glCullFace(GL_BACK);
-	shadowFBO.Unbind();
+		glCullFace(GL_BACK);
+		shadowFBO.Unbind();
 
-	/* Render scene normally */
-	glViewport(0, 0, Application::getScreenWidth(), Application::getScreenHeight());
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		/* Render scene normally */
+		glViewport(0, 0, Application::getScreenWidth(), Application::getScreenHeight());
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
 
-	Camera* camera = Manager::getInstance()->getCamera();
-
-	/* Skybox */
-	if (renderSkybox)
-		skybox->Render(modelStack);
+		/* Skybox */
+		if (renderSkybox)
+			skybox->Render(modelStack);
 
 
-	renderScene(camera->LookAt());
+		renderScene(Manager::getInstance()->getCamera()->LookAt());
 
+	}
+
+	std::string renderTimeString = std::to_string(renderTime);
+	renderTimeString = renderTimeString.substr(0, renderTimeString.find_first_of('.')+2 );
 
 	/* Render texts */
 	glDisable(GL_DEPTH_TEST);
-	renderText("FPS: " + std::to_string(Application::framesPerSecond), 10, 0, fonts["sansserif"], Vector3(1, 1, 0), 0.30f);
-	renderText("Regular", 0, 100, fonts["sansserif"], Vector3(0, 1, 0), 1.0f);
-	renderText("2x", 0, 200, fonts["sansserif"], Vector3(0, 1, 0), 2.0f);
-	renderText("4x", 0, 300, fonts["sansserif"], Vector3(0, 1, 0), 4.0f);
+	renderText("FPS: " + std::to_string(Application::framesPerSecond), 10, 0, "sansserif", Vector3(1, 1, 0), 0.30f);
+	renderText("Draw Calls: " + std::to_string(batches.size() * 2), 10, 30, "sansserif", Vector3(1, 0, 1), 0.30f);
+	renderText("Object Count: " + std::to_string(subscribers.size()), 10, 60, "sansserif", Vector3(0, 1, 0), 0.30f);
+	renderText("Render Loop: " + renderTimeString + "ms", 10, 90, "sansserif", Vector3(1, 0, 0), 0.28f);
 	renderTexts();
 	glEnable(GL_DEPTH_TEST);
 }
 
+void RenderSystem::updateBatchedData()
+{
+	for (auto& b : batches)
+	{
+		const BatchKey& key = b.first;
+		Batch& batch = b.second;
+
+		std::vector<Mtx44> modelMatrices;
+
+		batch.data.clear();
+		batch.data.reserve(batch.subscribers.size());
+
+		for (RenderComponent* sub : batch.subscribers)
+		{
+			modelStack.PushMatrix();
+			TransformComponent* transform = sub->getParent()->getComponent<TransformComponent>();
+			modelStack.Translate(transform->getPos());
+			modelStack.Rotate(transform->getRot());
+			modelStack.Scale(transform->getScale());
+
+			/* Update MVP */
+			modelMatrices.push_back(modelStack.Top());
+			batch.data.emplace_back(modelStack.Top());
+			//batch.data.emplace_back(modelStack.Top(), Manager::getInstance()->getCamera()->LookAt(), projection);
+
+			modelStack.PopMatrix();
+		}
+
+		/* Update model info for each batch for the shadow renderer */
+		static_cast<RendererShadow*>(renderers[depth])->setModelMatricesForBatch(&batch, modelMatrices);
+	}
+}
+
 void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 {
+	lit->Use();
 	modelStack.LoadIdentity();
 
 	/* Renders all objects in batches */
@@ -283,9 +318,11 @@ void RenderSystem::renderTexture(const FrameBuffer& buffer)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RenderSystem::renderText(const std::string& text, float xPos, float yPos, Font & font, Vector3 color, float fontSize, TextAlignment align)
+void RenderSystem::renderText(const std::string& text, float xPos, float yPos, const std::string& fontName, Vector3 color, float fontSize, TextAlignment align)
 {
 	++textUID;
+
+	Font& font = fonts[fontName];
 
 	UIVertex vertex;
 	Vector2 cursor(xPos, yPos);

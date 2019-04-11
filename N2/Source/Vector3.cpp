@@ -10,6 +10,7 @@ Struct to define a 3D vector
 #include <cmath>
 #include "Vector3.h"
 #include "Mtx44.h"
+#include <string>
 
 bool Vector3::IsEqual(float a, float b) const
 {
@@ -427,6 +428,11 @@ Vector3& Vector3::Normalize( void ) throw( DivideByZero )
 	if(z != 0)
 		z /= d;
 	return *this;
+}
+
+std::string Vector3::toString() const
+{
+	return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z);
 }
 
 std::ostream& operator<< (std::ostream& os, Vector3& rhs)

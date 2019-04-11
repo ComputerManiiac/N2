@@ -11,13 +11,12 @@ public:
 	RendererShadow();
 	~RendererShadow();
 
-	void Initialize(RenderComponent* render);
-	void Render(RenderComponent* render);
-
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 
+	void setModelMatricesForBatch(Batch* batch, const std::vector<Mtx44>& modelMatrices);
+
 private:
-	std::vector<Mtx44> modelMatrices;
+	std::map<Batch*, std::vector<Mtx44>> data;
 };
 
 #endif

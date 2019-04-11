@@ -157,10 +157,12 @@ void main(){
 //			color += ambient + diffuse + specular;
 		}
 
-		if(materialColor.a < 0.1)
-			discard;
 		color.a =  materialColor.a;
-
+				
+		if(color.a == 0 || color.xyz == 0)
+			discard;
+//		if(texCoord.y > 0.5)
+//			color = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 	else
 	{

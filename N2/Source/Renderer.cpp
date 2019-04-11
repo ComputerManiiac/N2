@@ -5,7 +5,7 @@ Renderer::Renderer(ShaderProgram* shader, bool isBatched) : shader(shader), isBa
 {
 	projection = Manager::getInstance()->getSystem<RenderSystem>()->getProjectionMatrix();
 
-	if(isBatched)
+	if (isBatched)
 		glGenBuffers(1, &batchVBO);
 }
 
@@ -13,21 +13,24 @@ Renderer::Renderer() {}
 
 Renderer::~Renderer()
 {
-	if(!isBatched)
-		glDeleteBuffers(1, &batchVBO);
-}
-
-void Renderer::Initialize(RenderComponent* render)
-{
 
 }
 
-void Renderer::Render(RenderComponent* render)
+void Renderer::Initialize(const BatchKey& key, Batch& batch)
 {
 
+	glGenVertexArrays(1, &batch.VAO);
+	glGenBuffers(1, &batch.VBO);
+	glGenBuffers(1, &batch.EBO);
 }
 
 void Renderer::Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view)
 {
 
+}
+
+void Renderer::Deinitialize(Batch& batch)
+{
+	if (isBatched)
+		glDeleteBuffers(1, &batchVBO);
 }

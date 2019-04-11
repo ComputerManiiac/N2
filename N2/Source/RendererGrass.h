@@ -7,16 +7,17 @@ class RendererGrass : public Renderer
 {
 public:
 
-	RendererGrass(ShaderProgram* shader) : Renderer(shader) {}
+	RendererGrass(ShaderProgram* shader);
 	RendererGrass();
 	~RendererGrass();
 
-	void Initialize(RenderComponent* render);
-	void Render(RenderComponent* render);
-
+	void Initialize(const BatchKey& key, Batch& batch);
+	void Initialize(const std::vector<LightSource*>& lightSources);
+	void Deinitialize(Batch& batch);
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 
-
+private:
+	unsigned int grassWindTexture;
 };
 
 #endif

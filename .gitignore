@@ -3,4 +3,5 @@
 *.db
 *.db
 *.tlog
-Debug/
+
+N2/Debug/

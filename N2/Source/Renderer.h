@@ -21,7 +21,7 @@ public:
 
 protected:
 	ShaderProgram* shader;
-	unsigned int batchVBO;
+	unsigned int instancedVBO;
 	bool isBatched;
 	Mtx44 projection;
 };

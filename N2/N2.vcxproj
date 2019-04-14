@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\BatchData.cpp" />
     <ClCompile Include="Source\RendererParticle.cpp" />
     <ClCompile Include="Source\ParticleComponent.cpp" />
     <ClCompile Include="Source\ParticleSystem.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Source\UIComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\BatchData.h" />
     <ClInclude Include="Source\RendererParticle.h" />
     <ClInclude Include="Source\ParticleComponent.h" />
     <ClInclude Include="Source\ParticleSystem.h" />

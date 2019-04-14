@@ -63,7 +63,7 @@ void RendererLit::Render(Batch& batch, const unsigned int& textureID, MS& modelS
 	shader->setUniform("viewMatrix", Manager::getInstance()->getCamera()->LookAt());
 
 	glBindVertexArray(batch.VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
 
 	GLsizei offset = 0;
 	for (unsigned int i = 3; i <= 6; ++i)

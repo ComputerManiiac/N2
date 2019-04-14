@@ -12,6 +12,7 @@
 
 
 
+
 RenderSystem::RenderSystem()
 {
 
@@ -76,6 +77,7 @@ void RenderSystem::Initialize() {
 	ui = manager->getShader("ui");
 	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
 	ShaderProgram* grass = manager->getShader("grass");
+	ShaderProgram* particleShader = manager->getShader("particle");
 
 	/* Set renderers */
 	skybox = new RendererSkybox(skyboxShader);
@@ -83,6 +85,10 @@ void RenderSystem::Initialize() {
 	renderers[grass] = new RendererGrass(grass);
 	renderers[lit] = new RendererLit(lit);
 	renderers[depth] = new RendererShadow(depth);
+
+	particle = new RendererParticle(particleShader);
+	renderers[particleShader] = particle;
+	particle->Initialize();
 
 	/* Set up skybox */
 	skybox->Initialize();

@@ -87,7 +87,7 @@ void RendererGrass::Render(Batch& batch, const unsigned int& textureID, MS& mode
 	glDepthFunc(GL_LESS);
 
 	glBindVertexArray(batch.VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
 
 	GLsizei offset = 0;
 	for (unsigned int i = 3; i <= 6; ++i)

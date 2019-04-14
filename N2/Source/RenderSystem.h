@@ -47,6 +47,7 @@
 #include "Text.h"
 #include "Renderer.h"
 #include "RendererSkybox.h"
+#include "RendererParticle.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -101,6 +102,8 @@ private:
 	ShaderProgram* ui;
 	
 	
+	RendererParticle* particle;
+
 	/* Skybox */
 	RendererSkybox* skybox;
 	

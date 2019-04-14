@@ -13,6 +13,11 @@ RendererParticle::~RendererParticle()
 {
 }
 
+void RendererParticle::Initialize()
+{
+
+}
+
 void RendererParticle::Initialize(const BatchKey & key, Batch & batch)
 {
 }

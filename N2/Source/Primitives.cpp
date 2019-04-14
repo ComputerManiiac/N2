@@ -269,7 +269,7 @@ void Primitives::generateQuad(OBJInfo& info)
 {
 	std::vector<Vertex>& vertices = info.vertices;
 
-	float length = 2.0f;
+	float length = 1.0f;
 	float halfLength = 0.5f * length;
 
 	Vertex v;

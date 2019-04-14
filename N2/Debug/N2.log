@@ -1,32 +1,10 @@
-﻿  RendererParticle.cpp
-  ParticleComponent.cpp
+﻿  Entity.cpp
   ParticleSystem.cpp
-d:\programming\c++\n2\n2\source\particlesystem.cpp(25): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-d:\programming\c++\n2\n2\source\particlesystem.cpp(52): warning C4018: '<': signed/unsigned mismatch
-d:\programming\c++\n2\n2\source\particlesystem.cpp(55): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\particlesystem.cpp(56): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-  RendererSkybox.cpp
-  Renderer.cpp
-  RendererGrass.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-  RendererShadow.cpp
-  RendererLit.cpp
-  Entity.cpp
-  RenderSystem.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-d:\programming\c++\n2\n2\source\rendersystem.cpp(379): warning C4018: '<': signed/unsigned mismatch
-  Manager.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-d:\programming\c++\n2\n2\source\manager.cpp(114): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\manager.cpp(119): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\manager.cpp(124): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\manager.cpp(129): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Application.cpp
+d:\programming\c++\n2\n2\source\particlesystem.cpp(77): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+d:\programming\c++\n2\n2\source\particlesystem.cpp(106): warning C4018: '<': signed/unsigned mismatch
+d:\programming\c++\n2\n2\source\particlesystem.cpp(111): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+d:\programming\c++\n2\n2\source\particlesystem.cpp(140): warning C4018: '<': signed/unsigned mismatch
+d:\programming\c++\n2\n2\source\particlesystem.cpp(270): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+d:\programming\c++\n2\n2\source\particlesystem.cpp(271): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   Generating Code...
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'D:\Programming\C++\N2\Debug\vc120.pdb'; linking object as if no debug info
   N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe

@@ -11,6 +11,7 @@ public:
 	RendererParticle();
 	~RendererParticle();
 
+	void Initialize();
 	void Initialize(const BatchKey& key, Batch& batch);
 
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);

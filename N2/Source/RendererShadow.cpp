@@ -25,7 +25,7 @@ void RendererShadow::Render(Batch& batch, const unsigned int& textureID, MS& mod
 	const std::vector<Mtx44>& modelMatrices = data[&batch];
 
 	glBindVertexArray(batch.VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
 
 	GLsizei offset = 0;
 	for (unsigned int i = 3; i <= 6; ++i)

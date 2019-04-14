@@ -5,7 +5,7 @@ ParticleComponent::ParticleComponent(Entity* parent, bool emitting, float lifeTi
 	: Component("Particle Emitter", parent), emitting(emitting), lifeTime(lifeTime), initialVelocity(initialVelocity), particleSpawnTimer(0)
 {
 	particleSpawnRate = 1.0f / particlesPerSecond;
-	position.Set(1, 2, 3);
+	position.Set(0, 2, 0);
 	colour.Set(1, 0, 1);
 }
 

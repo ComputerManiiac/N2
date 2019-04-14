@@ -31,7 +31,8 @@ Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 sca
 	addComponent(contiguous.Allocate<RigidbodyComponent>(this, 2.0f));
 
 	if(name != "ground")
-		addComponent(contiguous.Allocate<ParticleComponent>(this, true, 8.0f, 0.25f, Vector3(1, 0, 1)));
+		//addComponent(contiguous.Allocate<ParticleComponent>(this, true, 3.0f, 1.0f, Vector3(0, 0, 0)));
+		addComponent(contiguous.Allocate<ParticleComponent>(this, true, 1.0f, 2.0f, Vector3(0,0,0)));
 	//addComponent(contiguous.Allocate<ParticleComponent>(this));
 
 	Manager* manager = Manager::getInstance();

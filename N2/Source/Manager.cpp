@@ -40,6 +40,7 @@ void Manager::Initialize()
 	shaders.try_emplace("ui", "Assets\\Shaders\\ui.vert", "Assets\\Shaders\\ui.frag");
 	shaders.try_emplace("skybox", "Assets\\Shaders\\skybox.vert", "Assets\\Shaders\\skybox.frag");
 	shaders.try_emplace("grass", "Assets\\Shaders\\grass.vert", "Assets\\Shaders\\grass.frag");
+	shaders.try_emplace("particle", "Assets\\Shaders\\particle.vert", "Assets\\Shaders\\particle.frag");
 
 	registerSystem<RenderSystem>(); 
 	registerSystem<PhysicsSystem>();
@@ -65,7 +66,7 @@ void Manager::Initialize()
 	//
 
 	/*entities["car"] = new Entity("car", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
-	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 5.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 	
 	//for (int x = 0; x < 10; x++)
 	//{
@@ -79,12 +80,14 @@ void Manager::Initialize()
 	//	offsetX += 0.6f;
 	//}
 
-	for (auto& system : systems) {
-		system.second->Initialize();
-	}
+	//for (auto& system : systems) {
+	//	system.second->Initialize();
+	//}
 
 
-
+	getSystem<RenderSystem>()->Initialize();
+	getSystem<ParticleSystem>()->Initialize();
+	getSystem<PhysicsSystem>()->Initialize();
 
 
 }
@@ -103,8 +106,8 @@ ShaderProgram* Manager::getShader(const std::string& name)
 void Manager::Update(double dt)
 {
 	TransformComponent* transform = entities["sphere"]->getComponent<TransformComponent>();
-	shaders["grass"].Use();
-	shaders["grass"].setUniform("objPosition", transform->getPos());
+	//shaders["grass"].Use();
+	//shaders["grass"].setUniform("objPosition", transform->getPos());
 
 
 	transform = entities["sphere"]->getComponent<TransformComponent>();

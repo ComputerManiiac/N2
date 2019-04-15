@@ -244,13 +244,14 @@ void RenderSystem::updateBatchedData()
 		const BatchKey& key = b.first;
 		Batch& batch = b.second;
 
-		std::vector<Mtx44> modelMatrices;
 
-		batch.data.clear();
-		batch.data.reserve(batch.subscribers.size());
+		//batch.data.clear();
+		//batch.data.reserve(batch.subscribers.size());
 
-		for (RenderComponent* sub : batch.subscribers)
+		for(int i = 0; i < (int) batch.subscribers.size(); i++)
+		//for (RenderComponent* sub : batch.subscribers)
 		{
+			RenderComponent* sub = batch.subscribers[i];
 			modelStack.PushMatrix();
 			TransformComponent* transform = sub->getParent()->getComponent<TransformComponent>();
 			modelStack.Translate(transform->getPos());
@@ -258,15 +259,24 @@ void RenderSystem::updateBatchedData()
 			modelStack.Scale(transform->getScale());
 
 			/* Update MVP */
-			modelMatrices.push_back(modelStack.Top());
-			batch.data.emplace_back(modelStack.Top());
+			if (i < batch.modelMatrices.size())
+				batch.modelMatrices[i] = modelStack.Top();
+			else
+				batch.modelMatrices.push_back(modelStack.Top());
+
+			if (i < batch.data.size())
+				batch.data[i].model = modelStack.Top();
+			else
+				batch.data.emplace_back(modelStack.Top());
+/*
+			batch.data.emplace_back(modelStack.Top());*/
 			//batch.data.emplace_back(modelStack.Top(), Manager::getInstance()->getCamera()->LookAt(), projection);
 
 			modelStack.PopMatrix();
 		}
 
 		/* Update model info for each batch for the shadow renderer */
-		static_cast<RendererShadow*>(renderers[depth])->setModelMatricesForBatch(&batch, modelMatrices);
+		static_cast<RendererShadow*>(renderers[depth])->setModelMatricesForBatch(&batch, batch.modelMatrices);
 	}
 }
 

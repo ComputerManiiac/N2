@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include "Primitives.h"
 #include "MatrixStack.h"
+#include "Application.h"
 #include "Manager.h"
 #include "Loader.h"
 #include <stdlib.h>
@@ -59,6 +60,8 @@ bool sortParticlePointers(Particle* a, Particle* b)
 
 void ParticleSystem::Update(double& dt)
 {
+	//if (Application::isKeyPressDown(GLFW_KEY_N))
+	//	std::cout << randomPointInSphere(, 5.0f) << std::endl;
 
 	ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
 	emitterShader->Use();
@@ -86,10 +89,7 @@ void ParticleSystem::Update(double& dt)
 				std::cout << "[Error] No free particles although particle count is not maxed?" << std::endl;
 
 			Particle& newParticle = particleCollection[index];
-			newParticle.setDefault(emitter);
-			newParticle.position.x += randomFloat(-1.0f, 1.0f);
-			newParticle.position.y += randomFloat(-1.0f, 1.0f);
-			newParticle.position.z += randomFloat(-1.0f, 1.0f);
+			initializeParticle(emitter, newParticle);
 			particles.push_back(&newParticle);
 			
 
@@ -106,8 +106,11 @@ void ParticleSystem::Update(double& dt)
 		for(int i = 0; i < particles.size(); i++)
 		{
 			Particle* particle = particles[i];
-			//particle->velocity.y -= 9.8f * dt;
-			//particle->position += particle->velocity * dt;
+			if (emitter->getType() != EMITTER_RANDOM_SPHERE) {
+				particle->velocity.y -= 9.8f * dt;
+			}
+			particle->position += particle->velocity * dt;
+
 			particle->lifeTime -= dt;
 			particle->cameraDist = (cameraPos - particle->position).LengthSquared();
 
@@ -259,6 +262,22 @@ Mtx44 ParticleSystem::removeRotationFromModel(const Mtx44& viewMatrix, const Mtx
 	return billboard;
 }
 
+void ParticleSystem::initializeParticle(const ParticleComponent* emitter, Particle & particle)
+{
+	particle.active = true;
+	particle.position = emitter->getPosition();
+
+	if (emitter->getType() == EMITTER_RANDOM_SPHERE) {
+		particle.velocity = randomPointInSphere(1.0);
+	}
+
+
+
+	particle.velocity = emitter->getInitialVelocity();
+	particle.colour = emitter->getColour();
+	particle.lifeTime = emitter->getLifeTime();
+}
+
 
 void ParticleSystem::updateTexture(const Particle& particle)
 {
@@ -276,8 +295,42 @@ void ParticleSystem::setTextureOffset(Vector2 & textureOffset, const int & index
 
 float ParticleSystem::randomFloat(float a, float b)
 {
-	float random = ((float)rand()) / (float)RAND_MAX;
-	float diff = b - a;
-	float r = random * diff;
-	return a + r;
+	return a + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (b - a)));
 }
+
+float ParticleSystem::randomFloat(float a) {
+	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX / a);
+}
+
+Vector3 ParticleSystem::randomPointInSphere(const float& radius) {
+
+	Vector3 newPosition;
+	float d = 0.0f;
+	float rSquared = radius * radius;
+	do {
+		newPosition.x = randomFloat(-radius, radius);
+		newPosition.y = randomFloat(-radius, radius);
+		newPosition.z = randomFloat(-radius, radius);
+		d = pow(newPosition.x, 2) + pow(newPosition.y, 2) + pow(newPosition.z, 2);
+	} while (d > rSquared);
+
+
+	return newPosition;
+}
+
+Vector3 ParticleSystem::randomPointInCone(const Vector3 & coneRotation, const float & coneWidthAngle, const float & radius)
+{
+	Vector3 newPosition;
+	float halfAngle = coneWidthAngle * 0.5f;
+	float randAngle = randomFloat(-halfAngle, halfAngle);
+	float randLength = randomFloat(radius);
+
+	newPosition.x = randLength * Math::DegreeToRadian(randAngle);
+	newPosition.z = randLength;
+
+	newPosition.Rotate(coneRotation);
+
+	return newPosition;
+}
+
+

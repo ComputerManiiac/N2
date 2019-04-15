@@ -8,11 +8,18 @@
 
 //class Entity;
 
+enum EmitterType {
+	EMITTER_STREAM_SPHERE,
+	EMITTER_STREAM_LINE,
+	EMITTER_STREAM_CONE,
+	EMITTER_RANDOM_SPHERE,
+};
+
 class ParticleComponent : public Component
 {
 public:
 
-	ParticleComponent(Entity* parent, bool emitting, float lifeTime, float particlesPerSecond, Vector3 initialVelocity);
+	ParticleComponent(Entity* parent, EmitterType type, bool emitting, float lifeTime, float particlesPerSecond, Vector3 initialVelocity);
 	ParticleComponent(Entity* parent);
 	ParticleComponent();
 	~ParticleComponent();
@@ -30,15 +37,17 @@ public:
 	const Vector3& getColour() const;
 	const float& getLifeTime() const;
 
+	const EmitterType& getType() const;
+
 private:
+	EmitterType type;
 	bool emitting;
 
 	/* How many seconds for each particle */
 	float particleSpawnRate;
 	/* Timer for when a particle should spawn */
-
 	float particleSpawnTimer;
-
+	
 	Vector3 position;
 	Vector3 colour;
 	float lifeTime;
@@ -51,15 +60,6 @@ struct Particle {
 	Particle(Vector3 position, Vector3 velocity, Vector3 colour) : position(position), velocity(velocity), colour(colour) {}
 	Particle() : active(false), lifeTime(0.0f) {}
 
-	void setDefault(ParticleComponent* emitter)
-	{
-		active = true;
-		this->position = emitter->getPosition();
-		/*this->position = emitter->getParent()->getComponent<TransformComponent>()->getPos();*/
-		this->velocity = emitter->getInitialVelocity();
-		this->colour = emitter->getColour();
-		this->lifeTime = emitter->getLifeTime();
-	}
 
 	bool operator < (const Particle& other) const
 	{

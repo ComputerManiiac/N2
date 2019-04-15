@@ -57,6 +57,7 @@ struct Batch {
 	unsigned int EBO;
 	std::vector<VertexData> data;
 	std::vector<RenderComponent*> subscribers;
+	std::vector<Mtx44> modelMatrices;
 	OBJInfo info;
 };
 

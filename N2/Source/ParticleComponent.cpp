@@ -1,11 +1,12 @@
 #include "ParticleComponent.h"
 #include "Entity.h"
 
-ParticleComponent::ParticleComponent(Entity* parent, bool emitting, float lifeTime, float particlesPerSecond, Vector3 initialVelocity)
-	: Component("Particle Emitter", parent), emitting(emitting), lifeTime(lifeTime), initialVelocity(initialVelocity), particleSpawnTimer(0)
+
+ParticleComponent::ParticleComponent(Entity* parent, EmitterType type, bool emitting, float lifeTime, float particlesPerSecond, Vector3 initialVelocity)
+	: Component("Particle Emitter", parent), type(type), emitting(emitting), lifeTime(lifeTime), initialVelocity(initialVelocity), particleSpawnTimer(0)
 {
 	particleSpawnRate = 1.0f / particlesPerSecond;
-	position.Set(0, 2, 0);
+	position = getParent()->getComponent<TransformComponent>()->getPos();
 	colour.Set(1, 0, 1);
 }
 
@@ -70,3 +71,9 @@ const float& ParticleComponent::getLifeTime() const
 {
 	return lifeTime;
 }
+
+const EmitterType & ParticleComponent::getType() const
+{
+	return type;
+}
+

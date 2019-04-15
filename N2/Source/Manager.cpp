@@ -49,13 +49,13 @@ void Manager::Initialize()
 
 	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0,0,0), Vector3(100,1,100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
 	
-
+	
 	//float offsetX = 2.0f;
 
-	//for (int x = 0; x < 10; x++)
+	//for (int x = 0; x < 50; x++)
 	//{
 	//	float offsetZ = 5.0f;
-	//	for (int z = 0; z < 10; z++)
+	//	for (int z = 0; z < 100; z++)
 	//	{
 	//		std::string name = "grass" + std::to_string(x) + "-" + std::to_string(z);
 	//		entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
@@ -63,26 +63,11 @@ void Manager::Initialize()
 	//	}
 	//	offsetX += 0.6f;
 	//}
-	//
+	
 
 	/*entities["car"] = new Entity("car", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
-	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 5.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
-	
-	//for (int x = 0; x < 10; x++)
-	//{
-	//	float offsetZ = 5.0f;
-	//	for (int z = 0; z < 10; z++)
-	//	{
-	//		std::string name = "balls" + std::to_string(x) + "-" + std::to_string(z);
-	//		entities[name] = new Entity(name, Vector3(offsetX, 5.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], false, "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
-	//		offsetZ += 0.4f;
-	//	}
-	//	offsetX += 0.6f;
-	//}
-
-	//for (auto& system : systems) {
-	//	system.second->Initialize();
-	//}
+	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 5.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 
 
 	getSystem<RenderSystem>()->Initialize();
@@ -106,8 +91,8 @@ ShaderProgram* Manager::getShader(const std::string& name)
 void Manager::Update(double dt)
 {
 	TransformComponent* transform = entities["sphere"]->getComponent<TransformComponent>();
-	//shaders["grass"].Use();
-	//shaders["grass"].setUniform("objPosition", transform->getPos());
+	shaders["grass"].Use();
+	shaders["grass"].setUniform("objPosition", transform->getPos());
 
 
 	transform = entities["sphere"]->getComponent<TransformComponent>();

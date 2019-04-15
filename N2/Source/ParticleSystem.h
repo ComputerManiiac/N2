@@ -3,6 +3,7 @@
 
 #include "System.h"
 #include "ParticleComponent.h"
+#include "MatrixStack.h"
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -53,8 +54,10 @@ private:
 	float randomFloat(float a, float b);
 	float randomFloat(float a);
 	Vector3 randomPointInSphere(const float& radius);
-	Vector3 randomPointInCone(const Vector3& coneRotation, const float& coneWidthAngle, const float& radius);
+	Vector3 randomPointInCone(const Vector3& coneRotation, const float& coneWidthAngle);
+	Vector3 randomPointInCircle(const float& radius);
 
+	MS modelStack;
 	unsigned int textureID;
 	unsigned int emitterVAO;
 	unsigned int emitterVBO;

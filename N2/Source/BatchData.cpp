@@ -1,6 +1,5 @@
 #include "BatchData.h"
 
-BatchData::BatchData(Mtx44 model) : model(model){}
 
 
 BatchData::BatchData()
@@ -12,7 +11,7 @@ BatchData::~BatchData()
 {
 }
 
-void BatchData::setModel(const Mtx44& model)
+std::vector<Mtx44>& BatchData::getModelMatrices()
 {
-	this->model = model;
+	return modelMatrices;
 }

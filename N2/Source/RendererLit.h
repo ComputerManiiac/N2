@@ -17,6 +17,8 @@ public:
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 	void Deinitialize(Batch& batch);
 
+
+
 };
 
 #endif

@@ -2,18 +2,20 @@
 #define BATCHDATA_H
 
 #include "Mtx44.h"
+#include <vector>
 
 class BatchData
 {
 public:
-	BatchData(Mtx44 model);
+
 	BatchData();
 	~BatchData();
 
-	void setModel(const Mtx44& model);
+	std::vector<Mtx44>& getModelMatrices();
+
 
 private:
-	Mtx44 model;
+	std::vector<Mtx44> modelMatrices;
 };
 
 #endif

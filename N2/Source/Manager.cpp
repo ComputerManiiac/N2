@@ -67,7 +67,7 @@ void Manager::Initialize()
 
 	/*entities["car"] = new Entity("car", Vector3(0.f, 3.f, 0.f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\devastator.obj", "Assets\\Textures\\devastator.tga");*/
 	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
-	entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 5.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 2.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 
 
 	getSystem<RenderSystem>()->Initialize();

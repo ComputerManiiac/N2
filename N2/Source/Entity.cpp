@@ -32,7 +32,7 @@ Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 sca
 
 	if(name == "particleSphere")
 		//addComponent(contiguous.Allocate<ParticleComponent>(this, true, 3.0f, 1.0f, Vector3(0, 0, 0)));
-		addComponent(contiguous.Allocate<ParticleComponent>(this, EMITTER_RANDOM_SPHERE, true, 1.0f, 2.0f, Vector3(0,0,0)));
+		addComponent(contiguous.Allocate<ParticleComponent>(this, EMITTER_CONE, true, 1.0f, 8.0f, Vector3(0,0,0)));
 	//addComponent(contiguous.Allocate<ParticleComponent>(this));
 
 	Manager* manager = Manager::getInstance();

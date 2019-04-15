@@ -9,10 +9,10 @@
 //class Entity;
 
 enum EmitterType {
-	EMITTER_STREAM_SPHERE,
-	EMITTER_STREAM_LINE,
-	EMITTER_STREAM_CONE,
-	EMITTER_RANDOM_SPHERE,
+	EMITTER_SPHERE,
+	EMITTER_LINE,
+	EMITTER_CONE,
+	EMITTER_CYLINDER,
 };
 
 class ParticleComponent : public Component

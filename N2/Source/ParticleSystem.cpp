@@ -1,7 +1,7 @@
 #include "ParticleSystem.h"
 #include <GL\glew.h>
 #include "Primitives.h"
-#include "MatrixStack.h"
+
 #include "Application.h"
 #include "Manager.h"
 #include "Loader.h"
@@ -72,10 +72,12 @@ void ParticleSystem::Update(double& dt)
 	
 	const Vector3& cameraPos = camera->getPos();
 
+	modelStack.LoadIdentity();
+
+	glDepthMask(GL_FALSE);
 	for (ParticleComponent* emitter : subscribers)
 	{
 		std::vector<ParticleData>& particleData = data[emitter];
-		MS modelStack;
 		std::vector<Particle*>& particles = emitterCollection[emitter];
 		const float& spawnTimer = emitter->getSpawnTimer() - dt;
 
@@ -91,8 +93,6 @@ void ParticleSystem::Update(double& dt)
 			Particle& newParticle = particleCollection[index];
 			initializeParticle(emitter, newParticle);
 			particles.push_back(&newParticle);
-			
-
 			emitter->setSpawnTimer(emitter->getSpawnRate());
 		}
 		else
@@ -100,15 +100,13 @@ void ParticleSystem::Update(double& dt)
 			emitter->setSpawnTimer(spawnTimer);
 		}
 
+
 		std::sort(particles.begin(), particles.end(), sortParticlePointers);
 
-		/* Update Particles */
+		/* Update Particle Data for Rendering */
 		for(int i = 0; i < particles.size(); i++)
 		{
 			Particle* particle = particles[i];
-			if (emitter->getType() != EMITTER_RANDOM_SPHERE) {
-				particle->velocity.y -= 9.8f * dt;
-			}
 			particle->position += particle->velocity * dt;
 
 			particle->lifeTime -= dt;
@@ -145,8 +143,6 @@ void ParticleSystem::Update(double& dt)
 			else
 				particleData.emplace_back(model, textureCurrent, textureNext, blend);
 
-			
-
 			modelStack.PopMatrix();
 		}
 
@@ -181,13 +177,13 @@ void ParticleSystem::Update(double& dt)
 
 		if (particleData.size() > 0)
 		{
+
 			glBufferData(GL_ARRAY_BUFFER, particleData.size() * sizeof(ParticleData), &particleData.at(0), GL_STATIC_DRAW);
 			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particles.size());
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-
-
+	glDepthMask(GL_TRUE);
 
 
 }
@@ -197,7 +193,6 @@ void ParticleSystem::Update(double& dt)
 
 int ParticleSystem::findFreeParticleIndex()
 {
-	std::cout << "Last Used Particle: " << lastUsedParticle << std::endl;
 
 	/* Find an inactive particle from the position of the last used particle to the end of the container */
 	for (int i = lastUsedParticle + 1; i < PARTICLE_MAX; i++)
@@ -226,25 +221,6 @@ int ParticleSystem::findFreeParticleIndex()
 }
 
 
-void ParticleSystem::registerComp(Component* component)
-{
-	ParticleComponent* particle = static_cast<ParticleComponent*>(component);
-	if (particle == nullptr) return;
-	subscribers.push_back(particle);
-}
-
-void ParticleSystem::removeComp(Component* component)
-{
-	ParticleComponent* particle = static_cast<ParticleComponent*>(component);
-	if (particle == nullptr) return;
-	subscribers.erase(std::remove(subscribers.begin(), subscribers.end(), particle));
-}
-
-const std::vector<Particle*>& ParticleSystem::getParticlesFromEmitter(ParticleComponent* emitter)
-{
-	return emitterCollection[emitter];
-}
-
 Mtx44 ParticleSystem::removeRotationFromModel(const Mtx44& viewMatrix, const Mtx44& other)
 {
 	Mtx44 billboard = other;
@@ -267,22 +243,26 @@ void ParticleSystem::initializeParticle(const ParticleComponent* emitter, Partic
 	particle.active = true;
 	particle.position = emitter->getPosition();
 
-	if (emitter->getType() == EMITTER_RANDOM_SPHERE) {
+	if (emitter->getType() == EMITTER_SPHERE)
+	{
 		particle.velocity = randomPointInSphere(1.0);
 	}
+	else if (emitter->getType() == EMITTER_CONE)
+	{
+		particle.velocity = randomPointInCone(Vector3(0, 0, 0), 60.0f);
+	}
+	else if (emitter->getType() == EMITTER_CYLINDER)
+	{
+		particle.position += randomPointInCircle(0.5f);
+		particle.velocity.Set(0.0f, 0.0f, 1.0f);
+	}
 
-
-
-	particle.velocity = emitter->getInitialVelocity();
 	particle.colour = emitter->getColour();
 	particle.lifeTime = emitter->getLifeTime();
 }
 
 
-void ParticleSystem::updateTexture(const Particle& particle)
-{
-	
-}
+
 
 void ParticleSystem::setTextureOffset(Vector2 & textureOffset, const int & index)
 {
@@ -315,22 +295,56 @@ Vector3 ParticleSystem::randomPointInSphere(const float& radius) {
 	} while (d > rSquared);
 
 
-	return newPosition;
+	return newPosition.Normalized();
 }
 
-Vector3 ParticleSystem::randomPointInCone(const Vector3 & coneRotation, const float & coneWidthAngle, const float & radius)
+Vector3 ParticleSystem::randomPointInCone(const Vector3& coneRotation, const float& coneWidthAngle)
 {
 	Vector3 newPosition;
 	float halfAngle = coneWidthAngle * 0.5f;
 	float randAngle = randomFloat(-halfAngle, halfAngle);
-	float randLength = randomFloat(radius);
 
-	newPosition.x = randLength * Math::DegreeToRadian(randAngle);
-	newPosition.z = randLength;
+	newPosition.x = Math::DegreeToRadian(randAngle);
+	newPosition.z = 1.0f;
 
 	newPosition.Rotate(coneRotation);
+
+	return newPosition.Normalized();
+}
+
+Vector3 ParticleSystem::randomPointInCircle(const float& radius)
+{
+	Vector3 newPosition;
+	
+	float randAngle = randomFloat(-Math::PI / 2.0f, Math::PI / 2.0f);
+	float randLength = randomFloat(radius);
+
+	newPosition.y = randLength * sin(randAngle);
+	newPosition.x = randLength * cos(randAngle);
 
 	return newPosition;
 }
 
+void ParticleSystem::registerComp(Component* component)
+{
+	ParticleComponent* particle = static_cast<ParticleComponent*>(component);
+	if (particle == nullptr) return;
+	subscribers.push_back(particle);
+}
 
+void ParticleSystem::removeComp(Component* component)
+{
+	ParticleComponent* particle = static_cast<ParticleComponent*>(component);
+	if (particle == nullptr) return;
+	subscribers.erase(std::remove(subscribers.begin(), subscribers.end(), particle));
+}
+
+const std::vector<Particle*>& ParticleSystem::getParticlesFromEmitter(ParticleComponent* emitter)
+{
+	return emitterCollection[emitter];
+}
+
+void ParticleSystem::updateTexture(const Particle& particle)
+{
+
+}

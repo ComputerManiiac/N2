@@ -18,7 +18,7 @@ RendererParticle::~RendererParticle()
 
 void RendererParticle::Initialize()
 {
-	std::cout << "Called" << std::endl;
+
 	ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
 	emitterShader->Use();
 	emitterShader->setUniform("particleTexture", 0);
@@ -96,18 +96,13 @@ void RendererParticle::Update(Batch& batch, MS & modelStack)
 
 void RendererParticle::Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view)
 {
+	return;
 	glDepthMask(GL_TRUE);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
-	std::vector<ParticleData>& batchData = data[&batch];
-
-	if (batchData.size() > 0) {
-		glBufferData(GL_ARRAY_BUFFER, batchData.size() * sizeof(ParticleData), &batchData.at(0), GL_STATIC_DRAW);
-		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, batchData.size());
-	}
 
 	GLsizei offset = 0;
 	for (unsigned int i = 3; i <= 6; ++i)
@@ -128,8 +123,12 @@ void RendererParticle::Render(Batch& batch, const unsigned int& textureID, MS& m
 	glVertexAttribPointer(9, 1, GL_FLOAT, false, sizeof(ParticleData), (void*)(offset + sizeof(Vector2) + sizeof(float)));
 	glVertexAttribDivisor(9, 1);
 
-	shader->Use();
+	std::vector<ParticleData>& batchData = data[&batch];
 
+	if (batchData.size() > 0) {
+		glBufferData(GL_ARRAY_BUFFER, batchData.size() * sizeof(ParticleData), &batchData.at(0), GL_STATIC_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, batchData.size());
+	}
 	
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDepthMask(GL_TRUE);

@@ -43,11 +43,11 @@ public:
 	LightSource();
 	~LightSource();
 
-	void setPointLight(const Vector3& position, const Vector3& color, const float& power,
+	void setPointLight(ShaderProgram* shader, const Vector3& position, const Vector3& color, const float& power,
 		const float& kC, const float& kL, const float& kQ);
 	
-	void setDirLight(const Vector3& direction, const Vector3& color, const float& power);
-	void setSpotLight(const Vector3& position, const Vector3& color, const Vector3& spotDirection,
+	void setDirLight(ShaderProgram* shader, const Vector3& direction, const Vector3& color, const float& power);
+	void setSpotLight(ShaderProgram* shader, const Vector3& position, const Vector3& color, const Vector3& spotDirection,
 		const float& power, const float& cosCutoff, const float& cosInner, const float& exponent,
 		const float& kC, const float &kL, const float& kQ);
 

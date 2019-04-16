@@ -2,6 +2,8 @@
 #define RENDERERPARTICLE_H
 
 #include "Renderer.h"
+#include "BatchData.h"
+
 class RendererParticle : public Renderer
 {
 public:

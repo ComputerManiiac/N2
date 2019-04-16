@@ -2,6 +2,8 @@
 #define RENDERERLIT_H
 
 #include "Renderer.h"
+#include "LightSource.h"
+#include "BatchData.h"
 
 class RendererLit : public Renderer
 {

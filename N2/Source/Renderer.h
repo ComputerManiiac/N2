@@ -6,7 +6,7 @@
 #include "MatrixStack.h"
 #include "Batch.h"
 #include "Entity.h"
-#include "BatchData.h"
+#include "LightSource.h"
 
 class Renderer
 {

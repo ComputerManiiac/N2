@@ -1,5 +1,5 @@
-﻿  RendererParticle.cpp
-d:\programming\c++\n2\n2\source\rendererparticle.cpp(87): warning C4018: '<': signed/unsigned mismatch
-d:\programming\c++\n2\n2\source\rendererparticle.cpp(166): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\rendererparticle.cpp(167): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe
+﻿  RenderSystem.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(374): warning C4018: '<': signed/unsigned mismatch
+  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.exe

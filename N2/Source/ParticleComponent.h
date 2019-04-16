@@ -2,10 +2,12 @@
 #define PARTCILECOMPONENT_H
 
 #include "Component.h"
+#include "TransformComponent.h"
 #include "Vector3.h"
-#include <vector>
+#include "Entity.h"
 
 
+//class Entity;
 
 enum EmitterType {
 	EMITTER_SPHERE,

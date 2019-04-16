@@ -20,7 +20,7 @@ LightSource::~LightSource()
 }
 
 
-void LightSource::setPointLight(const Vector3& position, const Vector3& color, const float& power,
+void LightSource::setPointLight(ShaderProgram* shader, const Vector3& position, const Vector3& color, const float& power,
 	const float& kC, const float& kL, const float& kQ)
 {
 	this->position = position;
@@ -40,7 +40,7 @@ void LightSource::setPointLight(const Vector3& position, const Vector3& color, c
 	setupAttribs();
 }
 
-void LightSource::setDirLight(const Vector3& direction, const Vector3& color, const float& power)
+void LightSource::setDirLight(ShaderProgram* shader, const Vector3& direction, const Vector3& color, const float& power)
 {
 	this->position = direction;
 	this->color = color;
@@ -52,7 +52,7 @@ void LightSource::setDirLight(const Vector3& direction, const Vector3& color, co
 	setupAttribs();
 }
 
-void LightSource::setSpotLight(const Vector3& position, const Vector3& color, const Vector3& spotDirection,
+void LightSource::setSpotLight(ShaderProgram* shader, const Vector3& position, const Vector3& color, const Vector3& spotDirection,
 	const float& power, const float& cosCutoff, const float& cosInner, const float& exponent, 
 	const float& kC, const float& kL, const float& kQ)
 {

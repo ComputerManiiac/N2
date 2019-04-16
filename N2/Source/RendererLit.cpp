@@ -55,7 +55,7 @@ void RendererLit::Initialize(const BatchKey& key, Batch& batch)
 		shader->setUniform("material.kShininess", mat.shininess);
 	}
 
-	shader->setUniform("colorTextureEnabled", true);
+	shader->setUniform("colorTexture", 0);
 	shader->setUniform("projection", projection);
 
 }

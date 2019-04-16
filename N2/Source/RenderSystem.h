@@ -38,21 +38,25 @@
 
 #include "System.h"
 #include "RenderComponent.h"
-
+#include "ColliderComponent.h"
+#include "TransformComponent.h"
 #include "MatrixStack.h"
 #include "LightSource.h"
 #include "FrameBuffer.h"
+#include "Batch.h"
 #include "Text.h"
 #include "Renderer.h"
 #include "RendererSkybox.h"
-
+#include "RendererParticle.h"
 #include <vector>
 #include <algorithm>
 #include <string>
 #include <map>
 
 
-class ParticleComponent;
+
+
+
 
 class RenderSystem : public System
 {
@@ -67,11 +71,10 @@ public:
 	void removeComp(Component* component);
 
 
-	void addParticleEmitters(const std::vector<ParticleComponent*>& emitters);
+	
 
 	void renderText(const std::string& text, float xPos, float yPos, const std::string& fontName, Vector3 color = Vector3(1, 1, 1), float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
 
-	/* To Be Removed */
 	bool renderSkybox;
 
 	const Mtx44 getProjectionMatrix() const;
@@ -96,11 +99,13 @@ private:
 
 
 	/* Shaders */
-	ShaderProgram* depthShader;
-	ShaderProgram* litShader;
-	ShaderProgram* uiShader;
-	ShaderProgram* particleShader;
+	ShaderProgram* depth;
+	ShaderProgram* lit;
+	ShaderProgram* ui;
 	
+	
+	RendererParticle* particle;
+
 	/* Skybox */
 	RendererSkybox* skybox;
 	

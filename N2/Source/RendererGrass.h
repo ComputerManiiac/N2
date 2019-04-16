@@ -13,6 +13,7 @@ public:
 	~RendererGrass();
 
 	void Initialize(const BatchKey& key, Batch& batch);
+	void Initialize(const std::vector<LightSource*>& lightSources);
 	void Deinitialize(Batch& batch);
 	void Update(Batch& batch, MS& modelStack);
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);

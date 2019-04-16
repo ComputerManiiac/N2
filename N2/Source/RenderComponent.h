@@ -7,6 +7,7 @@
 #include "ShaderProgram.h"
 #include <GL\glew.h>
 
+class Entity;
 
 struct Material {
 

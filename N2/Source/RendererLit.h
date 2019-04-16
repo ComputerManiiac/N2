@@ -3,7 +3,6 @@
 
 #include "Renderer.h"
 #include "LightSource.h"
-#include "BatchData.h"
 
 class RendererLit : public Renderer
 {
@@ -14,12 +13,11 @@ public:
 	~RendererLit();
 
 	void Initialize(const BatchKey& key, Batch& batch);
-	void Update(Batch& batch, MS& modelStack);
+
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 	void Deinitialize(Batch& batch);
 
-private:
-	std::map<Batch*, std::vector<BatchData>> data;
+
 
 };
 

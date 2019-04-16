@@ -2,31 +2,20 @@
 #define BATCHDATA_H
 
 #include "Mtx44.h"
-#include "Info.h"
 #include <vector>
 
-struct BatchData {
-	BatchData(Mtx44 model) : model(model) {}
-	BatchData(){}
-	Mtx44 model;
-};
+class BatchData
+{
+public:
 
-struct ParticleData : public BatchData {
+	BatchData();
+	~BatchData();
 
-	ParticleData(Mtx44 model, Vector2 textureCurrent, Vector2 textureNext, float lifeTimeBlend) :
-		BatchData(model), textureCurrent(textureCurrent), textureNext(textureNext), lifeTimeBlend(lifeTimeBlend) {}
+	std::vector<Mtx44>& getModelMatrices();
 
-	void setAll(const Mtx44& model, const Vector2& textureCurrent, const Vector2& textureNext, const float& lifeTimeBlend)
-	{
-		this->model = model;
-		this->textureCurrent = textureCurrent;
-		this->textureNext = textureNext;
-		this->lifeTimeBlend = lifeTimeBlend;
-	}
 
-	Vector2 textureCurrent;
-	Vector2 textureNext;
-	float lifeTimeBlend;
+private:
+	std::vector<Mtx44> modelMatrices;
 };
 
 #endif

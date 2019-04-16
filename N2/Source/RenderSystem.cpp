@@ -95,32 +95,19 @@ void RenderSystem::Initialize() {
 
 	BatchKey key;
 
-	unsigned int particleTexture;
-	Loader::loadTGA("Assets\\Textures\\particle_fire.tga", particleTexture);
-
-	const std::vector<ParticleComponent*>& emitters = Manager::getInstance()->getSystem<ParticleSystem>()->getSubscribers();
-	for (ParticleComponent* emitter : emitters) {
-
-		/* Add To Batch */
-		key.setAll(particleShader, particleTexture);
-		batches[key].subscribers.push_back(emitter);
-	}
-
 	/* Generates vertex arrays and buffers for each render component and populates the assigned int into them */
  	for (RenderComponent* sub : subscribers)
 	{
 		ShaderProgram* componentShader = sub->getShader();
 
 		/* Add To Batch */
-		key.setAll(componentShader, sub->getTexID());
+		key.setAll(componentShader, sub->getTexID(), sub->getMaterial());
 
 		if (batches.find(key) == batches.end() || batches[key].info.vertices.size() == 0)
 			batches[key].info = sub->getInfo();
 
 		batches[key].subscribers.push_back(sub);
 	}
-
-	
 
 	for (auto& b : batches)
 	{
@@ -232,7 +219,9 @@ void RenderSystem::Update(double& dt)
 		if (renderSkybox)
 			skybox->Render(modelStack);
 
+
 		renderScene(Manager::getInstance()->getCamera()->LookAt());
+
 	}
 
 	std::string renderTimeString = std::to_string(renderTime);
@@ -254,8 +243,40 @@ void RenderSystem::updateBatchedData()
 	{
 		const BatchKey& key = b.first;
 		Batch& batch = b.second;
-		renderers[key.shader]->Update(batch, modelStack);
-		renderers[depth]->Update(batch, modelStack);
+
+
+		//batch.data.clear();
+		//batch.data.reserve(batch.subscribers.size());
+
+		for(int i = 0; i < (int) batch.subscribers.size(); i++)
+		//for (RenderComponent* sub : batch.subscribers)
+		{
+			RenderComponent* sub = batch.subscribers[i];
+			modelStack.PushMatrix();
+			TransformComponent* transform = sub->getParent()->getComponent<TransformComponent>();
+			modelStack.Translate(transform->getPos());
+			modelStack.Rotate(transform->getRot());
+			modelStack.Scale(transform->getScale());
+
+			/* Update MVP */
+			if (i < batch.modelMatrices.size())
+				batch.modelMatrices[i] = modelStack.Top();
+			else
+				batch.modelMatrices.push_back(modelStack.Top());
+
+			if (i < batch.data.size())
+				batch.data[i].model = modelStack.Top();
+			else
+				batch.data.emplace_back(modelStack.Top());
+/*
+			batch.data.emplace_back(modelStack.Top());*/
+			//batch.data.emplace_back(modelStack.Top(), Manager::getInstance()->getCamera()->LookAt(), projection);
+
+			modelStack.PopMatrix();
+		}
+
+		/* Update model info for each batch for the shadow renderer */
+		static_cast<RendererShadow*>(renderers[depth])->setModelMatricesForBatch(&batch, batch.modelMatrices);
 	}
 }
 
@@ -458,14 +479,14 @@ void RenderSystem::removeComp(Component* component)
 
 	subscribers.erase(std::remove(subscribers.begin(), subscribers.end(), render));
 	
-	//BatchKey key(render->getShader(), render->getTexID(), render->getMaterial());
-	//if (batches.find(key) != batches.end())
-	//{
-	//	std::vector<RenderComponent*>* subs = &batches[key].subscribers;
-	//	auto pos = std::find(subs->begin(), subs->end(), render);
-	//	if (pos != subs->end())
-	//		subs->erase(pos);
-	//}
+	BatchKey key(render->getShader(), render->getTexID(), render->getMaterial());
+	if (batches.find(key) != batches.end())
+	{
+		std::vector<RenderComponent*>* subs = &batches[key].subscribers;
+		auto pos = std::find(subs->begin(), subs->end(), render);
+		if (pos != subs->end())
+			subs->erase(pos);
+	}
 
 	
 }

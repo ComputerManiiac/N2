@@ -11,10 +11,9 @@ public:
 	RendererShadow();
 	~RendererShadow();
 
-	void Update(Batch& batch, MS& modelStack);
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 
-	
+	void setModelMatricesForBatch(Batch* batch, const std::vector<Mtx44>& modelMatrices);
 
 private:
 	std::map<Batch*, std::vector<Mtx44>> data;

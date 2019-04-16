@@ -16,7 +16,6 @@ public:
 	~Renderer();
 
 	virtual void Initialize(const BatchKey& key, Batch& batch);
-	virtual void Update(Batch& batch, MS& modelStack);
 	virtual void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 	virtual void Deinitialize(Batch& batch);
 

@@ -70,9 +70,7 @@ public:
 	void registerComp(Component* component);
 	void removeComp(Component* component);
 
-
 	
-
 	void renderText(const std::string& text, float xPos, float yPos, const std::string& fontName, Vector3 color = Vector3(1, 1, 1), float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
 
 	bool renderSkybox;
@@ -136,7 +134,5 @@ private:
 
 
 };
-
-
 
 #endif

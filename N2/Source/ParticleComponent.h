@@ -6,7 +6,6 @@
 #include "Vector3.h"
 #include "Entity.h"
 
-
 //class Entity;
 
 enum EmitterType {
@@ -14,30 +13,6 @@ enum EmitterType {
 	EMITTER_LINE,
 	EMITTER_CONE,
 	EMITTER_CYLINDER,
-};
-
-
-struct Particle {
-
-	Particle(Vector3 position, Vector3 velocity, Vector3 colour) : position(position), velocity(velocity), colour(colour) {}
-	Particle() : active(false), lifeTime(0.0f) {}
-
-
-	bool operator < (const Particle& other) const
-	{
-		return this->cameraDist > other.cameraDist;
-	}
-
-
-	bool active;
-
-	Vector3 position;
-	Vector3 velocity;
-	Vector3 colour;
-
-	float cameraDist;
-
-	float lifeTime;
 };
 
 class ParticleComponent : public Component
@@ -64,12 +39,7 @@ public:
 
 	const EmitterType& getType() const;
 
-	std::vector<Particle*>& getParticles();
-
 private:
-
-	std::vector<Particle*> particles;
-
 	EmitterType type;
 	bool emitting;
 
@@ -85,4 +55,26 @@ private:
 };
 
 
+struct Particle {
+
+	Particle(Vector3 position, Vector3 velocity, Vector3 colour) : position(position), velocity(velocity), colour(colour) {}
+	Particle() : active(false), lifeTime(0.0f) {}
+
+
+	bool operator < (const Particle& other) const
+	{
+		return this->cameraDist > other.cameraDist;
+	}
+
+
+	bool active;
+
+	Vector3 position;
+	Vector3 velocity;
+	Vector3 colour;
+
+	float cameraDist;
+
+	float lifeTime;
+};
 #endif

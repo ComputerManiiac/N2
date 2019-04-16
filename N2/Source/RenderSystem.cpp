@@ -9,9 +9,7 @@
 #include "RendererShadow.h"
 #include "RendererGrass.h"
 #include "RendererSkybox.h"
-
-
-
+#include "RendererParticle.h"
 
 RenderSystem::RenderSystem()
 {
@@ -24,7 +22,6 @@ RenderSystem::~RenderSystem()
 {
 
 	
-
 
 	/* Deinitialize batches with the appropriate render */
 	for (auto& b : batches)
@@ -72,39 +69,31 @@ void RenderSystem::Initialize() {
 	projection.SetToPerspective(45.0f, (float)Application::getScreenWidth() / (float)Application::getScreenHeight(), 0.1f, 10000.0f);
 
 	Manager* manager = Manager::getInstance();
-	lit = manager->getShader("lit");
-	depth = manager->getShader("depth");
-	ui = manager->getShader("ui");
 	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
 	ShaderProgram* grass = manager->getShader("grass");
-	ShaderProgram* particleShader = manager->getShader("particle");
+
+	litShader = manager->getShader("lit");
+	depthShader = manager->getShader("depth");
+	uiShader = manager->getShader("ui");
+	particleShader = manager->getShader("particle");
 
 	/* Set renderers */
 	skybox = new RendererSkybox(skyboxShader);
 	renderers[skyboxShader] = skybox;
 	renderers[grass] = new RendererGrass(grass);
-	renderers[lit] = new RendererLit(lit);
-	renderers[depth] = new RendererShadow(depth);
+	renderers[litShader] = new RendererLit(litShader);
+	renderers[depthShader] = new RendererShadow(depthShader);
 
-	particle = new RendererParticle(particleShader);
+	RendererParticle* particle = new RendererParticle(particleShader);
 	renderers[particleShader] = particle;
 	particle->Initialize();
 
 	/* Set up skybox */
 	skybox->Initialize();
 
+
+
 	BatchKey key;
-
-	unsigned int particleTexture;
-	Loader::loadTGA("Assets\\Textures\\particle_fire.tga", particleTexture);
-
-	const std::vector<ParticleComponent*>& emitters = Manager::getInstance()->getSystem<ParticleSystem>()->getSubscribers();
-	for (ParticleComponent* emitter : emitters) {
-
-		/* Add To Batch */
-		key.setAll(particleShader, particleTexture);
-		batches[key].subscribers.push_back(emitter);
-	}
 
 	/* Generates vertex arrays and buffers for each render component and populates the assigned int into them */
  	for (RenderComponent* sub : subscribers)
@@ -139,18 +128,18 @@ void RenderSystem::Initialize() {
 
 void RenderSystem::setupLight()
 {
-	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass") });
+	LightSource::setShaders({ litShader, Manager::getInstance()->getShader("grass") });
 
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
-	light->setDirLight(lit, Vector3(2.0f, 100.0f, 2.0f), Vector3(1, 1, 1), 1.0f);
+	light->setDirLight(Vector3(2.0f, 100.0f, 2.0f), Vector3(1, 1, 1), 1.0f);
 	lightSources.push_back(light);
 
 	LightSource* light2 = new LightSource(LIGHT_POINT);
-	light2->setPointLight(lit, Vector3(10, 10.0, 0), Vector3(1, 0, 0), 1.0f, 1.0f, 0.01f, 0.001f);
+	light2->setPointLight(Vector3(10, 10.0, 0), Vector3(1, 0, 0), 1.0f, 1.0f, 0.01f, 0.001f);
 	lightSources.push_back(light2);
 
 	LightSource* light3 = new LightSource(LIGHT_SPOTLIGHT);
-	light3->setSpotLight(lit, Vector3(0.1f, 10.0, 0), Vector3(1, 1, 1), Vector3(0, -1, 0), 1.0f, 45.0f, 30.0f, 1.0f, 1.0f, 0.01f, 0.001f);
+	light3->setSpotLight(Vector3(0.1f, 10.0, 0), Vector3(1, 1, 1), Vector3(0, -1, 0), 1.0f, 45.0f, 30.0f, 1.0f, 1.0f, 0.01f, 0.001f);
 	lightSources.push_back(light3);
 
 	
@@ -186,15 +175,15 @@ void RenderSystem::setupShadows()
 	lightProjection.SetToOrtho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 500.0f);
 	lightProjectionView = lightProjection * lightView;
 
-	lit->Use();
-	lit->setUniform("lightProjectionView", lightProjectionView);
+	litShader->Use();
+	litShader->setUniform("lightProjectionView", lightProjectionView);
 
 	ShaderProgram* grass = Manager::getInstance()->getShader("grass");
 	grass->Use();
 	grass->setUniform("lightProjectionView", lightProjectionView);
 
-	depth->Use();
-	depth->setUniform("lightProjectionView", lightProjectionView);
+	depthShader->Use();
+	depthShader->setUniform("lightProjectionView", lightProjectionView);
 
 	glBindVertexArray(0);
 }
@@ -215,7 +204,7 @@ void RenderSystem::Update(double& dt)
 		glViewport(0, 0, 2048, 2048);
 		shadowFBO.Bind();
 		glClear(GL_DEPTH_BUFFER_BIT);
-		renderScene(lightView, depth);
+		renderScene(lightView, depthShader);
 
 
 		glCullFace(GL_BACK);
@@ -255,13 +244,13 @@ void RenderSystem::updateBatchedData()
 		const BatchKey& key = b.first;
 		Batch& batch = b.second;
 		renderers[key.shader]->Update(batch, modelStack);
-		renderers[depth]->Update(batch, modelStack);
+		renderers[depthShader]->Update(batch, modelStack);
 	}
 }
 
 void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 {
-	lit->Use();
+	litShader->Use();
 	modelStack.LoadIdentity();
 
 	/* Renders all objects in batches */
@@ -286,14 +275,14 @@ void RenderSystem::renderTexts()
 	{
 		const Font& font = *f.first;
 		std::vector<Text*>& text = f.second;
-		ui->Use();
+		uiShader->Use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, font.textureID);
 	
 		for (Text* t : text)
 		{
-			ui->setUniform("textColor", t->color);
-			ui->setUniform("textSize", t->textSize);
+			uiShader->setUniform("textColor", t->color);
+			uiShader->setUniform("textSize", t->textSize);
 			glBindVertexArray(t->VAO);
 			glDrawElements(GL_TRIANGLES, t->indices.size(), GL_UNSIGNED_INT, 0);
 		}
@@ -311,6 +300,20 @@ void RenderSystem::renderTexture(const FrameBuffer& buffer)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, buffer.getTexID());
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+
+
+void RenderSystem::addParticleEmitters(const std::vector<ParticleComponent*>& emitters)
+{
+	BatchKey key;
+	unsigned int fireParticle;
+	Loader::loadTGA("Assets\\Textures\\particle_fire.tga", fireParticle);
+	for (ParticleComponent* emitter : emitters)
+	{
+		key.setAll(particleShader, fireParticle);
+		batches[key].subscribers.push_back(emitter);
+	}
 }
 
 void RenderSystem::renderText(const std::string& text, float xPos, float yPos, const std::string& fontName, Vector3 color, float fontSize, TextAlignment align)

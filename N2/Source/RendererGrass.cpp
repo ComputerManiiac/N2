@@ -20,12 +20,6 @@ RendererGrass::~RendererGrass()
 {
 }
 
-void RendererGrass::Initialize(const std::vector<LightSource*>& lightSources)
-{
-
-
-	
-}
 
 void RendererGrass::Deinitialize(Batch & batch)
 {
@@ -79,7 +73,7 @@ void RendererGrass::Initialize(const BatchKey& key, Batch& batch)
 		shader->setUniform("material.kSpecular", mat.specular);
 		shader->setUniform("material.kShininess", mat.shininess);
 	}
-	shader->setUniform("colorTextureEnabled", 1);
+	shader->setUniform("colorTextureEnabled", true);
 	shader->setUniform("projection", projection);
 }
 

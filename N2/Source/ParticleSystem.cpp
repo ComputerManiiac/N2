@@ -51,6 +51,7 @@ void ParticleSystem::Initialize()
 	//glVertexAttribDivisor(0, 0);
 
 	//Loader::loadTGA("Assets\\Textures\\particle_fire.tga", textureID);
+	Manager::getInstance()->getSystem<RenderSystem>()->addParticleEmitters(subscribers);
 }
 
 bool sortParticlePointers(Particle* a, Particle* b)
@@ -78,6 +79,7 @@ void ParticleSystem::Update(double& dt)
 			Particle& newParticle = particleCollection[index];
 			initializeParticle(emitter, newParticle);
 			particles.push_back(&newParticle);
+			std::cout << "Spawned" << std::endl;
 			emitter->setSpawnTimer(emitter->getSpawnRate());
 		}
 		else

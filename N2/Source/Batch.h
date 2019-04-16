@@ -19,13 +19,13 @@ struct VertexData {
 struct BatchKey {
 
 
-	BatchKey(ShaderProgram* shader, unsigned int textureID, Material mat) : shader(shader), textureID(textureID), mat(mat) {}
+	BatchKey(ShaderProgram* shader, unsigned int textureID) : shader(shader), textureID(textureID) {}
 	BatchKey() {}
 
 
 	bool operator==(const BatchKey& other)
 	{
-		return (other.textureID == textureID) && (mat == other.mat) && (shader == other.shader);
+		return (other.textureID == textureID) && (shader == other.shader);
 	}
 
 	bool operator < (const BatchKey other) const
@@ -33,30 +33,28 @@ struct BatchKey {
 		return memcmp((void*)this, (void*)&other, sizeof(BatchKey)) > 0;
 	}
 
-	void setAll(ShaderProgram* shader, const unsigned int& textureID, const Material& material)
+	void setAll(ShaderProgram* shader, const unsigned int& textureID)
 	{
 		this->shader = shader;
 		this->textureID = textureID;
-		this->mat = material;
 	}
 
 	unsigned int textureID;
-	Material mat;
 	ShaderProgram* shader;
 };
 
 
 struct Batch {
 
-	Batch(std::vector<RenderComponent*> subscribers) : subscribers(subscribers) {}
+	Batch(std::vector<Component*> subscribers) : subscribers(subscribers) {}
 	Batch() : VAO(0), VBO(0), EBO(0) {}
 
 
 	unsigned int VAO;
 	unsigned int VBO;
 	unsigned int EBO;
-	std::vector<VertexData> data;
-	std::vector<RenderComponent*> subscribers;
+	//std::vector<VertexData> data;
+	std::vector<Component*> subscribers;
 	std::vector<Mtx44> modelMatrices;
 	OBJInfo info;
 };

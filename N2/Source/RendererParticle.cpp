@@ -3,6 +3,7 @@
 #include "Loader.h"
 #include "Primitives.h"
 
+
 RendererParticle::RendererParticle(ShaderProgram* shader) : Renderer(shader) {}
 
 
@@ -17,7 +18,6 @@ RendererParticle::~RendererParticle()
 
 void RendererParticle::Initialize()
 {
-	srand((unsigned int)time(NULL));
 
 	ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
 	emitterShader->Use();
@@ -52,15 +52,94 @@ void RendererParticle::Initialize(const BatchKey& key, Batch& batch)
 {
 }
 
+void RendererParticle::Update(Batch& batch, MS & modelStack)
+{
+	std::vector<ParticleData>& batchData = data[&batch];
+	const Mtx44& viewMatrix = Manager::getInstance()->getCamera()->LookAt();
+
+	for (Component* component : batch.subscribers) {
+
+		ParticleComponent* emitter = static_cast<ParticleComponent*>(component);
+		const std::vector<Particle*>& particles = emitter->getParticles();
+		
+		for (int i = 0; i < (int)particles.size(); i++) 
+		{
+
+			const Particle* particle = particles[i];
+
+			modelStack.PushMatrix();
+			modelStack.Translate(particle->position);
+
+			Mtx44 model = removeRotationFromModel(viewMatrix, modelStack.Top());
+			float lifeFactor = 1 - (particle->lifeTime / emitter->getLifeTime());
+			int totalCount = 8 * 8;
+			float atlasProgression = lifeFactor * totalCount;
+			int index = (int)floor(atlasProgression);
+			int nextIndex = index < totalCount - 1 ? index + 1 : index;
+			float blend = fmod(atlasProgression, 1.0f);
+
+			Vector2 textureCurrent;
+			setTextureOffset(textureCurrent, index);
+			Vector2 textureNext;
+			setTextureOffset(textureNext, nextIndex);
+
+			/* Update MVP */
+			if (i < batchData.size())
+				batchData[i].setAll(model, textureCurrent, textureNext, blend);
+			else
+				batchData.emplace_back(model, textureCurrent, textureNext, blend);
+
+			modelStack.PopMatrix();
+		}
+	}
+}
+
 void RendererParticle::Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view)
 {
+	return;
+	glDepthMask(GL_TRUE);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
 
+	GLsizei offset = 0;
+	for (unsigned int i = 3; i <= 6; ++i)
+	{
+		glEnableVertexAttribArray(i);
+		glVertexAttribPointer(i, 4, GL_FLOAT, false, sizeof(ParticleData), (void*)offset);
+		offset += 4 * sizeof(float);
+		glVertexAttribDivisor(i, 1);
+	}
+
+	glEnableVertexAttribArray(7);
+	glVertexAttribPointer(7, 2, GL_FLOAT, false, sizeof(ParticleData), (void*)offset);
+	glVertexAttribDivisor(7, 1);
+	glEnableVertexAttribArray(8);
+	glVertexAttribPointer(8, 2, GL_FLOAT, false, sizeof(ParticleData), (void*)(offset + sizeof(Vector2)));
+	glVertexAttribDivisor(8, 1);
+	glEnableVertexAttribArray(9);
+	glVertexAttribPointer(9, 1, GL_FLOAT, false, sizeof(ParticleData), (void*)(offset + sizeof(Vector2) + sizeof(float)));
+	glVertexAttribDivisor(9, 1);
+
+	std::vector<ParticleData>& batchData = data[&batch];
+
+	if (batchData.size() > 0) {
+		glBufferData(GL_ARRAY_BUFFER, batchData.size() * sizeof(ParticleData), &batchData.at(0), GL_STATIC_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, batchData.size());
+	}
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDepthMask(GL_TRUE);
+	
 }
 
 void RendererParticle::Deinitialize(Batch& batch)
 {
 }
+
+
 
 
 

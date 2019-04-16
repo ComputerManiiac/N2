@@ -77,3 +77,8 @@ const EmitterType & ParticleComponent::getType() const
 	return type;
 }
 
+std::vector<Particle*>& ParticleComponent::getParticles()
+{
+	return particles;
+}
+

@@ -55,7 +55,7 @@ void Manager::Initialize()
 	//for (int x = 0; x < 50; x++)
 	//{
 	//	float offsetZ = 5.0f;
-	//	for (int z = 0; z < 100; z++)
+	//	for (int z = 0; z < 50; z++)
 	//	{
 	//		std::string name = "grass" + std::to_string(x) + "-" + std::to_string(z);
 	//		entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
@@ -116,6 +116,8 @@ void Manager::Update(double dt)
 	{
 		transform->Move(Vector3(-2, 0, 0.0f) * dt);
 	}
+
+
 
 	//RigidbodyComponent* rigidbody = entities["obj1"]->getComponent<RigidbodyComponent>();
 	//

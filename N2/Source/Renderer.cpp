@@ -24,6 +24,10 @@ void Renderer::Initialize(const BatchKey& key, Batch& batch)
 	glGenBuffers(1, &batch.EBO);
 }
 
+void Renderer::Update(Batch& batch, MS& modelStack)
+{
+}
+
 void Renderer::Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view)
 {
 
@@ -34,3 +38,4 @@ void Renderer::Deinitialize(Batch& batch)
 	if (isBatched)
 		glDeleteBuffers(1, &instancedVBO);
 }
+

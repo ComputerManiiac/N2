@@ -1,34 +1,5 @@
-﻿  Application.cpp
-  Entity.cpp
-  Manager.cpp
+﻿  RenderSystem.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-d:\programming\c++\n2\n2\source\manager.cpp(102): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\manager.cpp(107): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\manager.cpp(112): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\manager.cpp(117): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  ParticleSystem.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-d:\programming\c++\n2\n2\source\particlesystem.cpp(82): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-d:\programming\c++\n2\n2\source\particlesystem.cpp(111): warning C4018: '<': signed/unsigned mismatch
-d:\programming\c++\n2\n2\source\particlesystem.cpp(114): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\particlesystem.cpp(116): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\particlesystem.cpp(145): warning C4018: '<': signed/unsigned mismatch
-d:\programming\c++\n2\n2\source\particlesystem.cpp(295): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-d:\programming\c++\n2\n2\source\particlesystem.cpp(296): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  RenderSystem.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-d:\programming\c++\n2\n2\source\rendersystem.cpp(262): warning C4018: '<': signed/unsigned mismatch
-d:\programming\c++\n2\n2\source\rendersystem.cpp(267): warning C4018: '<': signed/unsigned mismatch
-d:\programming\c++\n2\n2\source\rendersystem.cpp(395): warning C4018: '<': signed/unsigned mismatch
-  Renderer.cpp
-  RendererGrass.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-  RendererLit.cpp
-  RendererShadow.cpp
-  RendererSkybox.cpp
-  Generating Code...
-  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.exe
+  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(374): warning C4018: '<': signed/unsigned mismatch
+  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.exe

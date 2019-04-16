@@ -19,9 +19,31 @@ RendererShadow::~RendererShadow()
 
 
 
+void RendererShadow::Update(Batch& batch, MS& modelStack)
+{
+	std::vector<Mtx44>& batchData = data[&batch];
+
+	for (int i = 0; i < (int)batch.subscribers.size(); i++)
+	{
+		RenderComponent* sub = static_cast<RenderComponent*>(batch.subscribers[i]);
+		modelStack.PushMatrix();
+		TransformComponent* transform = sub->getParent()->getComponent<TransformComponent>();
+		modelStack.Translate(transform->getPos());
+		modelStack.Rotate(transform->getRot());
+		modelStack.Scale(transform->getScale());
+
+		/* Update MVP */
+		if (i < batchData.size())
+			batchData[i] = modelStack.Top();
+		else
+			batchData.emplace_back(modelStack.Top());
+
+		modelStack.PopMatrix();
+	}
+}
+
 void RendererShadow::Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view)
 {
-
 	const std::vector<Mtx44>& modelMatrices = data[&batch];
 
 	glBindVertexArray(batch.VAO);
@@ -42,11 +64,5 @@ void RendererShadow::Render(Batch& batch, const unsigned int& textureID, MS& mod
 	shader->Use();
 	const unsigned int& indexSize = batch.info.indices.size();
 	glDrawElementsInstanced(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, 0, batch.subscribers.size());
-}
-
-void RendererShadow::setModelMatricesForBatch(Batch* batch, const std::vector<Mtx44>& modelMatrices)
-{
-	/*data.insert(std::pair<Batch&, std::vector<Mtx44>>(batch, modelMatrices));*/
-	data[batch] = std::move(modelMatrices);
 }
 

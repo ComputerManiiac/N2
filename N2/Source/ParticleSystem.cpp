@@ -20,37 +20,37 @@ ParticleSystem::~ParticleSystem()
 void ParticleSystem::Initialize()
 {
 	srand((unsigned int)time(NULL));
-	ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
+	/*ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
 	emitterShader->Use();
 	emitterShader->setUniform("particleTexture", 0);
-	emitterShader->setUniform("projection", Manager::getInstance()->getSystem<RenderSystem>()->getProjectionMatrix());
+	emitterShader->setUniform("projection", Manager::getInstance()->getSystem<RenderSystem>()->getProjectionMatrix());*/
 
 	particleCount = 0;
 	lastUsedParticle = -1;
 
-	OBJInfo info;
-	Primitives::generateQuad(info);
+	//OBJInfo info;
+	//Primitives::generateQuad(info);
 
 
-	glGenVertexArrays(1, &emitterVAO);
-	glGenBuffers(1, &emitterVBO);
-	glGenBuffers(1, &emitterEBO);
+	//glGenVertexArrays(1, &emitterVAO);
+	//glGenBuffers(1, &emitterVBO);
+	//glGenBuffers(1, &emitterEBO);
 
-	glBindVertexArray(emitterVAO);
+	//glBindVertexArray(emitterVAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, emitterVBO);
-	glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * sizeof(Vertex), &info.vertices.at(0), GL_STATIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, emitterVBO);
+	//glBufferData(GL_ARRAY_BUFFER, info.vertices.size() * sizeof(Vertex), &info.vertices.at(0), GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, emitterEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, emitterEBO);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, info.indices.size() * sizeof(unsigned int), &info.indices.at(0), GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
+	//glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (void*)0);
-	
-	glVertexAttribDivisor(0, 0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (void*)0);
+	//
+	//glVertexAttribDivisor(0, 0);
 
-	Loader::loadTGA("Assets\\Textures\\particle_fire.tga", textureID);
+	//Loader::loadTGA("Assets\\Textures\\particle_fire.tga", textureID);
 }
 
 bool sortParticlePointers(Particle* a, Particle* b)
@@ -59,28 +59,13 @@ bool sortParticlePointers(Particle* a, Particle* b)
 }
 
 void ParticleSystem::Update(double& dt)
-{
-	//if (Application::isKeyPressDown(GLFW_KEY_N))
-	//	std::cout << randomPointInSphere(, 5.0f) << std::endl;
+{	
+	const Vector3& cameraPos = Manager::getInstance()->getCamera()->getPos();
 
-	ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
-	emitterShader->Use();
-
-	Camera* camera = Manager::getInstance()->getCamera();
-	const Mtx44& viewMatrix = camera->LookAt();
-	emitterShader->setUniform("viewMatrix", viewMatrix);
-	
-	const Vector3& cameraPos = camera->getPos();
-
-	modelStack.LoadIdentity();
-
-	glDepthMask(GL_FALSE);
 	for (ParticleComponent* emitter : subscribers)
 	{
-		std::vector<ParticleData>& particleData = data[emitter];
-		std::vector<Particle*>& particles = emitterCollection[emitter];
+		std::vector<Particle*>& particles = emitter->getParticles();
 		const float& spawnTimer = emitter->getSpawnTimer() - dt;
-
 
 		/* Spawn Particle */
 		if (particleCount < PARTICLE_MAX && spawnTimer <= 0.0f)
@@ -100,9 +85,6 @@ void ParticleSystem::Update(double& dt)
 			emitter->setSpawnTimer(spawnTimer);
 		}
 
-
-		std::sort(particles.begin(), particles.end(), sortParticlePointers);
-
 		/* Update Particle Data for Rendering */
 		for(int i = 0; i < particles.size(); i++)
 		{
@@ -118,73 +100,11 @@ void ParticleSystem::Update(double& dt)
 				particle->active = false;
 				particles.erase(particles.begin() + i);
 				--particleCount;
-				continue;
 			}
-
-			modelStack.PushMatrix();
-			modelStack.Translate(particle->position);
-
-			Mtx44 model = removeRotationFromModel(viewMatrix, modelStack.Top());
-
-			float lifeFactor = 1 - (particle->lifeTime / emitter->getLifeTime());
-			int totalCount = 8 * 8;
-			float atlasProgression = lifeFactor *  totalCount;
-			int index = (int) floor(atlasProgression);
-			int nextIndex = index < totalCount - 1 ? index + 1 : index;
-			float blend = fmod(atlasProgression, 1.0f);
-
-			Vector2 textureCurrent;
-			setTextureOffset(textureCurrent, index);
-			Vector2 textureNext;
-			setTextureOffset(textureNext, nextIndex);
-
-			if (i < particleData.size())
-				particleData[i].setAll(model, textureCurrent, textureNext, blend);
-			else
-				particleData.emplace_back(model, textureCurrent, textureNext, blend);
-
-			modelStack.PopMatrix();
 		}
 
-
-		 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-
-		glBindVertexArray(emitterVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, emitterBatchVBO);
-
-		GLsizei offset = 0;
-		for (unsigned int i = 3; i <= 6; ++i)
-		{
-			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, 4, GL_FLOAT, false, sizeof(ParticleData), (void*)offset);
-			offset += 4 * sizeof(float);
-			glVertexAttribDivisor(i, 1);
-		}
-
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 2, GL_FLOAT, false, sizeof(ParticleData), (void*)offset);
-		glVertexAttribDivisor(7, 1);
-		glEnableVertexAttribArray(8);
-		glVertexAttribPointer(8, 2, GL_FLOAT, false, sizeof(ParticleData), (void*) (offset + sizeof(Vector2)));
-		glVertexAttribDivisor(8, 1);
-		glEnableVertexAttribArray(9);
-		glVertexAttribPointer(9, 1, GL_FLOAT, false, sizeof(ParticleData), (void*)(offset + sizeof(Vector2) + sizeof(float)));
-		glVertexAttribDivisor(9, 1);
-
-
-
-		if (particleData.size() > 0)
-		{
-
-			glBufferData(GL_ARRAY_BUFFER, particleData.size() * sizeof(ParticleData), &particleData.at(0), GL_STATIC_DRAW);
-			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particles.size());
-		}
-		glBindTexture(GL_TEXTURE_2D, 0);
+		std::sort(particles.begin(), particles.end(), sortParticlePointers);
 	}
-	glDepthMask(GL_TRUE);
-
 
 }
 
@@ -339,12 +259,74 @@ void ParticleSystem::removeComp(Component* component)
 	subscribers.erase(std::remove(subscribers.begin(), subscribers.end(), particle));
 }
 
-const std::vector<Particle*>& ParticleSystem::getParticlesFromEmitter(ParticleComponent* emitter)
+const std::vector<ParticleComponent*>& ParticleSystem::getSubscribers()
 {
-	return emitterCollection[emitter];
+	return subscribers;
 }
+
 
 void ParticleSystem::updateTexture(const Particle& particle)
 {
 
 }
+
+
+//modelStack.PushMatrix();
+//modelStack.Translate(particle->position);
+
+//Mtx44 model = removeRotationFromModel(viewMatrix, modelStack.Top());
+
+//float lifeFactor = 1 - (particle->lifeTime / emitter->getLifeTime());
+//int totalCount = 8 * 8;
+//float atlasProgression = lifeFactor *  totalCount;
+//int index = (int) floor(atlasProgression);
+//int nextIndex = index < totalCount - 1 ? index + 1 : index;
+//float blend = fmod(atlasProgression, 1.0f);
+
+//Vector2 textureCurrent;
+//setTextureOffset(textureCurrent, index);
+//Vector2 textureNext;
+//setTextureOffset(textureNext, nextIndex);
+
+//if (i < particleData.size())
+//	particleData[i].setAll(model, textureCurrent, textureNext, blend);
+//else
+//	particleData.emplace_back(model, textureCurrent, textureNext, blend);
+
+//modelStack.PopMatrix();
+
+
+//glActiveTexture(GL_TEXTURE0);
+//glBindTexture(GL_TEXTURE_2D, textureID);
+//
+//glBindVertexArray(emitterVAO);
+//glBindBuffer(GL_ARRAY_BUFFER, emitterBatchVBO);
+//
+//GLsizei offset = 0;
+//for (unsigned int i = 3; i <= 6; ++i)
+//{
+//	glEnableVertexAttribArray(i);
+//	glVertexAttribPointer(i, 4, GL_FLOAT, false, sizeof(ParticleData), (void*)offset);
+//	offset += 4 * sizeof(float);
+//	glVertexAttribDivisor(i, 1);
+//}
+//
+//glEnableVertexAttribArray(7);
+//glVertexAttribPointer(7, 2, GL_FLOAT, false, sizeof(ParticleData), (void*)offset);
+//glVertexAttribDivisor(7, 1);
+//glEnableVertexAttribArray(8);
+//glVertexAttribPointer(8, 2, GL_FLOAT, false, sizeof(ParticleData), (void*)(offset + sizeof(Vector2)));
+//glVertexAttribDivisor(8, 1);
+//glEnableVertexAttribArray(9);
+//glVertexAttribPointer(9, 1, GL_FLOAT, false, sizeof(ParticleData), (void*)(offset + sizeof(Vector2) + sizeof(float)));
+//glVertexAttribDivisor(9, 1);
+//
+//
+//
+//if (particleData.size() > 0)
+//{
+//
+//	glBufferData(GL_ARRAY_BUFFER, particleData.size() * sizeof(ParticleData), &particleData.at(0), GL_STATIC_DRAW);
+//	glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particles.size());
+//}
+//glBindTexture(GL_TEXTURE_2D, 0);

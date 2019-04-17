@@ -8,7 +8,7 @@
 #include <vector>
 #include <algorithm>
 
-#define PARTICLE_MAX 10
+#define PARTICLE_MAX 20
 
 struct ParticleData {
 

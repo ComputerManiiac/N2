@@ -14,11 +14,13 @@
 class Manager
 {
 public:
+
 	static Manager* getInstance();
 	~Manager();
 	
-	void Initialize();
-	void Update(double dt);
+	void Register();
+	virtual void Initialize();
+	virtual void Update(double dt);
 
 	template<typename T>
 	void registerComponent(Component* component);
@@ -32,15 +34,18 @@ public:
 	Camera* getCamera();
 	ShaderProgram* getShader(const std::string& name);
 
-private:
+protected:
 
-	Manager();
-	static Manager* instance;
+
+
 	std::map<std::type_index, System*> systems;
 	std::map<std::string, ShaderProgram> shaders;
 	std::map<std::string, Entity*> entities;
 	Camera camera;
-	Entity* entity;
+
+protected:
+	static Manager* instance;
+	Manager();
 };
 
 

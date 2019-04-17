@@ -15,6 +15,8 @@ unsigned int Application::halfScreenHeight = 0;
 
 int Application::framesPerSecond = 0;
 
+Manager* Application::manager = nullptr;
+
 
 Application::Application(std::string title, unsigned int screenWidth, unsigned int screenHeight) : title(title)
 {
@@ -44,10 +46,6 @@ Application::Application(std::string title, unsigned int screenWidth, unsigned i
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouseCallback);
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 }
 
@@ -60,11 +58,12 @@ Application::~Application()
 {
 }
 
+
+
 void Application::Run()
 {
 
 	Manager* manager = Manager::getInstance();
-	manager->Initialize();
 
 	StopWatch timer;
 	timer.startTimer();
@@ -114,6 +113,11 @@ void Application::Run()
 	delete manager;
 }
 
+Manager* Application::getManager()
+{
+	return manager;
+}
+
 
 
 bool Application::isKeyPressed(int key)
@@ -146,6 +150,11 @@ void Application::mouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	mouseX = xPos;
 	mouseY = yPos;
+}
+
+void Application::setManager(Manager* manager)
+{
+	this->manager = manager;
 }
 
 unsigned int Application::getScreenWidth()

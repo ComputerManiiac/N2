@@ -27,6 +27,7 @@ void ParticleSystem::Initialize()
 
 	particleCount = 0;
 	lastUsedParticle = -1;
+	textureID = 0;
 
 	OBJInfo info;
 	Primitives::generateQuad(info);
@@ -35,6 +36,7 @@ void ParticleSystem::Initialize()
 	glGenVertexArrays(1, &emitterVAO);
 	glGenBuffers(1, &emitterVBO);
 	glGenBuffers(1, &emitterEBO);
+	glGenBuffers(1, &emitterBatchVBO);
 
 	glBindVertexArray(emitterVAO);
 
@@ -49,6 +51,8 @@ void ParticleSystem::Initialize()
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), (void*)0);
 	
 	glVertexAttribDivisor(0, 0);
+
+	glBindVertexArray(0);
 
 	Loader::loadTGA("Assets\\Textures\\particle_fire.tga", textureID);
 }
@@ -98,6 +102,26 @@ void ParticleSystem::Update(double& dt)
 			emitter->setSpawnTimer(spawnTimer);
 		}
 
+		for (int i = 0; i < particles.size(); i++)
+		{
+			Particle* particle = particles[i];
+
+
+			particle->position += particle->velocity * dt;
+
+			particle->lifeTime -= dt;
+			particle->cameraDist = (cameraPos - particle->position).LengthSquared();
+
+			/* Particle has expired */
+			if (particle->lifeTime <= 0.0f)
+			{
+				particle->active = false;
+				particles.erase(particles.begin() + i);
+				--particleCount;
+			}
+
+		}
+
 
 		if(particles.size() > 1)
 			std::sort(particles.begin(), particles.end(), sortParticlePointers);
@@ -107,13 +131,12 @@ void ParticleSystem::Update(double& dt)
 		{
 			Particle* particle = particles[i];
 
-
 			modelStack.PushMatrix();
 			modelStack.Translate(particle->position);
 
 			Mtx44 model = removeRotationFromModel(viewMatrix, modelStack.Top());
 
-			float lifeFactor = 1 - (particle->lifeTime / emitter->getLifeTime());
+			float lifeFactor = 1.0f - (particle->lifeTime / emitter->getLifeTime());
 			int totalCount = 8 * 8;
 			float atlasProgression = lifeFactor *  totalCount;
 			int index = (int) floor(atlasProgression);
@@ -132,28 +155,17 @@ void ParticleSystem::Update(double& dt)
 
 			modelStack.PopMatrix();
 
-
-			particle->position += particle->velocity * dt;
-
-			particle->lifeTime -= dt;
-			particle->cameraDist = (cameraPos - particle->position).LengthSquared();
-
-			/* Particle has expired */
-			if (particle->lifeTime <= 0.0f)
-			{
-				particle->active = false;
-				particles.erase(particles.begin() + i);
-				--particleCount;
-			}
 		}
 
 
-		 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		if (particleData.size() == 0) continue;
 
+
+
+		
 		glBindVertexArray(emitterVAO);
 		glBindBuffer(GL_ARRAY_BUFFER, emitterBatchVBO);
+
 
 		GLsizei offset = 0;
 		for (unsigned int i = 3; i <= 6; ++i)
@@ -176,12 +188,14 @@ void ParticleSystem::Update(double& dt)
 
 
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
 		glBufferData(GL_ARRAY_BUFFER, particleData.size() * sizeof(ParticleData), &particleData.at(0), GL_STATIC_DRAW);
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particleData.size());
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	glDepthMask(GL_TRUE);
-
+	glBindVertexArray(0);
 
 }
 

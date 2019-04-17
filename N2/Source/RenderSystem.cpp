@@ -221,7 +221,6 @@ void RenderSystem::Update(double& dt)
 
 
 		renderScene(Manager::getInstance()->getCamera()->LookAt());
-
 	}
 
 	std::string renderTimeString = std::to_string(renderTime);
@@ -318,7 +317,11 @@ void RenderSystem::renderTexts()
 			glBindVertexArray(t->VAO);
 			glDrawElements(GL_TRIANGLES, t->indices.size(), GL_UNSIGNED_INT, 0);
 		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+	glBindVertexArray(0);
 	texts.clear();
 	textUID = 0;
 }

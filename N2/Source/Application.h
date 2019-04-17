@@ -3,6 +3,7 @@
 
 #include "OverloadNew.h"
 #include "timer.h"
+#include "Manager.h"
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <iostream>
@@ -19,7 +20,9 @@ public:
 	Application();
 	~Application();
 
-	void Run();
+	virtual void Run();
+
+	static Manager* getManager();
 
 	static bool isKeyPressed(int key);
 	static bool isKeyPressDown(int key);
@@ -34,12 +37,24 @@ public:
 	static double getMouseX();
 	static double getMouseY();
 
+	void setManager(Manager* manager);
+
 	static int framesPerSecond;
 
 private:
 
 	static void keyCallback(GLFWwindow* window, int key, int scanNode, int action, int mods);
 	static void mouseCallback(GLFWwindow* window, double xPos, double yPos);
+
+
+
+
+	std::string title;
+
+protected:
+
+
+	static Manager* manager;
 
 	static std::map<int, bool> keyDown;
 	static std::map<int, bool> keyRelease;
@@ -54,10 +69,6 @@ private:
 	static unsigned int halfScreenHeight;
 
 	static GLFWwindow* window;
-
-	std::string title;
-
-
 
 };
 

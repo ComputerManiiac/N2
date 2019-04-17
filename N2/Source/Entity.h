@@ -26,8 +26,10 @@ public:
 	Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader, bool collisionEnabled, std::string modelPath, std::string texturePath);
 
 	Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgram* shader);
+	Entity(std::string name);
 	Entity();
 	virtual ~Entity();
+
 
 
 	const std::string& getName() const;
@@ -39,7 +41,7 @@ public:
 	template<typename T>
 	T* getComponent();
 
-private:
+protected:
 
 	Contiguous contiguous;
 	std::string name;

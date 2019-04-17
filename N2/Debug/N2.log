@@ -20,6 +20,7 @@ c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(130): warning C4018: '
 c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(151): warning C4018: '<': signed/unsigned mismatch
 c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(280): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(281): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  Render2DSystem.cpp
   RenderSystem.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
   c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
@@ -27,6 +28,9 @@ c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(261): warning C4018: '<'
 c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(266): warning C4018: '<': signed/unsigned mismatch
 c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(398): warning C4018: '<': signed/unsigned mismatch
   Renderer.cpp
+  RendererGrass.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
   RendererLit.cpp
   RendererParticle.cpp
 c:\users\compu\desktop\n2\n2\n2\source\rendererparticle.cpp(86): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data

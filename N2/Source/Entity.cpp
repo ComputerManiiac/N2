@@ -102,6 +102,9 @@ Entity::Entity(std::string name, Vector3 position, Vector3 rotation, Vector3 sca
 	manager->registerComponent<PhysicsSystem>(getComponent<RigidbodyComponent>());
 }
 
+Entity::Entity(std::string name) : name(name) {
+
+}
 
 Entity::Entity()
 {
@@ -113,6 +116,8 @@ Entity::~Entity()
 {
 
 }
+
+
 
 const std::string& Entity::getName() const
 {

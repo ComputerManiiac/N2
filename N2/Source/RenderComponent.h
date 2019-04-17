@@ -61,9 +61,6 @@ private:
 	DRAW_MODE mode;
 	Material material;
 	OBJInfo info;
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
 	unsigned int textureID;
 	ShaderProgram* shader;
 	bool doubleSided;

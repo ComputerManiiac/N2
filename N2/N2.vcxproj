@@ -165,6 +165,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\BatchData.cpp" />
+    <ClCompile Include="Source\Physics2DSystem.cpp" />
+    <ClCompile Include="Source\Render2DComponent.cpp" />
+    <ClCompile Include="Source\Render2DSystem.cpp" />
     <ClCompile Include="Source\RendererParticle.cpp" />
     <ClCompile Include="Source\ParticleComponent.cpp" />
     <ClCompile Include="Source\ParticleSystem.cpp" />
@@ -194,10 +197,13 @@
     <ClCompile Include="Source\timer.cpp" />
     <ClCompile Include="Source\TransformComponent.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
-    <ClCompile Include="Source\UIComponent.cpp" />
+    <ClCompile Include="Source\Transform2DComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BatchData.h" />
+    <ClInclude Include="Source\Physics2DSystem.h" />
+    <ClInclude Include="Source\Render2DComponent.h" />
+    <ClInclude Include="Source\Render2DSystem.h" />
     <ClInclude Include="Source\RendererParticle.h" />
     <ClInclude Include="Source\ParticleComponent.h" />
     <ClInclude Include="Source\ParticleSystem.h" />
@@ -234,8 +240,8 @@
     <ClInclude Include="Source\Vector3.h" />
     <ClInclude Include="Source\System.h" />
     <ClInclude Include="Source\Utility.h" />
-    <ClInclude Include="Source\UIComponent.h" />
     <ClInclude Include="Source\Text.h" />
+    <ClInclude Include="Source\Transform2DComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

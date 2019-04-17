@@ -25,18 +25,6 @@
     <Filter Include="Source Files\Memory">
       <UniqueIdentifier>{20a8e28c-c712-47f8-a883-2a8ad70462f2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{e4f10113-8923-49c3-8752-3e87d42d62f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Systems">
-      <UniqueIdentifier>{4f674df4-dc81-47f1-af43-90b91ee88773}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Components">
-      <UniqueIdentifier>{b772647f-2afd-4cd5-8ac2-16e5c4f06fee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Systems">
-      <UniqueIdentifier>{cd56bf5b-8e73-45d1-b23c-bd02ef439d57}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Others">
       <UniqueIdentifier>{6870f51d-c4e7-4980-94aa-24de8b272498}</UniqueIdentifier>
     </Filter>
@@ -52,11 +40,35 @@
     <Filter Include="Header Files\Structures">
       <UniqueIdentifier>{be18c654-cb0a-47f4-8dff-985fc8a36dc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Renderer">
+    <Filter Include="Header Files\3D">
+      <UniqueIdentifier>{bd511e58-facd-405a-8f9d-1847603eb792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3D\Renderer">
       <UniqueIdentifier>{6acd75f4-b4e9-4c54-8114-050a67d2080f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Renderer">
+    <Filter Include="Header Files\3D\Systems">
+      <UniqueIdentifier>{cd56bf5b-8e73-45d1-b23c-bd02ef439d57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3D\Components">
+      <UniqueIdentifier>{b772647f-2afd-4cd5-8ac2-16e5c4f06fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3D">
+      <UniqueIdentifier>{abe04adb-71d4-4806-a0ca-2f5e78194234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3D\Components">
+      <UniqueIdentifier>{e4f10113-8923-49c3-8752-3e87d42d62f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3D\Renderer">
       <UniqueIdentifier>{f1ab7205-3f58-434d-a46f-39ac4a8a30d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3D\Systems">
+      <UniqueIdentifier>{4f674df4-dc81-47f1-af43-90b91ee88773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\2D">
+      <UniqueIdentifier>{3d02de55-21a0-4db9-ab39-33ee68d3ee10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\2D">
+      <UniqueIdentifier>{4ad43094-7645-4a33-a757-727a4ebc9111}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -82,16 +94,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\RenderSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\3D\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component.cpp">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\RenderComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\TransformComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Loader.cpp">
       <Filter>Source Files\Others</Filter>
@@ -112,45 +124,54 @@
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Source\PhysicsSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\3D\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\RigidbodyComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\ColliderComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\UIComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\FrameBuffer.cpp">
       <Filter>Source Files\Others</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererGrass.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\3D\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererLit.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\3D\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererShadow.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\3D\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\3D\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererSkybox.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\3D\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\ParticleComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+      <Filter>Source Files\3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\ParticleSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\3D\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererParticle.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\3D\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\BatchData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Render2DSystem.cpp">
+      <Filter>Source Files\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics2DSystem.cpp">
+      <Filter>Source Files\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Render2DComponent.cpp">
+      <Filter>Source Files\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Transform2DComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -183,19 +204,19 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\RenderSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\3D\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Source\System.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\3D\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Source\Component.h">
-      <Filter>Header Files\Components</Filter>
+      <Filter>Header Files\3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\RenderComponent.h">
-      <Filter>Header Files\Components</Filter>
+      <Filter>Header Files\3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\TransformComponent.h">
-      <Filter>Header Files\Components</Filter>
+      <Filter>Header Files\3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Loader.h">
       <Filter>Header Files\Others</Filter>
@@ -216,22 +237,19 @@
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Source\RigidbodyComponent.h">
-      <Filter>Header Files\Components</Filter>
+      <Filter>Header Files\3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\ColliderComponent.h">
-      <Filter>Header Files\Components</Filter>
+      <Filter>Header Files\3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\PhysicsSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\3D\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Source\Contiguous.h">
       <Filter>Header Files\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Utility.h">
       <Filter>Header Files\Others</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\UIComponent.h">
-      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\FrameBuffer.h">
       <Filter>Header Files\Others</Filter>
@@ -246,30 +264,42 @@
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererGrass.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\3D\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Renderer.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\3D\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererLit.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\3D\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererShadow.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\3D\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererSkybox.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\3D\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\ParticleComponent.h">
-      <Filter>Header Files\Components</Filter>
+      <Filter>Header Files\3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\ParticleSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\3D\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererParticle.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\3D\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\BatchData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Render2DSystem.h">
+      <Filter>Header Files\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Physics2DSystem.h">
+      <Filter>Header Files\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Render2DComponent.h">
+      <Filter>Header Files\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Transform2DComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

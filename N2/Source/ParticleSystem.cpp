@@ -60,8 +60,6 @@ bool sortParticlePointers(Particle* a, Particle* b)
 
 void ParticleSystem::Update(double& dt)
 {
-	//if (Application::isKeyPressDown(GLFW_KEY_N))
-	//	std::cout << randomPointInSphere(, 5.0f) << std::endl;
 
 	ShaderProgram* emitterShader = Manager::getInstance()->getShader("particle");
 	emitterShader->Use();
@@ -101,25 +99,14 @@ void ParticleSystem::Update(double& dt)
 		}
 
 
-		std::sort(particles.begin(), particles.end(), sortParticlePointers);
+		if(particles.size() > 1)
+			std::sort(particles.begin(), particles.end(), sortParticlePointers);
 
 		/* Update Particle Data for Rendering */
 		for(int i = 0; i < particles.size(); i++)
 		{
 			Particle* particle = particles[i];
-			particle->position += particle->velocity * dt;
 
-			particle->lifeTime -= dt;
-			particle->cameraDist = (cameraPos - particle->position).LengthSquared();
-
-			/* Particle has expired */
-			if (particle->lifeTime <= 0.0f)
-			{
-				particle->active = false;
-				particles.erase(particles.begin() + i);
-				--particleCount;
-				continue;
-			}
 
 			modelStack.PushMatrix();
 			modelStack.Translate(particle->position);
@@ -144,6 +131,20 @@ void ParticleSystem::Update(double& dt)
 				particleData.emplace_back(model, textureCurrent, textureNext, blend);
 
 			modelStack.PopMatrix();
+
+
+			particle->position += particle->velocity * dt;
+
+			particle->lifeTime -= dt;
+			particle->cameraDist = (cameraPos - particle->position).LengthSquared();
+
+			/* Particle has expired */
+			if (particle->lifeTime <= 0.0f)
+			{
+				particle->active = false;
+				particles.erase(particles.begin() + i);
+				--particleCount;
+			}
 		}
 
 
@@ -175,12 +176,8 @@ void ParticleSystem::Update(double& dt)
 
 
 
-		if (particleData.size() > 0)
-		{
-
-			glBufferData(GL_ARRAY_BUFFER, particleData.size() * sizeof(ParticleData), &particleData.at(0), GL_STATIC_DRAW);
-			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particles.size());
-		}
+		glBufferData(GL_ARRAY_BUFFER, particleData.size() * sizeof(ParticleData), &particleData.at(0), GL_STATIC_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particleData.size());
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	glDepthMask(GL_TRUE);

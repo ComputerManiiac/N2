@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Render2DSystem.h"
 #include "Entity2D.h"
+#include "Camera2D.h"
 
 SceneManager::SceneManager()
 {
@@ -10,21 +11,133 @@ SceneManager::SceneManager()
 
 SceneManager::~SceneManager()
 {
+
+
+	for (int y = 0; y < 24; ++y)
+	{
+		for (int x = 0; x < 32; ++x)
+		{
+			if(entities[y][x] != nullptr)
+				delete entities[y][x];
+		}
+	}
+
+	Manager::~Manager();
 }
 
 void SceneManager::Initialize()
 {
+	editorMode = true;
+
+	currentObject = 0;
+	for (int y = 0; y < 24; ++y)
+	{
+		for (int x = 0; x < 32; ++x)
+		{
+			entities[y][x] = nullptr;
+		}
+	}
+
+	camera = new Camera2D(Vector3(0, 0, -1));
+
 	registerSystem<Render2DSystem>();
 	shaders.try_emplace("tile", "Assets\\Shaders\\tile.vert", "Assets\\Shaders\\tile.frag");
 
-	entities["testblock"] = new Entity2D("testblock", Vector3(100, 200, 0), Vector2(0, 0), Vector2(1, 1), &shaders["tile"], "Assets\\Textures\\wood.tga");
+	//entities["background"] = new Entity2D("background", Vector3(0, 0, -1), 0, Vector2(800, 600), &shaders["tile"], "Assets\\Textures\\2D\\background.tga");
+	//entities["house"] = new Entity2D("house", Vector3(400, 300, 1), 0, Vector2(75, 100), &shaders["tile"], "Assets\\Textures\\2D\\house.tga");
+	//entities["tree2"] = new Entity2D("tree2", Vector3(420, 300, 0), 0, Vector2(75, 75), &shaders["tile"], "Assets\\Textures\\2D\\tree.tga");
+
+	//entities["testblock"] = new Entity2D("testblock", Vector3(0, 0, 0),0, Vector2(75, 75), &shaders["tile"], "Assets\\Textures\\2D\\tree.tga");
+
+	//entities["grass"] = new Entity2D("grass", Vector3(0, 0, 0), 0, Vector2(25, 25), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga", Vector2(6.0f / 32.0f, 1.0f - (1.0f / 32.0f)));
+
 	getSystem<Render2DSystem>()->Initialize();
+
 }
 
 void SceneManager::Update(double dt)
 {
+	if (editorMode)
+	{
+		std::cout << currentObject << std::endl;
+		if (Application::isKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
+		{
+			int x = (int)floor(Application::getMouseX() / 25.0f);
+			int y = (int)floor(Application::getMouseY() / 25.0f);
 
+			if (entities[y][x] == nullptr)
+			{
+				Vector2 textureOffset;
+				textureOffset.x = (currentObject % 32) / 32.0f;
+				textureOffset.y = 1.0f - ((currentObject / 32) + 1) / 32.0f;
+				entities[y][x] = new Entity2D(std::to_string(glfwGetTime()), Vector3(x * 25.0f, y * 25.0f, 0), 0, Vector2(25, 25), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga", textureOffset);
+			}
+		}
+
+		else if (Application::isKeyPressed(GLFW_MOUSE_BUTTON_RIGHT))
+		{
+			int x = (int)floor(Application::getMouseX() / 25.0f);
+			int y = (int)floor(Application::getMouseY() / 25.0f);
+
+			if (entities[y][x] != nullptr)
+			{
+				delete entities[y][x];
+				entities[y][x] = nullptr;
+			}
+		}
+		else if (Application::isKeyPressDown(GLFW_KEY_C))
+		{
+			for (int y = 0; y < 24; ++y)
+			{
+				for (int x = 0; x < 32; ++x)
+				{
+					if (entities[y][x] != nullptr)
+					{
+						delete entities[y][x];
+						entities[y][x] = nullptr;
+					}
+				}
+			}
+		}
+		else if (Application::getMouseScrollDelta() == 1)
+		{
+			currentObject = Math::Clamp(--currentObject, 0, 767);
+		}
+		else if (Application::getMouseScrollDelta() == -1)
+		{
+			currentObject = Math::Clamp(++currentObject, 0, 767);
+		}
+		else if (Application::isKeyPressDown(GLFW_KEY_Z))
+		{
+			currentObject = Math::Clamp(currentObject - 32, 0, 767);
+		}
+		else if (Application::isKeyPressDown(GLFW_KEY_X))
+		{
+			currentObject = Math::Clamp(currentObject + 32, 0, 767);
+		}
+		else if (Application::isKeyPressDown(GLFW_KEY_ENTER))
+		{
+			editorMode = false;
+		}
+
+		//std::cout << "Scroll: " << Application::getMouseScrollDelta() << std::endl;
+
+
+		if (Application::isKeyPressDown(GLFW_KEY_P))
+			Application::toggleCursorLock(GLFW_CURSOR_DISABLED);
+		if (Application::isKeyPressDown(GLFW_KEY_O))
+			Application::toggleCursorLock(GLFW_CURSOR_NORMAL);
+
+	}
+	else
+	{
+
+	}
+
+	camera->Update(dt);
 	getSystem<Render2DSystem>()->Update(dt);
+	
+
 }
 
 SceneManager* SceneManager::getInstance()

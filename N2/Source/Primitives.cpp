@@ -297,3 +297,30 @@ void Primitives::generateQuad(OBJInfo& info)
 	info.indices = { 0,1,2,2,1,3 };
 
 }
+
+void Primitives::generateQuad2D(OBJInfo2D & info)
+{
+	std::vector<Vector3>& vertices = info.vertices;
+
+	float length = 1.0f;
+	float halfLength = 0.5f * length;
+
+	Vector3 v;
+
+	v.Set(-halfLength, halfLength, 0);
+	vertices.push_back(v);
+
+
+	v.Set(-halfLength, -halfLength, 0);
+	vertices.push_back(v);
+
+
+	v.Set(halfLength, halfLength, 0);
+	vertices.push_back(v);
+
+
+	v.Set(halfLength, -halfLength, 0);
+	vertices.push_back(v);
+
+	info.indices = { 0,1,2,2,1,3 };
+}

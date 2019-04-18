@@ -16,7 +16,7 @@ class Manager
 public:
 
 	static Manager* getInstance();
-	~Manager();
+	virtual ~Manager();
 	
 	void Register();
 	virtual void Initialize();
@@ -34,14 +34,17 @@ public:
 	Camera* getCamera();
 	ShaderProgram* getShader(const std::string& name);
 
+private:
+	std::map<std::string, Entity*> entities;
+
 protected:
 
 
 
 	std::map<std::type_index, System*> systems;
 	std::map<std::string, ShaderProgram> shaders;
-	std::map<std::string, Entity*> entities;
-	Camera camera;
+
+	Camera* camera;
 
 protected:
 	static Manager* instance;

@@ -30,7 +30,6 @@ void Camera::Init(const Vector3& pos)
 	this->position = pos;
 
 	canFreeLook = true;
-
 	updateMouse();
 }
 
@@ -133,20 +132,6 @@ Mtx44 Camera::LookAt()
 }
 
 
-Mtx44 Camera::generateLookAt(const Vector3& pos, const Vector3& target, const Vector3& up)
-{
-
-	Vector3 front = (target - pos).Normalized();
-	Vector3 right = front.Cross(up).Normalized();
-	Vector3 cUp = right.Cross(front);
-
-	Mtx44 mat = Mtx44(right.x, cUp.x, -front.x, 0,
-		right.y, cUp.y, -front.y, 0,
-		right.z, cUp.z, -front.z, 0,
-			-right.Dot(target), -cUp.Dot(target), front.Dot(target), 1);
-
-	return mat;
-}
 
 
 void Camera::Invert()

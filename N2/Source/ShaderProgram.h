@@ -2,6 +2,7 @@
 #define SHADERPROGRAM_H
 
 #include "Vector3.h"
+#include "Info.h"
 #include "Mtx44.h"
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
@@ -23,6 +24,7 @@ public:
 	void setUniform(const char* name, const int& value);
 	void setUniform(const char* name, const float& value);
 	void setUniform(const char* name, const float& x, const float& y, const float& z);
+	void setUniform(const char* name, const Vector2& vec);
 	void setUniform(const char* name, const Vector3& vec);
 	void setUniform(const char* name, const float& x, const float& y, const float& z, const float& w);
 	void setUniform(const char* name, const Mtx44& matrix);

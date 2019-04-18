@@ -14,6 +14,7 @@ public:
 	static void generateBoxCollider(const OBJInfo& ref, std::vector<Vector3>& colliderPoints);
 
 	static void generateQuad(OBJInfo& info);
+	static void generateQuad2D(OBJInfo2D& info);
 };
 
 #endif

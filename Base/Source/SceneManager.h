@@ -14,7 +14,11 @@ public:
 
 	static SceneManager* getInstance();
 
-
+private:
+	bool editorMode;
+	int currentObject;
+	//std::map<std::string, Entity*> entities;
+	Entity* entities[24][32];
 };
 
 #endif

@@ -5,8 +5,12 @@ GLFWwindow* Application::window = nullptr;
 std::map<int, bool> Application::keyDown = {};
 std::map<int, bool> Application::keyRelease = {};
 
+
+
 double Application::mouseX = 0.0;
 double Application::mouseY = 0.0;
+
+float Application::mouseScrollDeltaY = 0.0f;
 
 unsigned int Application::screenWidth = 0;
 unsigned int Application::screenHeight = 0;
@@ -14,6 +18,7 @@ unsigned int Application::halfScreenWidth = 0;
 unsigned int Application::halfScreenHeight = 0;
 
 int Application::framesPerSecond = 0;
+
 
 Manager* Application::manager = nullptr;
 
@@ -23,8 +28,8 @@ Application::Application(std::string title, unsigned int screenWidth, unsigned i
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 
-	this->halfScreenWidth = (unsigned int) 0.5 * screenWidth;
-	this->halfScreenHeight = (unsigned int) 0.5 * screenHeight;
+	this->halfScreenWidth = (unsigned int) screenWidth / 2;
+	this->halfScreenHeight = (unsigned int) screenHeight / 2;
 
 	/* Initialize the library */
 	if (!glfwInit()) return;
@@ -42,10 +47,10 @@ Application::Application(std::string title, unsigned int screenWidth, unsigned i
 	}
 
 	glfwSetKeyCallback(window, keyCallback);
- 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouseCallback);
-
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	glfwSetScrollCallback(window, scrollCallback);
 	
 }
 
@@ -97,7 +102,6 @@ void Application::Run()
 			lastTime = glfwGetTime();
 		}
 
-
 		/* Clear all key down and release states */
 		keyDown.clear();
 		keyRelease.clear();
@@ -118,11 +122,23 @@ Manager* Application::getManager()
 	return manager;
 }
 
+void Application::toggleCursorLock(int state)
+{
+	glfwSetInputMode(window, GLFW_CURSOR, state);
+}
+
+float Application::getMouseScrollDelta()
+{
+	return mouseScrollDeltaY;
+}
 
 
 bool Application::isKeyPressed(int key)
 {
-	return glfwGetKey(window, key);
+	if (key == GLFW_MOUSE_BUTTON_LEFT || key == GLFW_MOUSE_BUTTON_RIGHT)
+		return glfwGetMouseButton(window, key);
+	else
+		return glfwGetKey(window, key);
 }
 
 bool Application::isKeyPressDown(int key)
@@ -150,6 +166,21 @@ void Application::mouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	mouseX = xPos;
 	mouseY = yPos;
+}
+
+void Application::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	/* Store key down and key release states of given key */
+	if (action == GLFW_PRESS && keyDown.find(button) == keyDown.end())
+		keyDown[button] = true;
+
+	if (action == GLFW_RELEASE && keyRelease.find(button) == keyRelease.end())
+		keyRelease[button] = true;
+}
+
+void Application::scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
+{
+	mouseScrollDeltaY = (float) yOffset;
 }
 
 void Application::setManager(Manager* manager)

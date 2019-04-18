@@ -79,9 +79,6 @@ struct Vector2 {
 
 struct Vertex {
 
-	Vector3 position;
-	Vector3 normal;
-	Vector2 texCoord;
 
 	Vertex(Vector3 position, Vector2 texCoord, Vector3 normal) : position(position), texCoord(texCoord), normal(normal) {}
 	Vertex() {}
@@ -91,22 +88,32 @@ struct Vertex {
 		return memcmp((void*)this, (void*)&other, sizeof(Vertex)) > 0;
 	}
 
+	Vector3 position;
+	Vector3 normal;
+	Vector2 texCoord;
+
 };
+
+
 
 
 struct OBJInfo {
 
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
 
 	OBJInfo(std::vector<Vertex> vertices, std::vector<unsigned int> indices) : vertices(vertices), indices(indices) {}
-
 	OBJInfo() {}
 
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
 };
 
 
+struct OBJInfo2D {
 
+	OBJInfo2D(std::vector<Vector3> vertices, std::vector<unsigned int> indices) : vertices(vertices), indices(indices) {}
+	OBJInfo2D() {}
 
-
+	std::vector<Vector3> vertices;
+	std::vector<unsigned int> indices;
+};
 #endif

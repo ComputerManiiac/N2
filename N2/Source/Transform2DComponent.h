@@ -8,14 +8,26 @@ class Transform2DComponent : public Component
 {
 public:
 	
-	Transform2DComponent(Entity* parent, Vector3 position, Vector2 rotation, Vector2 scale);
+	Transform2DComponent(Entity* parent, Vector3 position, float rotation, Vector2 scale);
 	Transform2DComponent();
 	~Transform2DComponent();
 
+	const Vector3& getPos() const;
+	const Vector3& getCenterPos() const;
+
+	const float& getRot() const;
+
+	
+	const Vector2& getScale() const;
+	const Vector3& getScale3D() const;
+
 private:
 	Vector3 position;
-	Vector2 rotation;
+	Vector3 centerPosition;
+
+	float rotation;
 	Vector2 scale;
+	Vector3 scale3D;
 };
 
 #endif

@@ -14,12 +14,12 @@ public:
 	Camera();
 	~Camera();
 
-	static Mtx44 generateLookAt(const Vector3& pos, const Vector3& target,  const Vector3& up);
 
-	Mtx44 LookAt();
-	void Init(const Vector3& pos);
+	virtual Mtx44 LookAt();
+	virtual void Init(const Vector3& pos);
+	virtual void Update(double dt);
+
 	void Reset();
-	void Update(double dt);
 	void Invert();
 	void setFreeLook(bool state);
 
@@ -29,10 +29,8 @@ public:
 	const Vector3& getPos() const;
 
 private:
-
 	Vector3 front;
 	Vector3 target;
-	Vector3 position;
 	Vector3 up;
 
 	bool firstMouse;
@@ -42,8 +40,13 @@ private:
 	float sensitivity = 0.08f;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
-
 	void updateMouse();
+
+protected:
+
+
+	Vector3 position;
+	
 };
 
 #endif

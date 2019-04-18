@@ -3,12 +3,15 @@
 
 
 
-GameApplication::GameApplication(std::string title, unsigned int screenWidth, unsigned int screenHeight) :Application(title, screenWidth, screenHeight)
+GameApplication::GameApplication(std::string title, unsigned int screenWidth, unsigned int screenHeight) : Application(title, screenWidth, screenHeight)
 {	
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+GameApplication::GameApplication()
+{
+
 }
 
 GameApplication::~GameApplication()
@@ -51,6 +54,7 @@ void GameApplication::Run()
 			lastTime = glfwGetTime();
 		}
 
+		mouseScrollDeltaY = 0.0f;
 
 		/* Clear all key down and release states */
 		keyDown.clear();

@@ -7,7 +7,7 @@ class GameApplication : public Application
 {
 public:
 	GameApplication(std::string title, unsigned int screenWidth, unsigned int screenHeight);
-	GameApplication() = delete;
+	GameApplication();
 	~GameApplication();
 
 	void Run();

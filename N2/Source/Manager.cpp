@@ -28,6 +28,7 @@ Manager::~Manager()
 	for (auto& entity : entities)
 		delete entity.second;
 
+	delete camera;
 }
 
 void Manager::Register() {
@@ -38,6 +39,7 @@ void Manager::Register() {
 
 void Manager::Initialize()	
 {
+	camera = new Camera(Vector3(0, 1, 5));
 
 	getSystem<RenderSystem>()->Initialize();
 	getSystem<ParticleSystem>()->Initialize();
@@ -47,7 +49,7 @@ void Manager::Initialize()
 
 Camera* Manager::getCamera()
 {
-	return &camera;
+	return camera;
 }
 
 ShaderProgram* Manager::getShader(const std::string& name)
@@ -132,7 +134,7 @@ void Manager::Update(double dt)
 	if (Application::isKeyPressDown(GLFW_KEY_H))
 		getSystem<RenderSystem>()->renderSkybox = !getSystem<RenderSystem>()->renderSkybox;
 
-	camera.Update(dt);
+	camera->Update(dt);
 
 	getSystem<PhysicsSystem>()->Update(dt);
 	getSystem<RenderSystem>()->Update(dt);

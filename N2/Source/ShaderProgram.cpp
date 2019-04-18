@@ -87,6 +87,11 @@ void ShaderProgram::setUniform(const char* name, const float& x, const float& y,
 	glUniform3f(glGetUniformLocation(id, name), x, y, z);
 }
 
+void ShaderProgram::setUniform(const char* name, const Vector2 & vec)
+{
+	glUniform2f(glGetUniformLocation(id, name), vec.x, vec.y);
+}
+
 void ShaderProgram::setUniform(const char* name, const float& x, const float& y, const float& z, const float& w)
 {
 	int attrid = glGetUniformLocation(id, name);

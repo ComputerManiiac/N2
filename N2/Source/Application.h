@@ -24,6 +24,10 @@ public:
 
 	static Manager* getManager();
 
+	static void toggleCursorLock(int state);
+
+	static float getMouseScrollDelta();
+
 	static bool isKeyPressed(int key);
 	static bool isKeyPressDown(int key);
 	static bool isKeyPressRelease(int key);
@@ -45,7 +49,8 @@ private:
 
 	static void keyCallback(GLFWwindow* window, int key, int scanNode, int action, int mods);
 	static void mouseCallback(GLFWwindow* window, double xPos, double yPos);
-
+	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+	static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
 
 
 
@@ -61,6 +66,8 @@ protected:
 
 	static double mouseX;
 	static double mouseY;
+
+	static float mouseScrollDeltaY;
 
 	static unsigned int screenWidth;
 	static unsigned int screenHeight;

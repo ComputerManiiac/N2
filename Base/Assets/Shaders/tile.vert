@@ -8,7 +8,7 @@ layout(location = 0) in vec3 vertexPosition_modelspace;
 
 out vec2 texCoords;
 
-
+uniform vec2 textureTileSize;
 uniform vec2 textureTileOffset;
 uniform mat4 transformationMatrix;
 uniform mat4 projection;
@@ -17,7 +17,7 @@ uniform mat4 view;
 void main(){
 	texCoords = vertexPosition_modelspace.xy + vec2(0.5, 0.5);
 	texCoords /= 32;
-
+	texCoords *= textureTileSize / 16;
 	texCoords += textureTileOffset;
 
 

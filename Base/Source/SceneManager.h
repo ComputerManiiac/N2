@@ -16,9 +16,13 @@ public:
 
 private:
 	bool editorMode;
+	bool defineTileMode;
 	int currentObject;
 	//std::map<std::string, Entity*> entities;
 	Entity* entities[24][32];
+	Entity* tileMap;
+	Entity* selection;
+	Vector2 textureOffset;
 };
 
 #endif

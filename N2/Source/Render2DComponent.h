@@ -7,11 +7,14 @@
 class Render2DComponent : public Component
 {
 public:
-	Render2DComponent(Entity* parent, ShaderProgram* shader, std::string texturePath, Vector2 textureOffset);
+	Render2DComponent(Entity* parent, ShaderProgram* shader, std::string texturePath, Vector2 textureOffset, Vector2 textureSize);
 	Render2DComponent();
 	~Render2DComponent();
 
+	void setTextureOffset(const Vector2& textureOffset);
+
 	const unsigned int& getTexID() const;
+	const Vector2& getTextureSize() const;
 	const Vector2& getTextureOffset() const;
 	ShaderProgram* getShader() const;
 	
@@ -19,6 +22,7 @@ public:
 private:
 	unsigned int textureID;
 	Vector2 textureOffset;
+	Vector2 textureSize;
 	ShaderProgram* shader;
 };
 #endif

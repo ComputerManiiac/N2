@@ -12,6 +12,8 @@ SceneManager::SceneManager()
 SceneManager::~SceneManager()
 {
 
+	delete selection;
+	delete tileMap;
 
 	for (int y = 0; y < 24; ++y)
 	{
@@ -28,6 +30,9 @@ SceneManager::~SceneManager()
 void SceneManager::Initialize()
 {
 	editorMode = true;
+	defineTileMode = true;
+	selection = nullptr;
+	tileMap = nullptr;
 
 	currentObject = 0;
 	for (int y = 0; y < 24; ++y)
@@ -43,6 +48,7 @@ void SceneManager::Initialize()
 	registerSystem<Render2DSystem>();
 	shaders.try_emplace("tile", "Assets\\Shaders\\tile.vert", "Assets\\Shaders\\tile.frag");
 
+	
 	//entities["background"] = new Entity2D("background", Vector3(0, 0, -1), 0, Vector2(800, 600), &shaders["tile"], "Assets\\Textures\\2D\\background.tga");
 	//entities["house"] = new Entity2D("house", Vector3(400, 300, 1), 0, Vector2(75, 100), &shaders["tile"], "Assets\\Textures\\2D\\house.tga");
 	//entities["tree2"] = new Entity2D("tree2", Vector3(420, 300, 0), 0, Vector2(75, 75), &shaders["tile"], "Assets\\Textures\\2D\\tree.tga");
@@ -50,7 +56,16 @@ void SceneManager::Initialize()
 	//entities["testblock"] = new Entity2D("testblock", Vector3(0, 0, 0),0, Vector2(75, 75), &shaders["tile"], "Assets\\Textures\\2D\\tree.tga");
 
 	//entities["grass"] = new Entity2D("grass", Vector3(0, 0, 0), 0, Vector2(25, 25), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga", Vector2(6.0f / 32.0f, 1.0f - (1.0f / 32.0f)));
+	
+	tileMap = new Entity2D("tileMap", Vector3(0, 0, 0), 0, Vector2(Application::getScreenWidth(),
+		Application::getScreenHeight()), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga",
+		Vector2(0, 0),
+		Vector2(512, 512));
+	
+	textureOffset.x = 0.0f;
+	textureOffset.y = 1.0f - (1.0f / 32.0f);
 
+	selection = new Entity2D("selection", Vector3(0, 0, 0), 0, Vector2(25, 25), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga", textureOffset, Vector2(16, 16));
 	getSystem<Render2DSystem>()->Initialize();
 
 }
@@ -59,80 +74,112 @@ void SceneManager::Update(double dt)
 {
 	if (editorMode)
 	{
-		std::cout << currentObject << std::endl;
-		if (Application::isKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
-		{
+
+		if (defineTileMode) {
+			
+
+
 			int x = (int)floor(Application::getMouseX() / 25.0f);
 			int y = (int)floor(Application::getMouseY() / 25.0f);
 
-			if (entities[y][x] == nullptr)
-			{
-				Vector2 textureOffset;
-				textureOffset.x = (currentObject % 32) / 32.0f;
-				textureOffset.y = 1.0f - ((currentObject / 32) + 1) / 32.0f;
-				entities[y][x] = new Entity2D(std::to_string(glfwGetTime()), Vector3(x * 25.0f, y * 25.0f, 0), 0, Vector2(25, 25), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga", textureOffset);
-			}
-		}
+			if (Application::isKeyPressDown(GLFW_MOUSE_BUTTON_LEFT)) {
 
-		else if (Application::isKeyPressed(GLFW_MOUSE_BUTTON_RIGHT))
-		{
+				std::cout << "X: " << x * 25 << ", Y: " << y * 25 << std::endl;
+			}
+
+			if (Application::isKeyPressDown(GLFW_KEY_ENTER))
+			{
+				defineTileMode = false;
+			}
+
+
+		}
+		else {
+
+
+			std::cout << currentObject << std::endl;
+
 			int x = (int)floor(Application::getMouseX() / 25.0f);
 			int y = (int)floor(Application::getMouseY() / 25.0f);
 
-			if (entities[y][x] != nullptr)
+
+
+			selection->getComponent<Transform2DComponent>()->setPosition(25.0f * Vector3(x, y, 0));
+
+			if (Application::isKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
 			{
-				delete entities[y][x];
-				entities[y][x] = nullptr;
-			}
-		}
-		else if (Application::isKeyPressDown(GLFW_KEY_C))
-		{
-			for (int y = 0; y < 24; ++y)
-			{
-				for (int x = 0; x < 32; ++x)
+
+				if (entities[y][x] == nullptr)
 				{
-					if (entities[y][x] != nullptr)
+					Vector2 textureSize(16, 16);
+					entities[y][x] = new Entity2D(std::to_string(glfwGetTime()), Vector3(x * 25.0f, y * 25.0f, 0), 0, Vector2(25, 25), &shaders["tile"], "Assets\\Textures\\2D\\tileset.tga", textureOffset, textureSize);
+				}
+			}
+
+			else if (Application::isKeyPressed(GLFW_MOUSE_BUTTON_RIGHT))
+			{
+
+				if (entities[y][x] != nullptr)
+				{
+					delete entities[y][x];
+					entities[y][x] = nullptr;
+				}
+			}
+			else if (Application::isKeyPressDown(GLFW_KEY_C))
+			{
+				for (int y = 0; y < 24; ++y)
+				{
+					for (int x = 0; x < 32; ++x)
 					{
-						delete entities[y][x];
-						entities[y][x] = nullptr;
+						if (entities[y][x] != nullptr)
+						{
+							delete entities[y][x];
+							entities[y][x] = nullptr;
+						}
 					}
 				}
 			}
-		}
-		else if (Application::getMouseScrollDelta() == 1)
-		{
-			currentObject = Math::Clamp(--currentObject, 0, 767);
-		}
-		else if (Application::getMouseScrollDelta() == -1)
-		{
-			currentObject = Math::Clamp(++currentObject, 0, 767);
-		}
-		else if (Application::isKeyPressDown(GLFW_KEY_Z))
-		{
-			currentObject = Math::Clamp(currentObject - 32, 0, 767);
-		}
-		else if (Application::isKeyPressDown(GLFW_KEY_X))
-		{
-			currentObject = Math::Clamp(currentObject + 32, 0, 767);
-		}
-		else if (Application::isKeyPressDown(GLFW_KEY_ENTER))
-		{
-			editorMode = false;
-		}
+			else if (Application::getMouseScrollDelta() == 1)
+			{
+				currentObject = Math::Clamp(--currentObject, 0, 767);
+				textureOffset.x = (currentObject % 32) / 32.0f;
+				textureOffset.y = 1.0f - ((currentObject / 32) + 1) / 32.0f;
+				selection->getComponent<Render2DComponent>()->setTextureOffset(textureOffset);
+			}
+			else if (Application::getMouseScrollDelta() == -1)
+			{
+				currentObject = Math::Clamp(++currentObject, 0, 767);
+				textureOffset.x = (currentObject % 32) / 32.0f;
+				textureOffset.y = 1.0f - ((currentObject / 32) + 1) / 32.0f;
+				selection->getComponent<Render2DComponent>()->setTextureOffset(textureOffset);
+			}
+			else if (Application::isKeyPressDown(GLFW_KEY_Z))
+			{
+				currentObject = Math::Clamp(currentObject - 32, 0, 767);
+			}
+			else if (Application::isKeyPressDown(GLFW_KEY_X))
+			{
+				currentObject = Math::Clamp(currentObject + 32, 0, 767);
+			}
 
-		//std::cout << "Scroll: " << Application::getMouseScrollDelta() << std::endl;
-
-
-		if (Application::isKeyPressDown(GLFW_KEY_P))
-			Application::toggleCursorLock(GLFW_CURSOR_DISABLED);
-		if (Application::isKeyPressDown(GLFW_KEY_O))
-			Application::toggleCursorLock(GLFW_CURSOR_NORMAL);
-
+			if (Application::isKeyPressDown(GLFW_KEY_ENTER))
+			{
+				selection->getComponent<Transform2DComponent>()->setPosition(Vector3(-100, -100, 0));
+				editorMode = false;
+			}
+		}
 	}
 	else
 	{
 
 	}
+
+
+
+	if (Application::isKeyPressDown(GLFW_KEY_P))
+		Application::toggleCursorLock(GLFW_CURSOR_DISABLED);
+	if (Application::isKeyPressDown(GLFW_KEY_O))
+		Application::toggleCursorLock(GLFW_CURSOR_NORMAL);
 
 	camera->Update(dt);
 	getSystem<Render2DSystem>()->Update(dt);

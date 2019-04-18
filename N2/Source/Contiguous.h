@@ -17,7 +17,6 @@ public:
 
 	~Contiguous()
 	{
-		std::cout << "Freed 0x" << (void*)start << std::endl;
 		free((void*)start);
 	}
 

@@ -1,4 +1,7 @@
 ﻿  SceneManager.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-  Base.vcxproj -> D:\Programming\C++\N2\Debug\Base.exe
+c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+c:\users\compu\desktop\n2\n2\base\source\scenemanager.cpp(61): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\compu\desktop\n2\n2\base\source\scenemanager.cpp(60): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\compu\desktop\n2\n2\base\source\scenemanager.cpp(107): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Base.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\Base.exe

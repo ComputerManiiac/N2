@@ -12,6 +12,8 @@ public:
 	Transform2DComponent();
 	~Transform2DComponent();
 
+	void setPosition(const Vector3& position);
+
 	const Vector3& getPos() const;
 	const Vector3& getCenterPos() const;
 
@@ -22,6 +24,9 @@ public:
 	const Vector3& getScale3D() const;
 
 private:
+
+
+
 	Vector3 position;
 	Vector3 centerPosition;
 

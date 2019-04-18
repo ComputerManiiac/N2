@@ -58,6 +58,7 @@ void Render2DSystem::Update(double& dt)
 	{
 		Mtx44 transformation = getTransformationMatrix(sub->getParent()->getComponent<Transform2DComponent>());
 		shader->setUniform("transformationMatrix", transformation);
+		shader->setUniform("textureTileSize", sub->getTextureSize());
 		shader->setUniform("textureTileOffset", sub->getTextureOffset());
 
 		glActiveTexture(GL_TEXTURE0);

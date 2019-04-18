@@ -6,7 +6,8 @@
 class Entity2D : public Entity
 {
 public:
-	Entity2D(std::string name, Vector3 position, float rotation, Vector2 scale, ShaderProgram* shader, std::string texturePath, Vector2 textureOffset);
+	Entity2D(std::string name, Vector3 position, float rotation, Vector2 scale, ShaderProgram* shader, 
+		std::string texturePath, Vector2 textureOffset, Vector2 textureSize);
 	Entity2D();
 	~Entity2D();
 };

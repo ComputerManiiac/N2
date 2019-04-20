@@ -68,7 +68,11 @@ void Manager::registerSystem() {
 template<typename T>
 T* Manager::getSystem()
 {
-	return static_cast<T*>(systems[std::type_index(typeid(T*))]);
+	std::type_index type = std::type_index(typeid(T*));
+	if (systems.find(type) != systems.end())
+		return static_cast<T*>(systems[std::type_index(typeid(T*))]);
+	else
+		return nullptr;
 }
 
 #endif

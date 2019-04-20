@@ -12,6 +12,7 @@ public:
 	~Render2DComponent();
 
 	void setTextureOffset(const Vector2& textureOffset);
+	void setTextureSize(const Vector2& textureSize);
 
 	const unsigned int& getTexID() const;
 	const Vector2& getTextureSize() const;

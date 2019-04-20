@@ -314,5 +314,8 @@
     <ClInclude Include="Source\Camera2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

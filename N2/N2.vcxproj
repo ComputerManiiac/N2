@@ -205,6 +205,7 @@
     <ClInclude Include="Source\Camera2D.h" />
     <ClInclude Include="Source\BatchData.h" />
     <ClInclude Include="Source\Entity2D.h" />
+    <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\Physics2DSystem.h" />
     <ClInclude Include="Source\Render2DComponent.h" />
     <ClInclude Include="Source\Render2DSystem.h" />

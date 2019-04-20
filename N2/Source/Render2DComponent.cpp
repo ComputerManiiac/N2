@@ -23,6 +23,11 @@ void Render2DComponent::setTextureOffset(const Vector2& textureOffset)
 	this->textureOffset = textureOffset;
 }
 
+void Render2DComponent::setTextureSize(const Vector2& textureSize)
+{
+	this->textureSize = textureSize;
+}
+
 
 const unsigned int& Render2DComponent::getTexID() const {
 	return textureID;

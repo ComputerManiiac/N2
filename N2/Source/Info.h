@@ -72,6 +72,11 @@ struct Vector2 {
 		return *this;
 	}
 
+	friend std::ostream& operator<<(std::ostream& os, const Vector2& rhs)
+	{
+		os << "(" << rhs.x << "," << rhs.y << ")";
+		return os;
+	}
 	float x;
 	float y;
 };

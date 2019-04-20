@@ -36,5 +36,6 @@ Entity2D::Entity2D()
 Entity2D::~Entity2D()
 {
 	Manager* manager = Manager::getInstance();
-	manager->getSystem<Render2DSystem>()->removeComp(getComponent<Render2DComponent>());
+	if(manager->getSystem<Render2DSystem>() != nullptr)
+		manager->getSystem<Render2DSystem>()->removeComp(getComponent<Render2DComponent>());
 }

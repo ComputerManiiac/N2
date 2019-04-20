@@ -2,6 +2,7 @@
 #define SCENEMANAGER_H
 
 #include "Manager.h"
+#include "LevelEditor.h"
 
 class SceneManager : public Manager
 {
@@ -14,15 +15,15 @@ public:
 
 	static SceneManager* getInstance();
 
+
 private:
+
+	LevelEditor editor;
 	bool editorMode;
-	bool defineTileMode;
-	int currentObject;
 	//std::map<std::string, Entity*> entities;
 	Entity* entities[24][32];
-	Entity* tileMap;
-	Entity* selection;
-	Vector2 textureOffset;
+	unsigned int entityCount;
+
 };
 
 #endif

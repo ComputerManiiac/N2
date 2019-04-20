@@ -23,6 +23,13 @@ void Transform2DComponent::setPosition(const Vector3 & position)
 	this->centerPosition = position + scale3D * 0.5f;
 }
 
+void Transform2DComponent::setScale(const Vector2& scale)
+{
+	this->scale = scale;
+	scale3D.Set(scale.x, scale.y, 1);
+	this->centerPosition = position + scale3D * 0.5f;
+}
+
 const Vector3& Transform2DComponent::getPos() const
 {
 	return position;

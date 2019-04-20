@@ -1,9 +1,7 @@
-﻿  Entity2D.cpp
-  Render2DComponent.cpp
-  Render2DSystem.cpp
+﻿  Render2DSystem.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-  Generating Code...
+  d:\programming\c++\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
+d:\programming\c++\n2\n2\source\render2dsystem.cpp(209): warning C4018: '<': signed/unsigned mismatch
 winmm.lib(WINMM.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 winmm.lib(WINMM.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
 Gdi32.lib(GDI32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
@@ -12,4 +10,4 @@ Shell32.lib(SHELL32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already def
 Shell32.lib(SHELL32.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
 User32.lib(USER32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 User32.lib(USER32.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.lib
+  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.lib

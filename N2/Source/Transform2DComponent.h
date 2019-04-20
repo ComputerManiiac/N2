@@ -13,6 +13,7 @@ public:
 	~Transform2DComponent();
 
 	void setPosition(const Vector3& position);
+	void setScale(const Vector2& scale);
 
 	const Vector3& getPos() const;
 	const Vector3& getCenterPos() const;

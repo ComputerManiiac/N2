@@ -9,6 +9,12 @@ class Physics2DSystem : public System
 public:
 	Physics2DSystem();
 	~Physics2DSystem();
+
+	void Initialize();
+	void Update(double& dt);
+
+private:
+	
 };
 
 #endif

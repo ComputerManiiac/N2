@@ -1,11 +1,14 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-class Player
+#include "Entity2D.h"
+
+class Player : public Entity2D
 {
 public:
 	Player();
 	~Player();
+
 };
 
 #endif

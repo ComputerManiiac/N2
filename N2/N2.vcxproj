@@ -164,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Collider2DComponent.cpp" />
     <ClCompile Include="Source\Camera2D.cpp" />
     <ClCompile Include="Source\BatchData.cpp" />
     <ClCompile Include="Source\Entity2D.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="Source\Transform2DComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Collider2DComponent.h" />
     <ClInclude Include="Source\Camera2D.h" />
     <ClInclude Include="Source\BatchData.h" />
     <ClInclude Include="Source\Entity2D.h" />

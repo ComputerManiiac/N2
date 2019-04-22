@@ -1,4 +1,5 @@
 #include "Loader.h"
+#include <Windows.h>
 
 std::map<std::string, OBJInfo> Loader::cachedInfo = {};
 std::map<std::string, unsigned int> Loader::cachedTextures = {};
@@ -45,6 +46,35 @@ void Loader::loadImg(const std::string& filePath, GLubyte*& data, GLuint& bytesP
 	fileStream.seekg(18, std::ios::beg);
 	fileStream.read((char*)data, imageSize);
 	fileStream.close();
+}
+
+void Loader::loadBMP(const std::string& filePath, std::vector<unsigned char>& pixels)
+{
+	int i;
+	FILE* f = fopen(filePath.c_str(), "rb");
+	unsigned char info[54];
+	fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
+
+	// extract image height and width from header
+	int width = *(int*)&info[18];
+	int height = *(int*)&info[22];
+
+	int size = 3 * width * height;
+	unsigned char* data = new unsigned char[size]; // allocate 3 bytes per pixel
+	fread(data, sizeof(unsigned char), size, f); // read the rest of the data at once
+	fclose(f);
+
+	for (i = 0; i < size; i += 3)
+	{
+		unsigned char tmp = data[i];
+		data[i] = data[i + 2];
+		data[i + 2] = tmp;
+	}
+
+	bool x = 0;
+
+	pixels.insert(pixels.end(), &data[0], &data[size]);
+	delete[] data;
 }
 
 // Loads a .TGA image file from a given file path and generates a GL_TEXTURE_2D, returning a GLuint/unsigned int for it.

@@ -1,5 +1,5 @@
 #include "Primitives.h"
-
+#include "Loader.h"
 
 
 Primitives::Primitives()
@@ -296,4 +296,27 @@ void Primitives::generateQuad(OBJInfo& info)
 
 	info.indices = { 0,1,2,2,1,3 };
 
+}
+
+void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath)
+{
+	std::vector<unsigned char> data;
+	Loader::loadBMP(heightMapPath, data);
+
+	
+	float cellLength = 32.0f;
+
+	for (float x = 0; x < 512.0f; x+=cellLength)
+	{
+		for (float z = 0; z < 512.0f; z+= cellLength)
+		{
+
+		}
+	}
+
+	/*for (int i = 0; i < (int)data.size(); i += 3)
+	{
+		int avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+		
+	}*/
 }

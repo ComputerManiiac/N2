@@ -38,6 +38,7 @@ public:
 	Loader();
 	~Loader();
 	static void loadCubemap(const std::vector<std::string>& filePath, unsigned int& textureID, GLint filterMode = GL_LINEAR, GLint wrapMode = GL_CLAMP_TO_EDGE);
+	static void loadBMP(const std::string& filePath, std::vector<unsigned char>& data);
 	static void loadTGA(const std::string& filePath, unsigned int& textureID, GLint filterMode=GL_LINEAR, GLint wrapMode=GL_CLAMP_TO_EDGE);
 	static void loadOBJ(const std::string& filePath, OBJInfo& outInfo);
 	static void loadFont(const std::string& filePath, Font& font);

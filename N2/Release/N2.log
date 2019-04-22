@@ -1,49 +1,6 @@
-﻿  Application.cpp
-  Camera.cpp
-c:\users\compu\desktop\n2\n2\n2\source\camera.cpp(91): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  ColliderComponent.cpp
-  Component.cpp
-  Entity.cpp
-  Manager.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-c:\users\compu\desktop\n2\n2\n2\source\manager.cpp(68): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\manager.cpp(73): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\manager.cpp(78): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\manager.cpp(83): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  ParticleComponent.cpp
-  ParticleSystem.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(84): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(105): warning C4018: '<': signed/unsigned mismatch
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(110): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(112): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(130): warning C4018: '<': signed/unsigned mismatch
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(151): warning C4018: '<': signed/unsigned mismatch
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(280): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\particlesystem.cpp(281): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  PhysicsSystem.cpp
-c:\users\compu\desktop\n2\n2\n2\source\physicssystem.cpp(39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  RenderComponent.cpp
-  RenderSystem.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(261): warning C4018: '<': signed/unsigned mismatch
-c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(266): warning C4018: '<': signed/unsigned mismatch
-c:\users\compu\desktop\n2\n2\n2\source\rendersystem.cpp(398): warning C4018: '<': signed/unsigned mismatch
-  Renderer.cpp
-  RendererGrass.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\compu\desktop\n2\n2\n2\dependencies\glfw\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-  RendererLit.cpp
-  RendererParticle.cpp
-c:\users\compu\desktop\n2\n2\n2\source\rendererparticle.cpp(86): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\compu\desktop\n2\n2\n2\source\rendererparticle.cpp(87): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  RendererShadow.cpp
-  RendererSkybox.cpp
+﻿  Primitives.cpp
 winmm.lib(WINMM.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 Gdi32.lib(GDI32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 Shell32.lib(SHELL32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 User32.lib(USER32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
-  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Release\N2.lib
+  N2.vcxproj -> D:\Programming\C++\N2\Release\N2.lib

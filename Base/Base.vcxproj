@@ -88,13 +88,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\compu\Desktop\N2\N2\N2\Source;$(SolutionDir)N2\Dependencies\GLFW\include;$(SolutionDir)N2\Dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)N2\Source;$(SolutionDir)N2\Dependencies\GLFW\include;$(SolutionDir)N2\Dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>N2.lib;glew32s.lib;opengl32.lib;glfw3.lib;winmm.lib;Gdi32.lib;Shell32.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\compu\Desktop\N2\N2\Debug;$(SolutionDir)N2\Dependencies\GLFW\lib-vc2015;$(SolutionDir)N2\Dependencies\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)N2\Dependencies\GLFW\lib-vc2015;$(SolutionDir)N2\Dependencies\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,7 +117,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\compu\Desktop\N2\N2\N2\Source;$(SolutionDir)N2\Dependencies\GLFW\include;$(SolutionDir)N2\Dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)N2\Source;$(SolutionDir)N2\Dependencies\GLFW\include;$(SolutionDir)N2\Dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -125,7 +125,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>N2.lib;glew32s.lib;opengl32.lib;glfw3.lib;winmm.lib;Gdi32.lib;Shell32.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\compu\Desktop\N2\N2\Debug;$(SolutionDir)N2\Dependencies\GLFW\lib-vc2015;$(SolutionDir)N2\Dependencies\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)N2\Dependencies\GLFW\lib-vc2015;$(SolutionDir)N2\Dependencies\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,15 +145,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameApplication.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Source\GameApplication.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameApplication.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Source\GameApplication.h" />
+    <ClInclude Include="Source\Player.h" />
+    <ClInclude Include="Source\SceneManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

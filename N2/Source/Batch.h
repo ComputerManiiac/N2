@@ -5,6 +5,7 @@
 #include "ShaderProgram.h"
 #include "RenderComponent.h"
 #include <vector>
+#include "Info.h"
 
 struct VertexData {
 

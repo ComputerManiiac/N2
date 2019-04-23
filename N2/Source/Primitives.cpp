@@ -303,20 +303,166 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 	std::vector<unsigned char> data;
 	Loader::loadBMP(heightMapPath, data);
 
+	int gridLength = 128.0f;
+	float cellLength = 1.2f;
+	float cellLengthUV = 1.0f / (gridLength-1);
+	float heightMapOffsetRatio = 0.08f;
+
+	Vector2 offset;
+	Vector2 textureCoords;
+
+	Vertex v;
+	v.normal.Set(0, 1, 0);
 	
-	float cellLength = 32.0f;
+	info.vertices.reserve(gridLength * gridLength);
 
-	for (float x = 0; x < 512.0f; x+=cellLength)
-	{
-		for (float z = 0; z < 512.0f; z+= cellLength)
-		{
+	/* Vertices */
+	for (int z = 0; z < gridLength; z++) {
+		offset.x = 0.0f;
+		textureCoords.x = 0.0f;
+		for (int x = 0; x < gridLength; x++) {
 
+			/* Y Offset = Average color value of pixel in height map * constant */
+			int vertIndex = z * gridLength + x;
+			int pixelIndex = vertIndex * 3;
+			float averageColorOfPixel = getColourValue(data, pixelIndex);
+			float yOffset = averageColorOfPixel * heightMapOffsetRatio;
+
+			v.position.Set(offset.x, yOffset, offset.y);
+			v.texCoord.Set(textureCoords.x, textureCoords.y);
+
+			info.vertices.push_back(v);
+
+			if (x != 0 && z != 0)
+				calculateNormal(info.vertices[vertIndex], info.vertices[vertIndex - 1], info.vertices[vertIndex - gridLength]);
+
+			offset.x += cellLength;
+			textureCoords.x += cellLengthUV;
+		}
+		offset.y += cellLength;
+		textureCoords.y += cellLengthUV;
+	}
+
+	/* Border Vertices */
+	for (int z = 0; z < gridLength-1; z++) {
+		for (int x = 0; x < gridLength; x++) {
+			if (x == 0 || z == 0) {
+				int vertIndex = z * gridLength + x;
+				calculateNormal(info.vertices[vertIndex], info.vertices[vertIndex + 1], info.vertices[vertIndex + gridLength]);
+			}
 		}
 	}
 
-	/*for (int i = 0; i < (int)data.size(); i += 3)
-	{
-		int avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-		
-	}*/
+	/* Bottom Left Vertex */
+	int index = gridLength * (gridLength - 1);
+	calculateNormal(info.vertices[index], info.vertices[index - gridLength], info.vertices[index + 1]);
+
+	/* Indices */
+	int lastVert = gridLength - 1;
+	int totalQuads = lastVert * lastVert;
+	info.indices.reserve(totalQuads * 6);
+
+	for (int x = 0; x < lastVert; ++x) {
+		for (int z = 0; z < gridLength; ++z) {
+
+			int vertCount = x * gridLength + z;
+			if (z != lastVert) {
+				info.indices.push_back(vertCount);
+				info.indices.push_back(vertCount + gridLength);
+				info.indices.push_back(vertCount + 1);
+				info.indices.push_back(vertCount + 1);
+				info.indices.push_back(vertCount + gridLength);
+				info.indices.push_back(vertCount + gridLength + 1);
+			}
+		}
+
+	}
 }
+
+float Primitives::getColourValue(const std::vector<unsigned char>& data, const int & index)
+{
+	return (data[index] + data[index+1] + data[index+2]) / 3.0f;
+}
+
+void Primitives::calculateNormal(Vertex &self, const Vertex& a, const Vertex &b)
+{
+	Vector3 one = a.position - self.position;
+	Vector3 two = b.position - self.position;
+	self.normal = one.Cross(two).Normalize();
+}
+
+//
+//Mesh * MeshBuilder::GenerateSkyPlane(const std::string & meshName, Color color, int slices, float PlanetRadius, float AtmosphereRadius, float hTile, float vTile)
+//{
+//	std::vector<Vertex> vertex_buffer_data;
+//	std::vector<GLuint> index_buffer_data;
+//
+//	//Slice only from 1 - 256
+//	slices = Math::Clamp(slices, 1, 256);
+//
+//	//PlanetRaidus is xRadius, AtmosphereRadius is yRadius
+//	float planeSize = 2.f * (float)sqrtf(PlanetRadius * PlanetRadius + AtmosphereRadius * AtmosphereRadius);
+//	//Get values for traveling
+//	float delta = planeSize / (float)slices;
+//	float texDelta = 2.f / (float)slices;
+//
+//	//Get Vertices
+//	//Travel along the Z axis
+//	for (int z = 0; z <= slices; ++z)
+//	{
+//		//Travel along the X axis
+//		for (int x = 0; x <= slices; ++x)
+//		{
+//			//The X and Z position based on the current x and z value
+//			float xDist = (-0.5f *planeSize) + ((float)x *delta);
+//			float zDist = (-0.5f *planeSize) + ((float)z *delta);
+//
+//			//Getting the height
+//			float xHeight = (xDist * xDist) / AtmosphereRadius;
+//			float zHeight = (zDist * zDist) / AtmosphereRadius;
+//			float height = xHeight + zHeight;
+//
+//			Vertex v;
+//			//set pos
+//			v.pos.Set(xDist, 0.f - height, zDist);
+//			//set color
+//			v.color = color;
+//			//set TextureCoord
+//			float texU = hTile * ((float)x * texDelta * 0.5f);
+//			float texV = vTile * (1.f - (float)z * texDelta * 0.5f);
+//			v.texCoord.Set(texU, texV);
+//
+//			vertex_buffer_data.push_back(v);
+//		}
+//	}
+//
+//	//Calculating the indices
+//	int index = 0;
+//	for (int i = 0; i < slices; ++i)
+//	{
+//		for (int j = 0; j < slices; ++j)
+//		{
+//			int startVert = (i * (slices + 1) + j);
+//			//First Triangle of the quad
+//			index_buffer_data.push_back(startVert);
+//			index_buffer_data.push_back(startVert + 1);
+//			index_buffer_data.push_back(startVert + slices + 1);
+//			//Seoond Triangle of the quad
+//			index_buffer_data.push_back(startVert + 1);
+//			index_buffer_data.push_back(startVert + slices + 2);
+//			index_buffer_data.push_back(startVert + slices + 1);
+//		}
+//	}
+//
+//	Mesh *mesh = new Mesh(meshName);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+//	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+//
+//	mesh->indexSize = index_buffer_data.size();
+//	mesh->mode = Mesh::DRAW_TRIANGLES;
+//
+//	return mesh;
+//}

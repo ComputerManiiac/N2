@@ -15,6 +15,10 @@ public:
 
 	static void generateQuad(OBJInfo& info);
 	static void generateTerrain(OBJInfo& info, const std::string& heightMapPath);
+
+private:
+	static float getColourValue(const std::vector<unsigned char>& data, const int& index);
+	static void calculateNormal(Vertex& self, const Vertex& a, const Vertex& b);
 };
 
 #endif

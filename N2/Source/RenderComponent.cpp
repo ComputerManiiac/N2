@@ -43,6 +43,11 @@ RenderComponent::~RenderComponent()
 
 }
 
+void RenderComponent::setInfo(const OBJInfo& info)
+{
+	this->info = info;
+}
+
 
 const OBJInfo& RenderComponent::getInfo() const
 {

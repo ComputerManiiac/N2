@@ -24,6 +24,7 @@ void SceneManager::Initialize()
 	shaders.try_emplace("skybox", "Assets\\Shaders\\skybox.vert", "Assets\\Shaders\\skybox.frag");
 	shaders.try_emplace("grass", "Assets\\Shaders\\grass.vert", "Assets\\Shaders\\grass.frag");
 	shaders.try_emplace("particle", "Assets\\Shaders\\particle.vert", "Assets\\Shaders\\particle.frag");
+	shaders.try_emplace("terrain", "Assets\\Shaders\\terrain.vert", "Assets\\Shaders\\terrain.frag");
 
 	/*entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(100, 1, 100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");*/
 	/*entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
@@ -44,9 +45,15 @@ void SceneManager::Initialize()
 	//}
 
 	OBJInfo terrainInfo;
-	Primitives::generateTerrain(terrainInfo, "Assets\\Textures\\heightmap.bmp");
-	entities["terrain"] = new Entity("terrain", Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
+	Primitives::generateTerrain(terrainInfo, "Assets\\Textures\\heightmap.bmp", -10.0f, 10.0f, 0.5f);
+	entities["terrain"] = new Entity("terrain", Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["terrain"], "Assets\\Models\\cube.obj", "Assets\\Textures\\terrain.tga");
 	entities["terrain"]->getComponent<RenderComponent>()->setInfo(terrainInfo);
+
+	OBJInfo skyplane;
+	Primitives::generateSkyplane(skyplane, 128, 200, 2000, 1.0f, 1.0f);
+	entities["skyplane"] = new Entity("skyplane", Vector3(500, 1200, -500), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\Skybox\\top.tga");
+	entities["skyplane"]->getComponent<RenderComponent>()->setInfo(skyplane);
+
 	Manager::Initialize();
 
 }

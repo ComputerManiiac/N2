@@ -71,8 +71,6 @@ void Loader::loadBMP(const std::string& filePath, std::vector<unsigned char>& pi
 		data[i + 2] = tmp;
 	}
 
-	bool x = 0;
-
 	pixels.insert(pixels.end(), &data[0], &data[size]);
 	delete[] data;
 }

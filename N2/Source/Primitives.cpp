@@ -298,15 +298,16 @@ void Primitives::generateQuad(OBJInfo& info)
 
 }
 
-void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath)
+void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath, const float& minHeight, const float& maxHeight, const float& cellLength)
 {
 	std::vector<unsigned char> data;
 	Loader::loadBMP(heightMapPath, data);
 
-	int gridLength = 128.0f;
-	float cellLength = 1.2f;
+
+	float gridLength = static_cast<float>(sqrt(data.size() / 3));
 	float cellLengthUV = 1.0f / (gridLength-1);
-	float heightMapOffsetRatio = 0.08f;
+
+
 
 	Vector2 offset;
 	Vector2 textureCoords;
@@ -326,7 +327,8 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 			int vertIndex = z * gridLength + x;
 			int pixelIndex = vertIndex * 3;
 			float averageColorOfPixel = getColourValue(data, pixelIndex);
-			float yOffset = averageColorOfPixel * heightMapOffsetRatio;
+			float yOffset = minHeight + (averageColorOfPixel / 255.0f) * (maxHeight - minHeight);
+			
 
 			v.position.Set(offset.x, yOffset, offset.y);
 			v.texCoord.Set(textureCoords.x, textureCoords.y);
@@ -390,6 +392,70 @@ void Primitives::calculateNormal(Vertex &self, const Vertex& a, const Vertex &b)
 	Vector3 two = b.position - self.position;
 	self.normal = one.Cross(two).Normalize();
 }
+
+void Primitives::generateSkyplane(OBJInfo& info, int slices, const float& planetRadius, const float& atmosphereRadius, const float& hTile, const float& vTile)
+{
+	std::vector<Vertex>& vertex_buffer_data = info.vertices;
+	std::vector<unsigned int>& index_buffer_data = info.indices;
+	
+	//Slice only from 1 - 256
+	slices = Math::Clamp(slices, 1, 256);
+	
+	//PlanetRaidus is xRadius, AtmosphereRadius is yRadius
+	float planeSize = 2.f * (float)sqrtf(planetRadius * planetRadius + atmosphereRadius * atmosphereRadius);
+	//Get values for traveling
+	float delta = planeSize / (float)slices;
+	float texDelta = 2.f / (float)slices;
+	
+	//Get Vertices
+	//Travel along the Z axis
+	for (int z = 0; z <= slices; ++z)
+	{
+		//Travel along the X axis
+		for (int x = 0; x <= slices; ++x)
+		{
+			//The X and Z position based on the current x and z value
+			float xDist = (-0.5f *planeSize) + ((float)x *delta);
+			float zDist = (-0.5f *planeSize) + ((float)z *delta);
+	
+			//Getting the height
+			float xHeight = (xDist * xDist) / atmosphereRadius;
+			float zHeight = (zDist * zDist) / atmosphereRadius;
+			float height = xHeight + zHeight;
+	
+			Vertex v;
+			//set pos
+			v.position.Set(xDist, 0.f - height, zDist);
+			//set TextureCoord
+			float texU = hTile * ((float)x * texDelta * 0.5f);
+			float texV = vTile * (1.f - (float)z * texDelta * 0.5f);
+			v.texCoord.Set(texU, texV);
+	
+			vertex_buffer_data.push_back(v);
+		}
+	}
+	
+	//Calculating the indices
+	int index = 0;
+	for (int i = 0; i < slices; ++i)
+	{
+		for (int j = 0; j < slices; ++j)
+		{
+			int startVert = (i * (slices + 1) + j);
+			//First Triangle of the quad
+			index_buffer_data.push_back(startVert);
+			index_buffer_data.push_back(startVert + 1);
+			index_buffer_data.push_back(startVert + slices + 1);
+			//Seoond Triangle of the quad
+			index_buffer_data.push_back(startVert + 1);
+			index_buffer_data.push_back(startVert + slices + 2);
+			index_buffer_data.push_back(startVert + slices + 1);
+		}
+	}
+
+
+}
+
 
 //
 //Mesh * MeshBuilder::GenerateSkyPlane(const std::string & meshName, Color color, int slices, float PlanetRadius, float AtmosphereRadius, float hTile, float vTile)

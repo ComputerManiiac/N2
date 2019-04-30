@@ -8,14 +8,14 @@ RenderComponent::RenderComponent(Entity* parent, ShaderProgram* shader, std::str
 shader(shader), mode(mode), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.4f, 0.4f), Vector3(0.3f, 0.3f, 0.3f), 1.0f)
 {
 	Primitives::generateCube(info);
-	Loader::loadTGA(texturePath, textureID);
+	Loader::loadTGA(texturePath, textureID, GL_LINEAR, GL_REPEAT);
 }
 
 RenderComponent::RenderComponent(Entity* parent, ShaderProgram* shader, std::string modelPath, std::string texturePath, DRAW_MODE mode) : Component("Render", parent), 
 shader(shader), mode(mode), material(Vector3(0.2f, 0.2f, 0.2f), Vector3(0.4f, 0.4f, 0.4f), Vector3(0.3f, 0.3f, 0.3f), 1.0f)
 {
 	Loader::loadOBJ(modelPath, info);
-	Loader::loadTGA(texturePath, textureID);
+	Loader::loadTGA(texturePath, textureID, GL_NEAREST);
 }
 
 RenderComponent::RenderComponent(Entity* parent, ShaderProgram* shader, bool doubleSided, std::string modelPath, std::string texturePath, DRAW_MODE mode) : Component("Render", parent),

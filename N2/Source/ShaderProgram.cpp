@@ -11,6 +11,7 @@ ShaderProgram::ShaderProgram(std::string vertexPath, std::string fragmentPath)
 	id = glCreateProgram();
 	unsigned int vShader = loadAndCompile(GL_VERTEX_SHADER, vertexPath);
 	unsigned int fShader = loadAndCompile(GL_FRAGMENT_SHADER, fragmentPath);
+	
 
 	glAttachShader(id, vShader);
 	glAttachShader(id, fShader);

@@ -14,7 +14,9 @@ public:
 	static void generateBoxCollider(const OBJInfo& ref, std::vector<Vector3>& colliderPoints);
 
 	static void generateQuad(OBJInfo& info);
-	static void generateTerrain(OBJInfo& info, const std::string& heightMapPath);
+	static void generateTerrain(OBJInfo& info, const std::string& heightMapPath, const float& minHeight, const float& maxHeight, const float& cellLength);
+
+	static void generateSkyplane(OBJInfo& info, int slices, const float& planetRadius, const float& atmosphereRadius, const float& hTile, const float& vTile);
 
 private:
 	static float getColourValue(const std::vector<unsigned char>& data, const int& index);

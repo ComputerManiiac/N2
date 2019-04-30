@@ -11,7 +11,7 @@ layout(location = 9) in float lifeTimeBlend;
 
 uniform mat4 viewMatrix;
 uniform mat4 projection;
-
+	
 out vec2 textureOffsetNext;
 out vec2 textureOffsetCurrent;
 out float textureBlend;

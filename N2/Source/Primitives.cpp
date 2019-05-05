@@ -1,5 +1,6 @@
 #include "Primitives.h"
 #include "Loader.h"
+#include "Manager.h"
 
 
 Primitives::Primitives()
@@ -304,10 +305,11 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 	Loader::loadBMP(heightMapPath, data);
 
 
+
 	float gridLength = static_cast<float>(sqrt(data.size() / 3));
 	float cellLengthUV = 1.0f / (gridLength-1);
 
-	float halfGridLength = gridLength * 0.5f;
+	float halfGridLength = gridLength * 0.5f * cellLength;
 
 
 	Vector2 offset;

@@ -20,12 +20,16 @@ out vec3 vertexNormal_cameraspace;
 out vec2 texCoord;
 out mat4 view;
 out vec4 vertexPosition_lightspace;
+out float fogVisibility;
 
 uniform mat4 viewMatrix;
 uniform mat4 projection;
 
 uniform mat4 lightProjectionView;
 uniform bool lightEnabled;
+
+const float fogDensity = 0.0035;
+const float fogGradient = 5.0;
 
 void main(){
 
@@ -38,6 +42,11 @@ void main(){
 	vertexPosition_cameraspace = ( MV * vec4(vertexPosition_modelspace, 1) ).xyz;
 	vertexPosition_lightspace = lightProjectionView * model * vec4(vertexPosition_modelspace, 1.0);
 	vertexPosition_worldspace = (model * vec4(vertexPosition_modelspace, 1)).xyz;
+
+	/* Fog */
+	float distFromCamera = length(vertexPosition_cameraspace.xyz);
+	fogVisibility = exp(-pow(distFromCamera * fogDensity, fogGradient));
+	fogVisibility = clamp(fogVisibility, 0.0, 1.0);
 	
 	view = viewMatrix;
 

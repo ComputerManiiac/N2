@@ -34,6 +34,8 @@ in vec3 vertexNormal_cameraspace[];
 in vec2 texCoord[];
 in mat4 view[];
 in vec4 vertexPosition_lightspace[];
+in float fogVisibility[];
+
 
 uniform bool lightEnabled;
 uniform Light lights[MAX_LIGHTS];
@@ -42,9 +44,13 @@ uniform int numLights;
 uniform bool colorTextureEnabled;
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
+//uniform vec3 fogColour;
+
+const vec3 fogColour = vec3(0.5, 0.5, 0.5);
 
 out vec4 finalColor;
 out int shouldDiscard;
+out float materialAlpha;
 
 
 float getAttenuation(Light light, float distance) {
@@ -76,6 +82,7 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 		return 0.0;
 
     // Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+
     float closestDepth = texture(depthTexture, projCoords.xy).r; 
     // Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
@@ -88,7 +95,6 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 		for(int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = texture(depthTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
-//			if(currentDepth - 0.0001f > pcfDepth)
 			if(currentDepth - 0.0004f > pcfDepth)
 				shadow+=1.0;
 		}    
@@ -153,12 +159,10 @@ void calculateLighting(vec3 normal, int index){
 
 		}
 
-		if(materialColor.a < 0.1)
-			shouldDiscard = 1;
-		else
-			shouldDiscard = 0;
-
+		materialAlpha = materialColor.a;
 		finalColor.a =  materialColor.a;
+
+		finalColor = mix(vec4(fogColour, 1.0), finalColor, fogVisibility[index]);
 
 	}
 	else

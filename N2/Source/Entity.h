@@ -39,7 +39,7 @@ public:
 	template<typename T>
 	T* getComponent();
 
-private:
+protected:
 
 	Contiguous contiguous;
 	std::string name;

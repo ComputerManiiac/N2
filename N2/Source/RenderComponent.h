@@ -38,6 +38,7 @@ enum DRAW_MODE
 class RenderComponent : public Component
 {
 public:
+
 	RenderComponent(Entity* parent, ShaderProgram* shader, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
 	RenderComponent(Entity* parent, ShaderProgram* shader, std::string modelPath, std::string texturePath, DRAW_MODE mode = DRAW_TRIANGLES);
 	

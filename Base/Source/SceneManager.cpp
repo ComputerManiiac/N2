@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Primitives.h"
 #include "Loader.h"
+#include "Terrain.h"
 
 SceneManager::SceneManager()
 {
@@ -16,8 +17,8 @@ void SceneManager::Initialize()
 {
 	Manager::Register();
 
-	camera = Camera(Vector3(0, 1, 5));
-	shaders.try_emplace("lit", "Assets\\Shaders\\lit.vert", "Assets\\Shaders\\lit.frag");
+	camera = Camera(Vector3(0, 0, 0));
+	shaders.try_emplace("lit", "Assets\\Shaders\\lit.vert", "Assets\\Shaders\\lit.geom", "Assets\\Shaders\\lit.frag");
 	shaders.try_emplace("depth", "Assets\\Shaders\\depth.vert", "Assets\\Shaders\\depth.frag");
 	shaders.try_emplace("quad", "Assets\\Shaders\\quad.vert", "Assets\\Shaders\\quad.frag");
 	shaders.try_emplace("ui", "Assets\\Shaders\\ui.vert", "Assets\\Shaders\\ui.frag");
@@ -27,7 +28,7 @@ void SceneManager::Initialize()
 	shaders.try_emplace("terrain", "Assets\\Shaders\\terrain.vert", "Assets\\Shaders\\terrain.geom", "Assets\\Shaders\\terrain.frag");
 
 	//entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(100, 1, 100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
-	//entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 	//entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 2.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 
 	//float offsetX = 2.0f;
@@ -44,6 +45,14 @@ void SceneManager::Initialize()
 	//	offsetX += 0.6f;
 	//}
 
+	createScene();
+
+	Manager::Initialize();
+
+}
+
+void SceneManager::createScene()
+{
 	for (int i = 0; i < 10; ++i)
 	{
 		std::string treeName = "tree" + std::to_string(i);
@@ -56,14 +65,12 @@ void SceneManager::Initialize()
 	entities["skyplane"] = new Entity("skyplane", Vector3(500, 1200, -500), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\Skybox\\top.tga");
 	entities["skyplane"]->getComponent<RenderComponent>()->setInfo(skyplane);
 
+	entities["terrain"] = new Terrain(Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(8.0f, 3.0f, 8.0f), &shaders["terrain"], 
+		"Assets\\Textures\\heightmap.bmp",  { "Assets\\Textures\\terrain.tga","Assets\\Textures\\terrain_grass.tga" ,
+		"Assets\\Textures\\terrain_mountain.tga",  "Assets\\Textures\\terrain_mud.tga",
+		"Assets\\Textures\\terrain_path.tga", });
 
-	OBJInfo terrainInfo;
-	Primitives::generateTerrain(terrainInfo, "Assets\\Textures\\heightmap.bmp", -25.0f, 25.0f, 1.0f);
-	entities["terrain"] = new Entity("terrain", Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(5.0f, 1.5f, 5.0f), &shaders["terrain"], "Assets\\Models\\cube.obj", "Assets\\Textures\\terrain.tga");
-	entities["terrain"]->getComponent<RenderComponent>()->setInfo(terrainInfo);
-
-	Manager::Initialize();
-
+	
 }
 
 void SceneManager::Update(double dt)

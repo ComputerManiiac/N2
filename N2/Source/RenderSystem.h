@@ -74,6 +74,7 @@ public:
 
 	const Mtx44 getProjectionMatrix() const;
 
+
 private:
 
 	void setupLight();
@@ -98,7 +99,8 @@ private:
 	ShaderProgram* lit;
 	ShaderProgram* ui;
 	
-	
+
+
 	RendererParticle* particle;
 
 	/* Used for rendering textures to screen */
@@ -125,6 +127,7 @@ private:
 
 	MS modelStack;
 	Mtx44 projection, view;
+
 
 
 };

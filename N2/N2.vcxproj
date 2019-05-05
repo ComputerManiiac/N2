@@ -164,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\RendererTerrain.cpp" />
     <ClCompile Include="Source\BatchData.cpp" />
     <ClCompile Include="Source\RendererParticle.cpp" />
     <ClCompile Include="Source\ParticleComponent.cpp" />
@@ -194,8 +195,10 @@
     <ClCompile Include="Source\TransformComponent.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\UIComponent.cpp" />
+    <ClCompile Include="Source\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\RendererTerrain.h" />
     <ClInclude Include="Source\BatchData.h" />
     <ClInclude Include="Source\RendererParticle.h" />
     <ClInclude Include="Source\ParticleComponent.h" />
@@ -234,6 +237,7 @@
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\UIComponent.h" />
     <ClInclude Include="Source\Text.h" />
+    <ClInclude Include="Source\Terrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,7 @@
 #include "RendererLit.h"
 #include "RendererShadow.h"
 #include "RendererGrass.h"
+#include "RendererTerrain.h"
 
 
 
@@ -80,7 +81,7 @@ void RenderSystem::Initialize() {
 	renderers[grass] = new RendererGrass(grass);
 	renderers[lit] = new RendererLit(lit);
 	renderers[depth] = new RendererShadow(depth);
-	renderers[terrain] = new RendererLit(terrain);
+	renderers[terrain] = new RendererTerrain(terrain);
 
 	particle = new RendererParticle(particleShader);
 	renderers[particleShader] = particle;
@@ -294,6 +295,8 @@ void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 	}
 	glBindVertexArray(0);
 }
+
+
 
 void RenderSystem::renderTexts()
 {

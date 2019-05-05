@@ -34,6 +34,8 @@ in vec3 vertexNormal_cameraspace[];
 in vec2 texCoord[];
 in mat4 view[];
 in vec4 vertexPosition_lightspace[];
+in float fogVisibility[];
+
 
 uniform bool lightEnabled;
 uniform Light lights[MAX_LIGHTS];
@@ -43,8 +45,32 @@ uniform bool colorTextureEnabled;
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 
+uniform sampler2D terrainBackground;
+uniform sampler2D terrainMountain;
+uniform sampler2D terrainMud;
+uniform sampler2D terrainPath;
+//uniform vec3 fogColour;
+
+const vec3 fogColour = vec3(0.5, 0.5, 0.5);
+
 out vec4 finalColor;
 out int shouldDiscard;
+out float materialAlpha;
+
+
+vec4 calculateMaterialColor(int index){
+
+	vec4 blendMapColor = texture2D(colorTexture, texCoord[index]);
+
+	vec4 backgroundColor = texture2D(terrainBackground, texCoord[index]) * (1 - blendMapColor.r - blendMapColor.g - blendMapColor.b);
+	vec4 mountainColor = texture2D(terrainMountain, texCoord[index]) * blendMapColor.r;
+	vec4 mudColor = texture2D(terrainMud, texCoord[index]) * blendMapColor.g;
+	vec4 pathColor = texture2D(terrainPath, texCoord[index]) * blendMapColor.b;
+
+	vec4 materialColor = backgroundColor + mountainColor + mudColor + pathColor;
+
+	return materialColor;
+}
 
 
 float getAttenuation(Light light, float distance) {
@@ -76,6 +102,7 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 		return 0.0;
 
     // Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+
     float closestDepth = texture(depthTexture, projCoords.xy).r; 
     // Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
@@ -88,7 +115,6 @@ float getShadow(vec4 lightSpacePos, vec3 lightDir, vec3 vertexNormal){
 		for(int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = texture(depthTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
-//			if(currentDepth - 0.0001f > pcfDepth)
 			if(currentDepth - 0.0004f > pcfDepth)
 				shadow+=1.0;
 		}    
@@ -103,11 +129,11 @@ void calculateLighting(vec3 normal, int index){
 	{
 
 		// Material properties
-		vec4 materialColor;
-		if(colorTextureEnabled == true)
-			materialColor = texture2D( colorTexture, texCoord[index]);
-		else
-			materialColor = vec4( 0, 1, 0, 1 );
+		vec4 materialColor = calculateMaterialColor(index);
+//		if(colorTextureEnabled == true)
+//			materialColor = texture2D( colorTexture, texCoord[index]);
+//		else
+//			materialColor = vec4( 0, 1, 0, 1 );
 
 
 		// Vectors
@@ -153,13 +179,9 @@ void calculateLighting(vec3 normal, int index){
 
 		}
 
-		if(materialColor.a < 0.1)
-			shouldDiscard = 1;
-		else
-			shouldDiscard = 0;
-
+		materialAlpha = materialColor.a;
 		finalColor.a =  materialColor.a;
-
+		finalColor = mix(vec4(fogColour, 1.0), finalColor, fogVisibility[index]);
 	}
 	else
 	{
@@ -170,12 +192,15 @@ void calculateLighting(vec3 normal, int index){
 	}
 }
 
+
 vec3 calculateTriangleNormalCameraSpace(){
 	vec3 tangent = vertexPosition_worldspace[1] - vertexPosition_worldspace[0];
 	vec3 bitangent = vertexPosition_worldspace[2] - vertexPosition_worldspace[0];
 	vec3 normal = cross(tangent, bitangent);	
 	return (view[0] * vec4(normalize(normal), 0.0)).xyz;
 }
+
+
 
 void setVertex(vec3 normal, int index){
 

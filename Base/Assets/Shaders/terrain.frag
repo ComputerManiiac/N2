@@ -8,7 +8,7 @@
 
 // Interpolated values from the geometry shaders
 in vec4 finalColor;
-in int shouldDiscard;
+in float materialAlpha;
 
 // Ouput data
 out vec4 color;
@@ -16,6 +16,7 @@ out vec4 color;
 
 void main(){
 
-
+	if(materialAlpha < 0.1)
+		discard;
 	color = finalColor;
 }

@@ -13,6 +13,10 @@ public:
 	void Update(double dt);
 
 	static SceneManager* getInstance();
+
+private:
+
+	void createScene();
 };
 
 #endif

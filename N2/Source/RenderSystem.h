@@ -46,7 +46,6 @@
 #include "Batch.h"
 #include "Text.h"
 #include "Renderer.h"
-#include "RendererSkybox.h"
 #include "RendererParticle.h"
 #include <vector>
 #include <algorithm>
@@ -72,8 +71,6 @@ public:
 
 	
 	void renderText(const std::string& text, float xPos, float yPos, const std::string& fontName, Vector3 color = Vector3(1, 1, 1), float fontSize = 1.0f, TextAlignment align = TEXT_ALIGN_LEFT);
-
-	bool renderSkybox;
 
 	const Mtx44 getProjectionMatrix() const;
 
@@ -104,9 +101,6 @@ private:
 	
 	RendererParticle* particle;
 
-	/* Skybox */
-	RendererSkybox* skybox;
-	
 	/* Used for rendering textures to screen */
 	unsigned int quadVAO;
 	unsigned int quadVBO;

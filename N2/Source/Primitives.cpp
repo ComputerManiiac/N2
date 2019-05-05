@@ -307,9 +307,11 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 	float gridLength = static_cast<float>(sqrt(data.size() / 3));
 	float cellLengthUV = 1.0f / (gridLength-1);
 
+	float halfGridLength = gridLength * 0.5f;
 
 
 	Vector2 offset;
+	offset.y = -halfGridLength;
 	Vector2 textureCoords;
 
 	Vertex v;
@@ -319,7 +321,7 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 
 	/* Vertices */
 	for (int z = 0; z < gridLength; z++) {
-		offset.x = 0.0f;
+		offset.x = -halfGridLength;
 		textureCoords.x = 0.0f;
 		for (int x = 0; x < gridLength; x++) {
 

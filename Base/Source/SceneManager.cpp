@@ -24,35 +24,43 @@ void SceneManager::Initialize()
 	shaders.try_emplace("skybox", "Assets\\Shaders\\skybox.vert", "Assets\\Shaders\\skybox.frag");
 	shaders.try_emplace("grass", "Assets\\Shaders\\grass.vert", "Assets\\Shaders\\grass.frag");
 	shaders.try_emplace("particle", "Assets\\Shaders\\particle.vert", "Assets\\Shaders\\particle.frag");
-	shaders.try_emplace("terrain", "Assets\\Shaders\\terrain.vert", "Assets\\Shaders\\terrain.frag");
+	shaders.try_emplace("terrain", "Assets\\Shaders\\terrain.vert", "Assets\\Shaders\\terrain.geom", "Assets\\Shaders\\terrain.frag");
 
-	entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(100, 1, 100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
-	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
-	entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 2.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	//entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(100, 1, 100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
+	//entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	//entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 2.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 
-	float offsetX = 2.0f;
+	//float offsetX = 2.0f;
 
-	for (int x = 0; x < 50; x++)
+	//for (int x = 0; x < 50; x++)
+	//{
+	//	float offsetZ = 5.0f;
+	//	for (int z = 0; z < 10; z++)
+	//	{
+	//		std::string name = "grass" + std::to_string(x) + "-" + std::to_string(z);
+	//		entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
+	//		offsetZ += 0.4f;
+	//	}
+	//	offsetX += 0.6f;
+	//}
+
+	for (int i = 0; i < 10; ++i)
 	{
-		float offsetZ = 5.0f;
-		for (int z = 0; z < 10; z++)
-		{
-			std::string name = "grass" + std::to_string(x) + "-" + std::to_string(z);
-			entities[name] = new Entity(name, Vector3(offsetX, 1.0f, offsetZ), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["grass"], false, "Assets\\Models\\grass.obj", "Assets\\Textures\\grass.tga");
-			offsetZ += 0.4f;
-		}
-		offsetX += 0.6f;
+		std::string treeName = "tree" + std::to_string(i);
+		entities[treeName] = new Entity(treeName, Vector3(Math::RandFloatMinMax(-320.0f, 320.f), 0, Math::RandFloatMinMax(-320.0f, 320.f)), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"], "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
 	}
 
-	//OBJInfo terrainInfo;
-	//Primitives::generateTerrain(terrainInfo, "Assets\\Textures\\heightmap.bmp", -10.0f, 10.0f, 0.5f);
-	//entities["terrain"] = new Entity("terrain", Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["terrain"], "Assets\\Models\\cube.obj", "Assets\\Textures\\terrain.tga");
-	//entities["terrain"]->getComponent<RenderComponent>()->setInfo(terrainInfo);
 
-	//OBJInfo skyplane;
-	//Primitives::generateSkyplane(skyplane, 128, 200, 2000, 1.0f, 1.0f);
-	//entities["skyplane"] = new Entity("skyplane", Vector3(500, 1200, -500), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\Skybox\\top.tga");
-	//entities["skyplane"]->getComponent<RenderComponent>()->setInfo(skyplane);
+	OBJInfo skyplane;
+	Primitives::generateSkyplane(skyplane, 128, 200, 2000, 1.0f, 1.0f);
+	entities["skyplane"] = new Entity("skyplane", Vector3(500, 1200, -500), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\Skybox\\top.tga");
+	entities["skyplane"]->getComponent<RenderComponent>()->setInfo(skyplane);
+
+
+	OBJInfo terrainInfo;
+	Primitives::generateTerrain(terrainInfo, "Assets\\Textures\\heightmap.bmp", -25.0f, 25.0f, 1.0f);
+	entities["terrain"] = new Entity("terrain", Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(5.0f, 1.5f, 5.0f), &shaders["terrain"], "Assets\\Models\\cube.obj", "Assets\\Textures\\terrain.tga");
+	entities["terrain"]->getComponent<RenderComponent>()->setInfo(terrainInfo);
 
 	Manager::Initialize();
 
@@ -100,9 +108,6 @@ void SceneManager::Update(double dt)
 
 	if (Application::isKeyPressed(GLFW_KEY_G))
 		Application::framesPerSecond++;
-
-	if (Application::isKeyPressDown(GLFW_KEY_H))
-		getSystem<RenderSystem>()->renderSkybox = !getSystem<RenderSystem>()->renderSkybox;
 
 	camera.Update(dt);
 

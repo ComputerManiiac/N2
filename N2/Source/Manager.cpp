@@ -129,8 +129,6 @@ void Manager::Update(double dt)
 	if (Application::isKeyPressed(GLFW_KEY_G))
 		Application::framesPerSecond++;
 
-	if (Application::isKeyPressDown(GLFW_KEY_H))
-		getSystem<RenderSystem>()->renderSkybox = !getSystem<RenderSystem>()->renderSkybox;
 
 	camera.Update(dt);
 

@@ -138,9 +138,6 @@
     <ClCompile Include="Source\Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\RendererSkybox.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ParticleComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -255,9 +252,6 @@
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\RendererShadow.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\RendererSkybox.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\ParticleComponent.h">

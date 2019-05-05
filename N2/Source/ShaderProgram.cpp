@@ -22,6 +22,30 @@ ShaderProgram::ShaderProgram(std::string vertexPath, std::string fragmentPath)
 
 }
 
+
+ShaderProgram::ShaderProgram(std::string vertexPath, std::string geometryPath, std::string fragmentPath)
+{
+
+	this->vertexPath = vertexPath;
+	this->geometryPath = geometryPath;
+	this->fragmentPath = fragmentPath;
+
+	id = glCreateProgram();
+	unsigned int vShader = loadAndCompile(GL_VERTEX_SHADER, vertexPath);
+	unsigned int gShader = loadAndCompile(GL_GEOMETRY_SHADER, geometryPath);
+	unsigned int fShader = loadAndCompile(GL_FRAGMENT_SHADER, fragmentPath);
+	
+	glAttachShader(id, vShader);
+	glAttachShader(id, fShader);
+	glAttachShader(id, gShader);
+	glLinkProgram(id);
+	glValidateProgram(id);
+	glDeleteShader(vShader);
+	glDeleteShader(fShader);
+	glDeleteShader(gShader);
+
+}
+
 void ShaderProgram::Use()
 {
 	glUseProgram(id);
@@ -108,5 +132,10 @@ const std::string& ShaderProgram::getVertexPath() const
 const std::string& ShaderProgram::getFragmentPath() const
 {
 	return fragmentPath;
+}
+
+const std::string& ShaderProgram::getGeometryPath() const
+{
+	return geometryPath;
 }
 

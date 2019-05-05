@@ -14,6 +14,8 @@ layout(location = 3) in mat4 model;
 
 // Output data ; will be interpolated for each fragment.
 out vec3 vertexPosition_cameraspace;
+
+out vec3 vertexPosition_worldspace;
 out vec3 vertexNormal_cameraspace;
 out vec2 texCoord;
 out mat4 view;
@@ -35,6 +37,7 @@ void main(){
 	// Vector position, in camera space
 	vertexPosition_cameraspace = ( MV * vec4(vertexPosition_modelspace, 1) ).xyz;
 	vertexPosition_lightspace = lightProjectionView * model * vec4(vertexPosition_modelspace, 1.0);
+	vertexPosition_worldspace = (model * vec4(vertexPosition_modelspace, 1)).xyz;
 	
 	view = viewMatrix;
 

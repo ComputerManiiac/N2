@@ -8,8 +8,6 @@
 #include "RendererLit.h"
 #include "RendererShadow.h"
 #include "RendererGrass.h"
-#include "RendererSkybox.h"
-
 
 
 
@@ -63,9 +61,8 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize() {
 
-	renderSkybox = false;
 	textUID = 0;
-
+	 
 	Loader::loadFont("Assets\\Fonts\\sansserif2.fnt", fonts["sansserif"]);
 
 	/* Defines projection matrix for the scene */
@@ -75,25 +72,20 @@ void RenderSystem::Initialize() {
 	lit = manager->getShader("lit");
 	depth = manager->getShader("depth");
 	ui = manager->getShader("ui");
-	ShaderProgram* skyboxShader = Manager::getInstance()->getShader("skybox");
 	ShaderProgram* grass = manager->getShader("grass");
 	ShaderProgram* particleShader = manager->getShader("particle");
 	ShaderProgram* terrain = manager->getShader("terrain");
 
 	/* Set renderers */
-	skybox = new RendererSkybox(skyboxShader);
-	renderers[skyboxShader] = skybox;
 	renderers[grass] = new RendererGrass(grass);
 	renderers[lit] = new RendererLit(lit);
 	renderers[depth] = new RendererShadow(depth);
-	renderers[terrain] = new RendererLit(lit);
+	renderers[terrain] = new RendererLit(terrain);
 
 	particle = new RendererParticle(particleShader);
 	renderers[particleShader] = particle;
 	particle->Initialize();
 
-	/* Set up skybox */
-	skybox->Initialize();
 
 	BatchKey key;
 
@@ -128,7 +120,7 @@ void RenderSystem::Initialize() {
 
 void RenderSystem::setupLight()
 {
-	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass") });
+	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass"), Manager::getInstance()->getShader("terrain")});
 
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
 	light->setDirLight(lit, Vector3(2.0f, 100.0f, 2.0f), Vector3(1, 1, 1), 1.0f);
@@ -185,6 +177,10 @@ void RenderSystem::setupShadows()
 	depth->Use();
 	depth->setUniform("lightProjectionView", lightProjectionView);
 
+	ShaderProgram* terrain = Manager::getInstance()->getShader("terrain");
+	terrain->Use();
+	terrain->setUniform("lightProjectionView", lightProjectionView);
+
 	glBindVertexArray(0);
 }
 
@@ -217,9 +213,6 @@ void RenderSystem::Update(double& dt)
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
 
-		/* Skybox */
-		if (renderSkybox)
-			skybox->Render(modelStack);
 
 
 		renderScene(Manager::getInstance()->getCamera()->LookAt());
@@ -269,9 +262,7 @@ void RenderSystem::updateBatchedData()
 				batch.data[i].model = modelStack.Top();
 			else
 				batch.data.emplace_back(modelStack.Top());
-/*
-			batch.data.emplace_back(modelStack.Top());*/
-			//batch.data.emplace_back(modelStack.Top(), Manager::getInstance()->getCamera()->LookAt(), projection);
+
 
 			modelStack.PopMatrix();
 		}
@@ -293,9 +284,11 @@ void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 		Batch& batch = b.second;
 
 		if (shader == nullptr) {
+			key.shader->Use();
 			renderers[key.shader]->Render(batch, key.textureID, modelStack, viewMatrix);
 		}
 		else {
+			shader->Use();
 			renderers[shader]->Render(batch, key.textureID, modelStack, viewMatrix);
 		}
 	}

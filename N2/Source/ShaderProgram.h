@@ -17,7 +17,8 @@ public:
 
 	ShaderProgram() {}
 	ShaderProgram(std::string vertexPath, std::string fragmentPath);
-
+	ShaderProgram(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
+	
 	void Use();
 	void setUniform(const char* name, const bool& value);
 	void setUniform(const char* name, const int& value);
@@ -29,6 +30,7 @@ public:
 
 	const std::string& getVertexPath() const;
 	const std::string& getFragmentPath() const;
+	const std::string& getGeometryPath() const;
 
 
 private:
@@ -36,8 +38,9 @@ private:
 
 	unsigned int loadAndCompile(unsigned int type, const std::string &filePath);
 	unsigned int id;
-	std::string vertexPath = "";
-	std::string fragmentPath = "";
+	std::string vertexPath;
+	std::string fragmentPath;
+	std::string geometryPath;
 	
 };
 

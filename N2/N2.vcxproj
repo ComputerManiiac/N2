@@ -168,7 +168,6 @@
     <ClCompile Include="Source\RendererParticle.cpp" />
     <ClCompile Include="Source\ParticleComponent.cpp" />
     <ClCompile Include="Source\ParticleSystem.cpp" />
-    <ClCompile Include="Source\RendererSkybox.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\RendererGrass.cpp" />
     <ClCompile Include="Source\RendererShadow.cpp" />
@@ -201,7 +200,6 @@
     <ClInclude Include="Source\RendererParticle.h" />
     <ClInclude Include="Source\ParticleComponent.h" />
     <ClInclude Include="Source\ParticleSystem.h" />
-    <ClInclude Include="Source\RendererSkybox.h" />
     <ClInclude Include="Source\RendererGrass.h" />
     <ClInclude Include="Source\RendererShadow.h" />
     <ClInclude Include="Source\RendererLit.h" />

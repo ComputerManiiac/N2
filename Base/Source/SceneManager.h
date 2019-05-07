@@ -17,6 +17,7 @@ public:
 private:
 
 	void createScene();
+	void spawnObjectOnTerrain(const std::string& type, const unsigned int& number, const float& offset, const std::string& modelPath, const std::string& texturePath);
 };
 
 #endif

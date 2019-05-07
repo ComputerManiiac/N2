@@ -164,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\RendererSkybox.cpp" />
     <ClCompile Include="Source\RendererTerrain.cpp" />
     <ClCompile Include="Source\BatchData.cpp" />
     <ClCompile Include="Source\RendererParticle.cpp" />
@@ -191,6 +192,7 @@
     <ClCompile Include="Source\Mtx44.cpp" />
     <ClCompile Include="Source\RigidbodyComponent.cpp" />
     <ClCompile Include="Source\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Skybox.cpp" />
     <ClCompile Include="Source\timer.cpp" />
     <ClCompile Include="Source\TransformComponent.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
@@ -198,6 +200,7 @@
     <ClCompile Include="Source\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\RendererSkybox.h" />
     <ClInclude Include="Source\RendererTerrain.h" />
     <ClInclude Include="Source\BatchData.h" />
     <ClInclude Include="Source\RendererParticle.h" />
@@ -230,6 +233,7 @@
     <ClInclude Include="Source\OverloadNew.h" />
     <ClInclude Include="Source\RigidbodyComponent.h" />
     <ClInclude Include="Source\ShaderProgram.h" />
+    <ClInclude Include="Source\Skybox.h" />
     <ClInclude Include="Source\timer.h" />
     <ClInclude Include="Source\TransformComponent.h" />
     <ClInclude Include="Source\Vector3.h" />

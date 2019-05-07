@@ -28,8 +28,8 @@ uniform mat4 projection;
 uniform mat4 lightProjectionView;
 uniform bool lightEnabled;
 
-const float fogDensity = 0.0035;
-const float fogGradient = 5.0;
+const float fogDensity = 0.01;
+const float fogGradient = 3.5;
 
 void main(){
 

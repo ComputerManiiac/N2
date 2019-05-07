@@ -9,6 +9,7 @@
 #include "RendererShadow.h"
 #include "RendererGrass.h"
 #include "RendererTerrain.h"
+#include "RendererSkybox.h"
 
 
 
@@ -76,12 +77,14 @@ void RenderSystem::Initialize() {
 	ShaderProgram* grass = manager->getShader("grass");
 	ShaderProgram* particleShader = manager->getShader("particle");
 	ShaderProgram* terrain = manager->getShader("terrain");
+	ShaderProgram* skybox = manager->getShader("skybox");
 
 	/* Set renderers */
 	renderers[grass] = new RendererGrass(grass);
 	renderers[lit] = new RendererLit(lit);
 	renderers[depth] = new RendererShadow(depth);
 	renderers[terrain] = new RendererTerrain(terrain);
+	renderers[skybox] = new RendererSkybox(skybox);
 
 	particle = new RendererParticle(particleShader);
 	renderers[particleShader] = particle;

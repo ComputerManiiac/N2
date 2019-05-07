@@ -1,4 +1,4 @@
-	#include "PhysicsSystem.h"
+#include "PhysicsSystem.h"
 #include "Entity.h"
 
 
@@ -19,6 +19,7 @@ void PhysicsSystem::Initialize()
 
 void PhysicsSystem::Update(double& dt)
 {
+	return;
 	gravity = Vector3(0, -9.8f, 0);
 	
 

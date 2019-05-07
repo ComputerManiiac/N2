@@ -3,6 +3,7 @@
 #include "Primitives.h"
 #include "Loader.h"
 #include "Terrain.h"
+#include "Skybox.h"
 
 SceneManager::SceneManager()
 {
@@ -53,24 +54,53 @@ void SceneManager::Initialize()
 
 void SceneManager::createScene()
 {
-	for (int i = 0; i < 10; ++i)
-	{
-		std::string treeName = "tree" + std::to_string(i);
-		entities[treeName] = new Entity(treeName, Vector3(Math::RandFloatMinMax(-320.0f, 320.f), 0, Math::RandFloatMinMax(-320.0f, 320.f)), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"], "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
-	}
+
 
 
 	OBJInfo skyplane;
 	Primitives::generateSkyplane(skyplane, 128, 200, 2000, 1.0f, 1.0f);
-	entities["skyplane"] = new Entity("skyplane", Vector3(500, 1200, -500), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\Skybox\\top.tga");
+	entities["skyplane"] = new Skybox(Vector3(500, 1200, -500), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["skybox"], 
+		 { "Assets\\Textures\\Skybox\\top.tga", "Assets\\Textures\\night.tga" });
 	entities["skyplane"]->getComponent<RenderComponent>()->setInfo(skyplane);
 
-	entities["terrain"] = new Terrain(Vector3(0, -10, 0), Vector3(0, 0, 0), Vector3(8.0f, 3.0f, 8.0f), &shaders["terrain"], 
+	entities["terrain"] = new Terrain(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(2.0f, 1.0f, 2.0f), &shaders["terrain"],
 		"Assets\\Textures\\heightmap.bmp",  { "Assets\\Textures\\terrain.tga","Assets\\Textures\\terrain_grass.tga" ,
 		"Assets\\Textures\\terrain_mountain.tga",  "Assets\\Textures\\terrain_mud.tga",
-		"Assets\\Textures\\terrain_path.tga", });
+		"Assets\\Textures\\terrain_path.tga", }, -10.0f, 10.0f, 1.0f);
 
+	spawnObjectOnTerrain("tree", 12, -0.2f, "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
+	spawnObjectOnTerrain("tree2", 12, -0.1f, "Assets\\Models\\tree2.obj", "Assets\\Textures\\tree2.tga");
+	spawnObjectOnTerrain("rock", 8, 0.f, "Assets\\Models\\rock.obj", "Assets\\Textures\\rock.tga");
+	//
+	//for (int i = 0; i < 20; ++i)
+	//{
+	//	std::string treeName = "tree" + std::to_string(i);
+	//	Vector2 position(Math::RandFloatMinMax(-64.0f, 64.f), Math::RandFloatMinMax(-64.0f, 64.f));
+	//	float y = terrain->getHeight(position);
+	//	std::cout << y << std::endl;
+	//	entities[treeName] = new Entity(treeName, Vector3(position.x, y, position.y), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"], "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
+	//}
+	/*float y = terrain->getHeight(Vector2(-64, -64));
+	std::cout << y << std::endl;
+	entities["tree"] = new Entity("tree", Vector3(-64, y, -64), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"], "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");*/
 	
+}
+
+void SceneManager::spawnObjectOnTerrain(const std::string& type, const unsigned int& number, const float& offset,
+	const std::string& modelPath, const std::string& texturePath)
+{
+	Terrain* terrain = static_cast<Terrain*>(entities["terrain"]);
+	for (unsigned int n = 0; n < number; ++n) {
+		float y;
+		Vector2 position;
+		do {
+			position.Set(Math::RandFloatMinMax(-64.0f, 64.f), Math::RandFloatMinMax(-64.0f, 64.f));
+			y = terrain->getHeight(position);
+		} while (y < 0.0f);
+		std::string name = type + std::to_string(n);
+		entities[name] = new Entity(name, Vector3(position.x, terrain->getHeight(position) + offset, position.y), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"], modelPath, texturePath);
+
+	}
 }
 
 void SceneManager::Update(double dt)

@@ -299,14 +299,14 @@ void Primitives::generateQuad(OBJInfo& info)
 
 }
 
-void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath, const float& minHeight, const float& maxHeight, const float& cellLength)
+void Primitives::generateTerrain(OBJInfo& info, std::vector<unsigned char>& heightMapData, const std::string& heightMapPath, const float& minHeight, const float& maxHeight, const float& cellLength)
 {
-	std::vector<unsigned char> data;
-	Loader::loadBMP(heightMapPath, data);
+
+	Loader::loadBMP(heightMapPath, heightMapData);
 
 
 
-	float gridLength = static_cast<float>(sqrt(data.size() / 3));
+	float gridLength = static_cast<float>(sqrt(heightMapData.size() / 3));
 	float cellLengthUV = 1.0f / (gridLength-1);
 
 	float halfGridLength = gridLength * 0.5f * cellLength;
@@ -321,6 +321,8 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 	
 	info.vertices.reserve(gridLength * gridLength);
 
+	std::cout << "Start Position: " << -halfGridLength << "," << -halfGridLength << std::endl;
+
 	/* Vertices */
 	for (int z = 0; z < gridLength; z++) {
 		offset.x = -halfGridLength;
@@ -330,7 +332,7 @@ void Primitives::generateTerrain(OBJInfo& info, const std::string& heightMapPath
 			/* Y Offset = Average color value of pixel in height map * constant */
 			int vertIndex = z * gridLength + x;
 			int pixelIndex = vertIndex * 3;
-			float averageColorOfPixel = getColourValue(data, pixelIndex);
+			float averageColorOfPixel = getColourValue(heightMapData, pixelIndex);
 			float yOffset = minHeight + (averageColorOfPixel / 255.0f) * (maxHeight - minHeight);
 			
 

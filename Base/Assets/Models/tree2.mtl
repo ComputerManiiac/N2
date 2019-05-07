@@ -1,0 +1,17 @@
+newmtl Bush_1SG6
+illum 4
+Kd 0.30 0.14 0.03
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 7.61
+newmtl Bush_1SG7
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd tree2.tga
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 7.61

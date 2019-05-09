@@ -52,7 +52,7 @@ void RendererSkybox::Render(Batch& batch, const unsigned int& textureID, MS& mod
 {
 	shader->Use();
 	shader->setUniform("viewMatrix", Manager::getInstance()->getCamera()->LookAt());
-	shader->setUniform("time", (float)(static_cast<int>(static_cast<int>(glfwGetTime() * 7200) % 86400)));
+	shader->setUniform("time", (float)(static_cast<int>(static_cast<int>(glfwGetTime() * 3600) % 86400)));
 
 	std::cout << static_cast<int>(static_cast<int>(glfwGetTime() * 7200) % 86400) << std::endl;
 	glBindVertexArray(batch.VAO);

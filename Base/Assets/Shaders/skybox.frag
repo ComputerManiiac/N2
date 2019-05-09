@@ -25,6 +25,13 @@ void main()
 //		timeInDay = time % 86400;
 //
 //	float t = timeInDay / 86400;
-	vec4 textureColor = mix(texture2D(skyboxTexture, texCoords), texture2D(nightTexture, texCoords), time / 86400);
+	
+	float ratio = time / 86400;
+
+	int h = int(time / 43200);
+	if(h % 3  == 0)
+		ratio = 1 - ratio;
+
+	vec4 textureColor = mix(texture2D(skyboxTexture, texCoords), texture2D(nightTexture, texCoords), ratio);
 	color = mix(vec4(fogColor, 1.0), textureColor, fogVisibility);
 }

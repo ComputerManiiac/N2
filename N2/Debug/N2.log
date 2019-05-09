@@ -1,5 +1,4 @@
-﻿  PhysicsSystem.cpp
-c:\users\compu\desktop\n2\n2\n2\source\physicssystem.cpp(40): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+﻿  RendererSkybox.cpp
 winmm.lib(WINMM.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 winmm.lib(WINMM.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
 Gdi32.lib(GDI32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
@@ -8,4 +7,4 @@ Shell32.lib(SHELL32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already def
 Shell32.lib(SHELL32.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
 User32.lib(USER32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
 User32.lib(USER32.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-  N2.vcxproj -> C:\Users\compu\Desktop\N2\N2\Debug\N2.lib
+  N2.vcxproj -> D:\Programming\C++\N2\Debug\N2.lib

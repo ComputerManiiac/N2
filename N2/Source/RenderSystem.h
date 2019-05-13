@@ -47,6 +47,7 @@
 #include "Text.h"
 #include "Renderer.h"
 #include "RendererParticle.h"
+#include "RendererWater.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -80,7 +81,7 @@ private:
 	void setupLight();
 	void setupShadows();
 
-	void renderScene(const Mtx44& viewMatrix, ShaderProgram* shader=nullptr);
+	void renderScene(const Mtx44& viewMatrix, ShaderProgram* shader=nullptr, bool renderWater=true);
 	void renderTexts();
 
 	/* Text Mutation */
@@ -100,7 +101,7 @@ private:
 	ShaderProgram* ui;
 	
 
-
+	RendererWater* waterRenderer;
 	RendererParticle* particle;
 
 	/* Used for rendering textures to screen */

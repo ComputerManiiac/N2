@@ -1,11 +1,18 @@
 #include "RendererWater.h"
 #include "Manager.h"
 #include "Terrain.h"
+#include "Application.h"
 
-RendererWater::RendererWater(ShaderProgram* shader) : Renderer(shader) {}
+RendererWater::RendererWater(ShaderProgram* shader) : Renderer(shader) 
+{
+	generateFrameBuffer(reflectionFBO, reflectionRBO, reflectionTexID);
+	generateFrameBuffer(refractionFBO, refractionRBO, refractionTexID);
+}
 
 RendererWater::RendererWater()
 {
+
+
 }
 
 
@@ -13,8 +20,54 @@ RendererWater::~RendererWater()
 {
 }
 
+void RendererWater::bindReflectionFBO()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, reflectionFBO);
+}
+
+void RendererWater::bindRefractionFBO()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, refractionFBO);
+}
+
+const unsigned int & RendererWater::getReflectionID() const
+{
+	return reflectionTexID;
+}
+
+const unsigned int & RendererWater::getRefractionID() const
+{
+	return refractionTexID;
+}
+
+
+void RendererWater::generateFrameBuffer(unsigned int& FBO, unsigned int& RBO, unsigned int& textureID)
+{
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Application::getScreenWidth() , Application::getScreenHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+
+	glGenRenderbuffers(1, &RBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, Application::getScreenWidth(), Application::getScreenHeight());
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO); 
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "[Error] Framebuffer is not complete!" << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void RendererWater::Initialize(const BatchKey& key, Batch& batch)
 {
+
+
 	Renderer::Initialize(key, batch);
 
 	/* Buffer data into VBO and EBO*/
@@ -49,7 +102,6 @@ void RendererWater::Initialize(const BatchKey& key, Batch& batch)
 	shader->setUniform("material.kSpecular", key.mat.specular);
 	shader->setUniform("material.kShininess", key.mat.shininess);
 	shader->setUniform("colorTextureEnabled", 1);
-	shader->setUniform("colorTexture", 0);
 	shader->setUniform("projection", projection);
 
 }

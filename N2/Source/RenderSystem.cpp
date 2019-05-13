@@ -10,7 +10,7 @@
 #include "RendererGrass.h"
 #include "RendererTerrain.h"
 #include "RendererSkybox.h"
-#include "RendererWater.h"
+
 
 
 
@@ -87,7 +87,8 @@ void RenderSystem::Initialize() {
 	renderers[depth] = new RendererShadow(depth);
 	renderers[terrain] = new RendererTerrain(terrain);
 	renderers[skybox] = new RendererSkybox(skybox);
-	renderers[water] = new RendererWater(water);
+	waterRenderer = new RendererWater(water);
+	renderers[water] = waterRenderer;
 
 	particle = new RendererParticle(particleShader);
 	renderers[particleShader] = particle;
@@ -208,22 +209,26 @@ void RenderSystem::Update(double& dt)
 		glViewport(0, 0, 2048, 2048);
 		shadowFBO.Bind();
 		glClear(GL_DEPTH_BUFFER_BIT);
-		renderScene(lightView, depth);
+		renderScene(lightView, depth, false);
 
 
 		glCullFace(GL_BACK);
 		shadowFBO.Unbind();
 
-		/* Render scene normally */
+		///* Render scene to reflection texture */
 		glViewport(0, 0, Application::getScreenWidth(), Application::getScreenHeight());
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//waterRenderer->bindReflectionFBO();
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
+		//renderScene(Manager::getInstance()->getCamera()->LookAt(), nullptr, false);
 
+		/* Render scene normally */
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFBO.getTexID());
-
-
-
-		renderScene(Manager::getInstance()->getCamera()->LookAt());
+		renderScene(Manager::getInstance()->getCamera()->LookAt(), nullptr, true);
 	}
 
 	std::string renderTimeString = std::to_string(renderTime);
@@ -280,7 +285,7 @@ void RenderSystem::updateBatchedData()
 	}
 }
 
-void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
+void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader, bool renderWater)
 {
 	lit->Use();
 	modelStack.LoadIdentity();
@@ -291,13 +296,23 @@ void RenderSystem::renderScene(const Mtx44& viewMatrix, ShaderProgram* shader)
 		const BatchKey& key = b.first;
 		Batch& batch = b.second;
 
+		
+
 		if (shader == nullptr) {
 			key.shader->Use();
+
+			if (!renderWater && key.shader == Manager::getInstance()->getShader("water"))
+				continue;
+
 			renderers[key.shader]->Render(batch, key.textureID, modelStack, viewMatrix);
-		}
-		else {
+
+		} else {
+
 			shader->Use();
 			renderers[shader]->Render(batch, key.textureID, modelStack, viewMatrix);
+
+			
+			
 		}
 	}
 	glBindVertexArray(0);

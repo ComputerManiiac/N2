@@ -16,6 +16,22 @@ public:
 	void Render(Batch& batch, const unsigned int& textureID, MS& modelStack, const Mtx44& view);
 	void Deinitialize(Batch& batch);
 
+	void bindReflectionFBO();
+	void bindRefractionFBO();
+
+	const unsigned int& getReflectionID() const;
+	const unsigned int& getRefractionID() const;
+
+private:
+
+	void generateFrameBuffer(unsigned int& FBO, unsigned int& RBO, unsigned int& textureID);
+
+	unsigned int reflectionTexID;
+	unsigned int refractionTexID;
+	unsigned int reflectionFBO;
+	unsigned int refractionFBO;
+	unsigned int reflectionRBO;
+	unsigned int refractionRBO;
 };
 
 #endif

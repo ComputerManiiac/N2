@@ -69,22 +69,22 @@ void SceneManager::createScene()
 	terrain = new Terrain(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(2.0f, 1.0f, 2.0f), &shaders["terrain"],
 		"Assets\\Textures\\heightmap.bmp",  { "Assets\\Textures\\terrain.tga","Assets\\Textures\\terrain_grass.tga" ,
 		"Assets\\Textures\\terrain_mountain.tga",  "Assets\\Textures\\terrain_mud.tga",
-		"Assets\\Textures\\terrain_path.tga", }, -20.0f, 25.0f, 1.0f);
+		"Assets\\Textures\\terrain_path.tga", }, -20.0f, 25.0f, 2.0f);
 
 	entities["terrain"] = terrain;
 
-	entities["water"] = new Entity("water", Vector3(37.4f,-4.0f,-58.0f), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"],
+	entities["water"] = new Entity("water", Vector3(0.0f,-3.5f,0.0f), Vector3(0, 0, 0), Vector3(2.0f, 1.0f, 2.0f), &shaders["water"],
 		"Assets\\Models\\cube.obj", "Assets\\Textures\\water.tga");
 
 	OBJInfo water;
-	Primitives::generateWater(water, 64.0f, 1.0f);
+	Primitives::generateWater(water, 128.0f, 2.0f);
 	entities["water"]->getComponent<RenderComponent>()->setInfo(water);
 
 	entities["house"] = new Entity("house", Vector3(-10.0f, terrain->getHeight(Vector2(-10.0f, -30.0f)), -30.0f), Vector3(0, 0, -3.0f), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"],
 		"Assets\\Models\\house.obj", "Assets\\Textures\\house.tga");
 
-	spawnObjectOnTerrain("tree", 12, -0.2f, "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
-	spawnObjectOnTerrain("tree2", 12, -0.1f, "Assets\\Models\\tree2.obj", "Assets\\Textures\\tree2.tga");
+	spawnObjectOnTerrain("tree", 12, -0.3f, "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
+	spawnObjectOnTerrain("tree2", 12, -0.2f, "Assets\\Models\\tree2.obj", "Assets\\Textures\\tree2.tga");
 	spawnObjectOnTerrain("rock", 8, 0.f, "Assets\\Models\\rock.obj", "Assets\\Textures\\rock.tga");
 	//
 	//for (int i = 0; i < 20; ++i)

@@ -78,4 +78,7 @@ void Player::Update(double& dt)
 
 	transform->setPos(position);
 	Manager::getInstance()->getCamera()->setPosition(position + Vector3(0.0f, 1.0f, 0.0f));
+
+	Manager::getInstance()->getSystem<RenderSystem>()->renderText("Position: " + position.toString(),
+		10.0f, 120.0f, "sansserif", Vector3(1, 0, 0), 0.30f);
 }

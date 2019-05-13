@@ -29,6 +29,7 @@ void SceneManager::Initialize()
 	shaders.try_emplace("grass", "Assets\\Shaders\\grass.vert", "Assets\\Shaders\\grass.frag");
 	shaders.try_emplace("particle", "Assets\\Shaders\\particle.vert", "Assets\\Shaders\\particle.frag");
 	shaders.try_emplace("terrain", "Assets\\Shaders\\terrain.vert", "Assets\\Shaders\\terrain.geom", "Assets\\Shaders\\terrain.frag");
+	shaders.try_emplace("water", "Assets\\Shaders\\water.vert", "Assets\\Shaders\\water.geom", "Assets\\Shaders\\water.frag");
 
 	//entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(100, 1, 100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
 	entities["sphere"] = new Player(Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
@@ -68,10 +69,16 @@ void SceneManager::createScene()
 	terrain = new Terrain(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(2.0f, 1.0f, 2.0f), &shaders["terrain"],
 		"Assets\\Textures\\heightmap.bmp",  { "Assets\\Textures\\terrain.tga","Assets\\Textures\\terrain_grass.tga" ,
 		"Assets\\Textures\\terrain_mountain.tga",  "Assets\\Textures\\terrain_mud.tga",
-		"Assets\\Textures\\terrain_path.tga", }, -10.0f, 10.0f, 1.0f);
+		"Assets\\Textures\\terrain_path.tga", }, -20.0f, 25.0f, 1.0f);
 
 	entities["terrain"] = terrain;
 
+	entities["water"] = new Entity("water", Vector3(37.4f,-4.0f,-58.0f), Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"],
+		"Assets\\Models\\cube.obj", "Assets\\Textures\\water.tga");
+
+	OBJInfo water;
+	Primitives::generateWater(water, 64.0f, 1.0f);
+	entities["water"]->getComponent<RenderComponent>()->setInfo(water);
 
 	entities["house"] = new Entity("house", Vector3(-10.0f, terrain->getHeight(Vector2(-10.0f, -30.0f)), -30.0f), Vector3(0, 0, -3.0f), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"],
 		"Assets\\Models\\house.obj", "Assets\\Textures\\house.tga");

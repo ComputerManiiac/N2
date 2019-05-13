@@ -384,9 +384,7 @@ void Primitives::generateTerrain(OBJInfo& info, std::vector<unsigned char>& heig
 
 void Primitives::generateWater(OBJInfo& info, const float& gridLength, const float& cellLength)
 {
-	float halfGridLength = 0.5f * gridLength;
 	float cellLengthUV = 1.0f / (gridLength - 1);
-
 	float halfGridLength = gridLength * 0.5f * cellLength;
 
 	Vector2 offset;
@@ -415,23 +413,6 @@ void Primitives::generateWater(OBJInfo& info, const float& gridLength, const flo
 		offset.y += cellLength;
 		textureCoords.y += cellLengthUV;
 	}
-
-	/* Border Vertices */
-	for (int z = 0; z < gridLength - 1; z++)
-	{
-		for (int x = 0; x < gridLength; x++)
-		{
-			if (x == 0 || z == 0)
-			{
-				int vertIndex = z * gridLength + x;
-				calculateNormal(info.vertices[vertIndex], info.vertices[vertIndex + 1], info.vertices[vertIndex + gridLength]);
-			}
-		}
-	}
-
-	/* Bottom Left Vertex */
-	int index = gridLength * (gridLength - 1);
-	calculateNormal(info.vertices[index], info.vertices[index - gridLength], info.vertices[index + 1]);
 
 	/* Indices */
 	int lastVert = gridLength - 1;

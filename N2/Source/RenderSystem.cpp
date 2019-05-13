@@ -10,6 +10,7 @@
 #include "RendererGrass.h"
 #include "RendererTerrain.h"
 #include "RendererSkybox.h"
+#include "RendererWater.h"
 
 
 
@@ -78,6 +79,7 @@ void RenderSystem::Initialize() {
 	ShaderProgram* particleShader = manager->getShader("particle");
 	ShaderProgram* terrain = manager->getShader("terrain");
 	ShaderProgram* skybox = manager->getShader("skybox");
+	ShaderProgram* water = manager->getShader("water");
 
 	/* Set renderers */
 	renderers[grass] = new RendererGrass(grass);
@@ -85,6 +87,7 @@ void RenderSystem::Initialize() {
 	renderers[depth] = new RendererShadow(depth);
 	renderers[terrain] = new RendererTerrain(terrain);
 	renderers[skybox] = new RendererSkybox(skybox);
+	renderers[water] = new RendererWater(water);
 
 	particle = new RendererParticle(particleShader);
 	renderers[particleShader] = particle;
@@ -124,7 +127,8 @@ void RenderSystem::Initialize() {
 
 void RenderSystem::setupLight()
 {
-	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass"), Manager::getInstance()->getShader("terrain")});
+	LightSource::setShaders({ lit, Manager::getInstance()->getShader("grass"),
+		Manager::getInstance()->getShader("terrain"), Manager::getInstance()->getShader("water")});
 
 	LightSource* light = new LightSource(LIGHT_DIRECTIONAL);
 	light->setDirLight(lit, Vector3(2.0f, 100.0f, 2.0f), Vector3(1, 1, 1), 1.0f);

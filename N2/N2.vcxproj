@@ -164,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\RendererWater.cpp" />
     <ClCompile Include="Source\RendererSkybox.cpp" />
     <ClCompile Include="Source\RendererTerrain.cpp" />
     <ClCompile Include="Source\BatchData.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="Source\UpdateComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\RendererWater.h" />
     <ClInclude Include="Source\RendererSkybox.h" />
     <ClInclude Include="Source\RendererTerrain.h" />
     <ClInclude Include="Source\BatchData.h" />

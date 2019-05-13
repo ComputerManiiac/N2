@@ -27,6 +27,11 @@ Terrain::Terrain(Vector3 position, Vector3 rotation, Vector3 scale, ShaderProgra
 	Primitives::generateTerrain(info, heightMapData, heightMapPath, minHeight, maxHeight, cellLength);
 	getComponent<RenderComponent>()->setInfo(info);
 
+	Material mat = getComponent<RenderComponent>()->getMaterial();
+	mat.specular.Set(0.5f, 0.5f, 0.5f);
+	getComponent<RenderComponent>()->setMaterial(mat);
+
+
 	gridLength = static_cast<float>(sqrt(heightMapData.size() / 3));
 
 	for (int i = 1; i < (int)texturePaths.size(); ++i)
@@ -59,8 +64,6 @@ Vector2 Terrain::convertToGrid(const Vector2& position) {
 	float halfGridLength = gridLength * 0.5f * cellLength;
 
 	Vector2 start(-halfGridLength, -halfGridLength);
-
-
 
 	Vector2 grid;
 	grid.x = position.x / scale - start.x;

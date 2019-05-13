@@ -304,13 +304,10 @@ void Primitives::generateTerrain(OBJInfo& info, std::vector<unsigned char>& heig
 
 	Loader::loadBMP(heightMapPath, heightMapData);
 
-
-
 	float gridLength = static_cast<float>(sqrt(heightMapData.size() / 3));
 	float cellLengthUV = 1.0f / (gridLength-1);
 
 	float halfGridLength = gridLength * 0.5f * cellLength;
-
 
 	Vector2 offset;
 	offset.y = -halfGridLength;
@@ -320,8 +317,6 @@ void Primitives::generateTerrain(OBJInfo& info, std::vector<unsigned char>& heig
 	v.normal.Set(0, 1, 0);
 	
 	info.vertices.reserve(gridLength * gridLength);
-
-	std::cout << "Start Position: " << -halfGridLength << "," << -halfGridLength << std::endl;
 
 	/* Vertices */
 	for (int z = 0; z < gridLength; z++) {
@@ -387,6 +382,82 @@ void Primitives::generateTerrain(OBJInfo& info, std::vector<unsigned char>& heig
 	}
 }
 
+void Primitives::generateWater(OBJInfo& info, const float& gridLength, const float& cellLength)
+{
+	float halfGridLength = 0.5f * gridLength;
+	float cellLengthUV = 1.0f / (gridLength - 1);
+
+	float halfGridLength = gridLength * 0.5f * cellLength;
+
+	Vector2 offset;
+	offset.y = -halfGridLength;
+	Vector2 textureCoords;
+
+	Vertex v;
+	v.normal.Set(0, 1, 0);
+
+	info.vertices.reserve(gridLength * gridLength);
+
+	/* Vertices */
+	for (int z = 0; z < gridLength; z++)
+	{
+		offset.x = -halfGridLength;
+		textureCoords.x = 0.0f;
+		for (int x = 0; x < gridLength; x++)
+		{
+			v.position.Set(offset.x, 0, offset.y);
+			v.texCoord.Set(textureCoords.x, textureCoords.y);
+
+			info.vertices.push_back(v);
+			offset.x += cellLength;
+			textureCoords.x += cellLengthUV;
+		}
+		offset.y += cellLength;
+		textureCoords.y += cellLengthUV;
+	}
+
+	/* Border Vertices */
+	for (int z = 0; z < gridLength - 1; z++)
+	{
+		for (int x = 0; x < gridLength; x++)
+		{
+			if (x == 0 || z == 0)
+			{
+				int vertIndex = z * gridLength + x;
+				calculateNormal(info.vertices[vertIndex], info.vertices[vertIndex + 1], info.vertices[vertIndex + gridLength]);
+			}
+		}
+	}
+
+	/* Bottom Left Vertex */
+	int index = gridLength * (gridLength - 1);
+	calculateNormal(info.vertices[index], info.vertices[index - gridLength], info.vertices[index + 1]);
+
+	/* Indices */
+	int lastVert = gridLength - 1;
+	int totalQuads = lastVert * lastVert;
+	info.indices.reserve(totalQuads * 6);
+
+	for (int x = 0; x < lastVert; ++x)
+	{
+		for (int z = 0; z < gridLength; ++z)
+		{
+
+			int vertCount = x * gridLength + z;
+			if (z != lastVert)
+			{
+				info.indices.push_back(vertCount);
+				info.indices.push_back(vertCount + gridLength);
+				info.indices.push_back(vertCount + 1);
+				info.indices.push_back(vertCount + 1);
+				info.indices.push_back(vertCount + gridLength);
+				info.indices.push_back(vertCount + gridLength + 1);
+			}
+		}
+
+	}
+}
+
 float Primitives::getColourValue(const std::vector<unsigned char>& data, const int & index)
 {
 	return (data[index] + data[index+1] + data[index+2]) / 3.0f;
@@ -413,14 +484,11 @@ void Primitives::generateSkyplane(OBJInfo& info, int slices, const float& planet
 	float delta = planeSize / (float)slices;
 	float texDelta = 2.f / (float)slices;
 	
-	//Get Vertices
-	//Travel along the Z axis
 	for (int z = 0; z <= slices; ++z)
 	{
-		//Travel along the X axis
 		for (int x = 0; x <= slices; ++x)
 		{
-			//The X and Z position based on the current x and z value
+			//The x and z position based on the current x and z value
 			float xDist = (-0.5f *planeSize) + ((float)x *delta);
 			float zDist = (-0.5f *planeSize) + ((float)z *delta);
 	

@@ -22,6 +22,8 @@ public:
 	void Update(double dt);
 	void Invert();
 	void setFreeLook(bool state);
+	void Move(const Vector3& delta);
+	void setPosition(const Vector3& position);
 
 	const Vector3& getRight() const;
 	const Vector3& getFront() const;

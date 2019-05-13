@@ -85,7 +85,7 @@ unsigned int ShaderProgram::loadAndCompile(unsigned int type, const std::string 
 		glDeleteShader(id);
 		return 0;
 	}
-
+	
 	return id;
 }
 

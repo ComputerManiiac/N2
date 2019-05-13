@@ -49,6 +49,7 @@ public:
 	~RenderComponent();
 
 	void setInfo(const OBJInfo& info);
+	void setMaterial(const Material& material);
 
 	/* Needed for Rendering */
 	const OBJInfo& getInfo() const;

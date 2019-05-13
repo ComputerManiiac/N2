@@ -4,6 +4,8 @@
 #include "Loader.h"
 #include "Terrain.h"
 #include "Skybox.h"
+#include "UpdateSystem.h"
+#include "Player.h"
 
 SceneManager::SceneManager()
 {
@@ -29,7 +31,7 @@ void SceneManager::Initialize()
 	shaders.try_emplace("terrain", "Assets\\Shaders\\terrain.vert", "Assets\\Shaders\\terrain.geom", "Assets\\Shaders\\terrain.frag");
 
 	//entities["ground"] = new Entity("ground", Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(100, 1, 100), &shaders["lit"], "Assets\\Models\\cube.obj", "Assets\\Textures\\rock.tga");
-	entities["sphere"] = new Entity("sphere", Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
+	entities["sphere"] = new Player(Vector3(0.0f, 1.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 	//entities["particleSphere"] = new Entity("particleSphere", Vector3(5.0f, 2.0f, 0.0f), Vector3(0, 0, 0), Vector3(1, 1, 1), &shaders["lit"], "Assets\\Models\\sphere.obj", "Assets\\Textures\\human.tga");
 
 	//float offsetX = 2.0f;
@@ -63,10 +65,16 @@ void SceneManager::createScene()
 		 { "Assets\\Textures\\Skybox\\top.tga", "Assets\\Textures\\night.tga" });
 	entities["skyplane"]->getComponent<RenderComponent>()->setInfo(skyplane);
 
-	entities["terrain"] = new Terrain(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(2.0f, 1.0f, 2.0f), &shaders["terrain"],
+	terrain = new Terrain(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(2.0f, 1.0f, 2.0f), &shaders["terrain"],
 		"Assets\\Textures\\heightmap.bmp",  { "Assets\\Textures\\terrain.tga","Assets\\Textures\\terrain_grass.tga" ,
 		"Assets\\Textures\\terrain_mountain.tga",  "Assets\\Textures\\terrain_mud.tga",
 		"Assets\\Textures\\terrain_path.tga", }, -10.0f, 10.0f, 1.0f);
+
+	entities["terrain"] = terrain;
+
+
+	entities["house"] = new Entity("house", Vector3(-10.0f, terrain->getHeight(Vector2(-10.0f, -30.0f)), -30.0f), Vector3(0, 0, -3.0f), Vector3(1.0f, 1.0f, 1.0f), &shaders["lit"],
+		"Assets\\Models\\house.obj", "Assets\\Textures\\house.tga");
 
 	spawnObjectOnTerrain("tree", 12, -0.2f, "Assets\\Models\\tree.obj", "Assets\\Textures\\tree.tga");
 	spawnObjectOnTerrain("tree2", 12, -0.1f, "Assets\\Models\\tree2.obj", "Assets\\Textures\\tree2.tga");
@@ -89,7 +97,6 @@ void SceneManager::createScene()
 void SceneManager::spawnObjectOnTerrain(const std::string& type, const unsigned int& number, const float& offset,
 	const std::string& modelPath, const std::string& texturePath)
 {
-	Terrain* terrain = static_cast<Terrain*>(entities["terrain"]);
 	for (unsigned int n = 0; n < number; ++n) {
 		float y;
 		Vector2 position;
@@ -105,33 +112,7 @@ void SceneManager::spawnObjectOnTerrain(const std::string& type, const unsigned 
 
 void SceneManager::Update(double dt)
 {
-	//TransformComponent* transform = entities["sphere"]->getComponent<TransformComponent>();
-	//shaders["grass"].Use();
-	//shaders["grass"].setUniform("objPosition", transform->getPos());
-
-
-	//transform = entities["sphere"]->getComponent<TransformComponent>();
-
-	/*if (Application::isKeyPressed(GLFW_KEY_I))
-	{
-		transform->Move(Vector3(0, 0, 2.0f) * dt);
-	}
-
-	if (Application::isKeyPressed(GLFW_KEY_K))
-	{
-		transform->Move(Vector3(0, 0, -2.0f) * dt);
-	}
-
-	if (Application::isKeyPressed(GLFW_KEY_J))
-	{
-		transform->Move(Vector3(2, 0, 0.0f) * dt);
-	}
-
-	if (Application::isKeyPressed(GLFW_KEY_L))
-	{
-		transform->Move(Vector3(-2, 0, 0.0f) * dt);
-	}*/
-
+	
 
 	if (Application::isKeyPressDown(GLFW_KEY_3))
 	{
@@ -148,6 +129,7 @@ void SceneManager::Update(double dt)
 
 	camera.Update(dt);
 
+	getSystem<UpdateSystem>()->Update(dt);
 	getSystem<PhysicsSystem>()->Update(dt);
 	getSystem<RenderSystem>()->Update(dt);
 	getSystem<ParticleSystem>()->Update(dt);

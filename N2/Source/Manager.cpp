@@ -1,6 +1,7 @@
 #include "Manager.h"
 #include "Application.h"
-
+#include "UpdateSystem.h"
+#include "Terrain.h"
 
 Manager* Manager::instance = nullptr;
 
@@ -8,7 +9,7 @@ Manager* Manager::instance = nullptr;
 
 Manager::Manager()
 {
-
+	terrain = nullptr;
 }
 
 
@@ -31,6 +32,7 @@ Manager::~Manager()
 }
 
 void Manager::Register() {
+	registerSystem<UpdateSystem>();
 	registerSystem<RenderSystem>();
 	registerSystem<PhysicsSystem>();
 	registerSystem<ParticleSystem>();
@@ -43,6 +45,11 @@ void Manager::Initialize()
 	getSystem<ParticleSystem>()->Initialize();
 	getSystem<PhysicsSystem>()->Initialize();
 
+}
+
+Terrain* Manager::getTerrain()
+{
+	return terrain;
 }
 
 Camera* Manager::getCamera()

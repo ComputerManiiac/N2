@@ -14,6 +14,7 @@ public:
 
 	static SceneManager* getInstance();
 
+
 private:
 
 	void createScene();

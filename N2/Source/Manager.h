@@ -7,6 +7,7 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Entity.h"
+#include "Terrain.h"
 #include <map>
 #include <typeindex>
 #include <vector>
@@ -31,17 +32,17 @@ public:
 	template<typename T>
 	T* getSystem();
 
+	Terrain* getTerrain();
 	Camera* getCamera();
 	ShaderProgram* getShader(const std::string& name);
 
 protected:
 
-
-
 	std::map<std::type_index, System*> systems;
 	std::map<std::string, ShaderProgram> shaders;
 	std::map<std::string, Entity*> entities;
 	Camera camera;
+	Terrain* terrain;
 
 protected:
 	static Manager* instance;

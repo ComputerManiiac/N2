@@ -198,6 +198,8 @@
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\UIComponent.cpp" />
     <ClCompile Include="Source\Terrain.cpp" />
+    <ClCompile Include="Source\UpdateSystem.cpp" />
+    <ClCompile Include="Source\UpdateComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\RendererSkybox.h" />
@@ -242,6 +244,8 @@
     <ClInclude Include="Source\UIComponent.h" />
     <ClInclude Include="Source\Text.h" />
     <ClInclude Include="Source\Terrain.h" />
+    <ClInclude Include="Source\UpdateSystem.h" />
+    <ClInclude Include="Source\UpdateComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -88,29 +88,39 @@ void Camera::updateMouse()
 
 void Camera::Update(double dt)
 {
-	float speed = 5.0 * dt;
+	//float speed = 5.0 * dt;
 
-	if (Application::isKeyPressed(GLFW_KEY_W)) {
-		position += front * speed;
-	}
-	if (Application::isKeyPressed(GLFW_KEY_S)) {
-		position -= front * speed;
-	}
-	if (Application::isKeyPressed(GLFW_KEY_D)) {
-		position += front.Cross(up).Normalized() * speed;
-	}
-	if (Application::isKeyPressed(GLFW_KEY_A)) {
-		position -= front.Cross(up).Normalized() * speed;
-	}
-	if (Application::isKeyPressed(GLFW_KEY_Q)) {
-		position += up * speed;
-	}
-	if (Application::isKeyPressed(GLFW_KEY_E)) {
-		position -= up * speed;
-	}
+	//if (Application::isKeyPressed(GLFW_KEY_W)) {
+	//	position += front * speed;
+	//}
+	//if (Application::isKeyPressed(GLFW_KEY_S)) {
+	//	position -= front * speed;
+	//}
+	//if (Application::isKeyPressed(GLFW_KEY_D)) {
+	//	position += front.Cross(up).Normalized() * speed;
+	//}
+	//if (Application::isKeyPressed(GLFW_KEY_A)) {
+	//	position -= front.Cross(up).Normalized() * speed;
+	//}
+	//if (Application::isKeyPressed(GLFW_KEY_Q)) {
+	//	position += up * speed;
+	//}
+	//if (Application::isKeyPressed(GLFW_KEY_E)) {
+	//	position -= up * speed;
+	//}
 
 	if (canFreeLook)
 		updateMouse();
+}
+
+void Camera::Move(const Vector3& delta)
+{
+	this->position += delta;
+}
+
+void Camera::setPosition(const Vector3& position)
+{
+	this->position = position;
 }
 
 Mtx44 Camera::LookAt()
@@ -159,7 +169,7 @@ const Vector3& Camera::getFront() const {
 }
 
 const Vector3& Camera::getRight() const {
-	return front.Cross(up).Normalize();
+	return front.Cross(up).Normalized();
 }
 
 const float& Camera::getYaw() const {

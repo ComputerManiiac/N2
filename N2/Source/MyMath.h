@@ -260,6 +260,11 @@ Return a random float between min and max
 		else
 			return 0;
 	}
+
+	inline float Lerp(const float& a, const float& b, const float& percentage)
+	{
+		return a + percentage * (b - a);
+	}
 }//end namespace Math
 
 /******************************************************************************/

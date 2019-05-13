@@ -48,6 +48,11 @@ void RenderComponent::setInfo(const OBJInfo& info)
 	this->info = info;
 }
 
+void RenderComponent::setMaterial(const Material& material)
+{
+	this->material = material;
+}
+
 
 const OBJInfo& RenderComponent::getInfo() const
 {
